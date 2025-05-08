@@ -1,0 +1,283 @@
+<div class="page" style="background-color: #f5eddc; padding: 20px; border-radius: 10px;">
+  <h1>Evangelisti Archive Tree</h1>
+  
+  <p>This is a semantic tree implementation for the Evangelisti Archive dataset.</p>
+  
+  <!-- Two-column layout -->
+  <div style="display: flex; gap: 30px; margin-bottom: 20px;">
+    <!-- Left column: Semantic Tree -->
+    <div style="flex: 1; min-width: 0; background-color: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); padding: 15px;">
+      <h3 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 8px; margin-bottom: 15px;">Archive Structure</h3>
+      <semantic-tree 
+        id="evangelisti-tree" 
+        query="
+          PREFIX rico: <https://www.ica.org/standards/RiC/ontology#>
+          PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+          SELECT ?node ?parent ?label ?title ?hasChildren WHERE {
+            ?node rdfs:label ?label .
+            OPTIONAL {
+              ?parent rico:includesOrIncluded ?node .
+            }
+            OPTIONAL {
+              ?node rico:hasOrHadTitle ?titleNode .
+              ?titleNode rdfs:label ?title .
+            }
+            
+            # Count children instead of using EXISTS
+            {
+              SELECT ?node (COUNT(?child) > 0 AS ?hasChildren) WHERE {
+                ?node rdfs:label ?label .
+                OPTIONAL { ?node rico:includesOrIncluded ?child . }
+              } GROUP BY ?node
+            }
+          }
+        "
+        roots='["http://example.org/ArchivioEvangelisti/RSet/RS1"]'
+        tuple-template='{{> nodeTemplate}}'>
+        
+        <template id='nodeTemplate'>
+          <div>
+            <mp-event-trigger type='Component.TemplateUpdate' data='{"iri": "{{node.value}}"}' targets='["node-details"]'>
+              <div class="node-content" style="cursor: pointer; padding: 5px; border-radius: 4px; transition: background-color 0.2s; margin-bottom: 3px;">
+                <div style="display: flex; align-items: center;">
+                  {{#if (eq hasChildren.value "true")}}
+                    <i class="fa fa-folder" style="margin-right: 8px; color: #ffc107;"></i>
+                  {{else}}
+                    <i class="fa fa-file-text-o" style="margin-right: 8px; color: #2196F3;"></i>
+                  {{/if}}
+                  
+                  <div>
+                    {{#if title.value}}
+                      <div style="font-weight: bold; color: #333;">{{title.value}}</div>
+                    {{/if}}
+                    <semantic-link iri="{{node.value}}"></semantic-link>
+                  </div>
+                </div>
+              </div>
+            </mp-event-trigger>
+          </div>
+        </template>
+      </semantic-tree>
+    </div>
+    
+    <!-- Right column: Node Details -->
+    <div style="flex: 1; min-width: 0; border-left: 1px solid #eee; padding-left: 20px; background-color: #f9f9f9; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+      <h3 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 8px; margin-bottom: 15px;">Node Details</h3>
+      <mp-event-target-template-render id='node-details' template='{{> detailsTemplate}}'>
+        <template id='detailsTemplate'>
+          {{#if iri}}
+            <div class="node-details">
+              <h4><semantic-link iri="{{iri}}"></semantic-link></h4>
+              <p><strong>IRI:</strong> {{iri}}</p>
+              
+              <!-- Semantic query to fetch and display node details -->
+              <semantic-query 
+                query='
+                  PREFIX rico: <https://www.ica.org/standards/RiC/ontology#>
+                  PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                  PREFIX rico-bd: <http://example.org/rico-bd#>
+                  PREFIX lrmoo: <http://www.cidoc-crm.org/lrmoo/>
+                  PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+                  
+                  SELECT ?section ?property ?propertyLabel ?value ?valueLabel WHERE {
+                    {
+                      # Basic information
+                      <{{iri}}> ?property ?value .
+                      OPTIONAL { ?value rdfs:label ?valueLabel }
+                      BIND("Basic Information" AS ?section)
+                      BIND(REPLACE(STR(?property), "^.+[/#]", "") AS ?propertyLabel)
+                    } UNION {
+                      # Related works
+                      <{{iri}}> rico:isRelatedTo ?value .
+                      ?value a lrmoo:F1_Work ;
+                             rdfs:label ?valueLabel .
+                      BIND(rico:isRelatedTo AS ?property)
+                      BIND("Related Work" AS ?propertyLabel)
+                      BIND("Related Works" AS ?section)
+                    } UNION {
+                      # Parent-child relationships
+                      {
+                        # Parent relationship
+                        ?value rico:includesOrIncluded <{{iri}}> .
+                        ?value rdfs:label ?valueLabel .
+                        BIND(rico:isOrWasIncludedIn AS ?property)
+                        BIND("Parent" AS ?propertyLabel)
+                        BIND("Relationships" AS ?section)
+                      } UNION {
+                        # Child relationships
+                        <{{iri}}> rico:includesOrIncluded ?value .
+                        ?value rdfs:label ?valueLabel .
+                        BIND(rico:includesOrIncluded AS ?property)
+                        BIND("Child" AS ?propertyLabel)
+                        BIND("Relationships" AS ?section)
+                      }
+                    } UNION {
+                      # Technical metadata for instantiations
+                      <{{iri}}> rico:hasOrHadInstantiation ?inst .
+                      ?inst rico-bd:hasTechnicalMetadata ?techMeta .
+                      ?techMeta rico-bd:hasTechnicalMetadataType ?metaType ;
+                               rdfs:label ?value .
+                      ?metaType rdfs:label ?propertyLabel .
+                      BIND("Technical Metadata" AS ?section)
+                      BIND(?metaType AS ?property)
+                    }
+                  }
+                  ORDER BY ?section ?propertyLabel
+                '
+                template='{{> propertyTemplate}}'
+              >
+                <template id='propertyTemplate'>
+                  <div class="node-details-sections" style="display: flex; flex-direction: column; gap: 20px;">
+                    <!-- All sections as collapsible details -->
+                    <details class="section" style="background-color: white; border-radius: 6px; padding: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                      <summary style="color: #2c3e50; padding-bottom: 8px; margin-top: 0; font-weight: bold; cursor: pointer;">
+                        <i class="fa fa-info-circle" style="margin-right: 8px; color: #3498db;"></i>Basic Information
+                      </summary>
+                      <table class="table table-striped table-bordered" style="margin-top: 10px;">
+                        <thead>
+                          <tr>
+                            <th>Property</th>
+                            <th>Value</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {{#each bindings}}
+                            {{#if (eq section.value "Basic Information")}}
+                              <tr>
+                                <td>{{propertyLabel.value}}</td>
+                                <td>
+                                  {{#if valueLabel.value}}
+                                    <semantic-link iri="{{value.value}}">{{valueLabel.value}}</semantic-link>
+                                  {{else}}
+                                    {{#if value.type}}
+                                      {{#if (eq value.type "uri")}}
+                                        <semantic-link iri="{{value.value}}"></semantic-link>
+                                      {{else}}
+                                        {{value.value}}
+                                      {{/if}}
+                                    {{else}}
+                                      {{value.value}}
+                                    {{/if}}
+                                  {{/if}}
+                                </td>
+                              </tr>
+                            {{/if}}
+                          {{/each}}
+                        </tbody>
+                      </table>
+                    </details>
+                    
+                    <details class="section" style="background-color: white; border-radius: 6px; padding: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                      <summary style="color: #2c3e50; padding-bottom: 8px; margin-top: 0; font-weight: bold; cursor: pointer;">
+                        <i class="fa fa-book" style="margin-right: 8px; color: #e74c3c;"></i>Related Works
+                      </summary>
+                      <table class="table table-striped table-bordered" style="margin-top: 10px;">
+                        <thead>
+                          <tr>
+                            <th>Property</th>
+                            <th>Value</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {{#each bindings}}
+                            {{#if (eq section.value "Related Works")}}
+                              <tr>
+                                <td>{{propertyLabel.value}}</td>
+                                <td>
+                                  <i class="fa fa-book" style="margin-right: 5px;"></i>
+                                  <semantic-link iri="{{value.value}}">{{valueLabel.value}}</semantic-link>
+                                </td>
+                              </tr>
+                            {{/if}}
+                          {{/each}}
+                        </tbody>
+                      </table>
+                    </details>
+                    
+                    <details class="section" style="background-color: white; border-radius: 6px; padding: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                      <summary style="color: #2c3e50; padding-bottom: 8px; margin-top: 0; font-weight: bold; cursor: pointer;">
+                        <i class="fa fa-sitemap" style="margin-right: 8px; color: #2ecc71;"></i>Relationships
+                      </summary>
+                      <table class="table table-striped table-bordered" style="margin-top: 10px;">
+                        <thead>
+                          <tr>
+                            <th>Property</th>
+                            <th>Value</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {{#each bindings}}
+                            {{#if (eq section.value "Relationships")}}
+                              <tr>
+                                <td>{{propertyLabel.value}}</td>
+                                <td>
+                                  {{#if valueLabel.value}}
+                                    <semantic-link iri="{{value.value}}">{{valueLabel.value}}</semantic-link>
+                                  {{else}}
+                                    <semantic-link iri="{{value.value}}"></semantic-link>
+                                  {{/if}}
+                                </td>
+                              </tr>
+                            {{/if}}
+                          {{/each}}
+                        </tbody>
+                      </table>
+                    </details>
+                    
+                    <details class="section" style="background-color: white; border-radius: 6px; padding: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                      <summary style="color: #2c3e50; padding-bottom: 8px; margin-top: 0; font-weight: bold; cursor: pointer;">
+                        <i class="fa fa-cog" style="margin-right: 8px; color: #95a5a6;"></i>Technical Metadata
+                      </summary>
+                      <table class="table table-striped table-bordered" style="margin-top: 10px;">
+                        <thead>
+                          <tr>
+                            <th>Property</th>
+                            <th>Value</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {{#each bindings}}
+                            {{#if (eq section.value "Technical Metadata")}}
+                              <tr>
+                                <td>{{propertyLabel.value}}</td>
+                                <td>{{value.value}}</td>
+                              </tr>
+                            {{/if}}
+                          {{/each}}
+                        </tbody>
+                      </table>
+                    </details>
+                  </div>
+                </template>
+              </semantic-query>
+            </div>
+          {{else}}
+            <div class="node-details-placeholder">
+              <p>Click on a node in the tree to view its details.</p>
+            </div>
+          {{/if}}
+        </template>
+      </mp-event-target-template-render>
+    </div>
+  </div>
+  
+  <div style="background-color: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); padding: 15px; margin-top: 30px;">
+    <h3 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 8px; margin-bottom: 15px;">About this Tree</h3>
+    <p>
+      This tree visualizes the hierarchical structure of the Evangelisti Archive. 
+      The root node is RS1, which includes RS1_RS3, which in turn includes multiple child nodes.
+    </p>
+    <p>
+      The tree is implemented using the semantic-tree component, which visualizes the hierarchical structure
+      using a single SPARQL query that returns the node-parent relationships.
+    </p>
+    <strong>Usage:</strong>
+    <ul>
+      <li>Click on a node to expand/collapse it</li>
+      <li>Click on a node to view its details in the right panel</li>
+      <li>Folder icons <i class="fa fa-folder" style="color: #ffc107;"></i> indicate nodes that contain children</li>
+      <li>Document icons <i class="fa fa-file-text-o" style="color: #2196F3;"></i> indicate leaf nodes</li>
+    </ul>
+  </div>
+</div>
