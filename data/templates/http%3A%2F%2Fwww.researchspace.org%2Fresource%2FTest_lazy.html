@@ -11,29 +11,32 @@
       <semantic-tree 
         id="evangelisti-tree" 
         query="
-          PREFIX rico: <https://www.ica.org/standards/RiC/ontology#>
-          PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+          select distinct ?parent ?node ?label ?title ?hasCildren{
 
-          SELECT ?node ?parent ?label ?title ?hasChildren WHERE {
-            ?node rdfs:label ?label .
-            OPTIONAL {
-              ?parent rico:includesOrIncluded ?node .
-            }
-            OPTIONAL {
-              ?node rico:hasOrHadTitle ?titleNode .
-              ?titleNode rdfs:label ?title .
-            }
-            
-            # Count children instead of using EXISTS
-            {
-              SELECT ?node (COUNT(?child) > 0 AS ?hasChildren) WHERE {
-                ?node rdfs:label ?label .
-                OPTIONAL { ?node rico:includesOrIncluded ?child . }
-              } GROUP BY ?node
-            }
-          }
+  GRAPH <http://example.org/ArchivioEvangelisti/Structure/RS1_RS1> {
+
+  ?parent a <https://www.ica.org/standards/RiC/ontology#RecordSet>.
+
+  ?parent <https://www.ica.org/standards/RiC/ontology#hasOrHadPart> ?node.
+
+  ?parent <https://www.ica.org/standards/RiC/ontology#hasOrHadInstantiation> ?pInst.
+
+  ?pInst <http://example.org/rico-bd#hierarchyDepth> ?depth.
+
+  BIND(str(?parent) as ?label)
+
+  BIND(str(?node) as ?title)
+
+  BIND(1 as ?hasCildren)
+
+  FILTER(xsd:integer(?depth) < 3)
+
+  }
+ 
+}  
+ 
         "
-        roots='["http://example.org/ArchivioEvangelisti/RSet/RS1"]'
+        roots='["http://example.org/ArchivioEvangelisti/RS1_RS1"]'
         tuple-template='{{> nodeTemplate}}'>
         
         <template id='nodeTemplate'>
