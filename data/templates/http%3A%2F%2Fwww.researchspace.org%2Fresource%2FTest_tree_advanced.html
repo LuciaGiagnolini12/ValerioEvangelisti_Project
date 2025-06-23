@@ -1,0 +1,117 @@
+<div class="page" style="background-color: #f5eddc; padding: 20px; border-radius: 10px;">
+  <h1>Evangelisti Archive Tree - Advanced (Lazy Loading)</h1>
+  
+  <p>This demonstrates the SemanticTreeAdvanced component with lazy loading functionality.</p>
+  
+  <!-- Two-column layout -->
+  <div style="display: flex; gap: 30px; margin-bottom: 20px;">
+    <!-- Left column: Semantic Tree Advanced -->
+    <div style="flex: 1; min-width: 0; background-color: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); padding: 15px;">
+      <h3 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 8px; margin-bottom: 15px;">Archive Structure (Lazy Loading)</h3>
+      <semantic-tree-advanced 
+        id="evangelisti-tree-advanced" 
+        query="
+          SELECT DISTINCT ?parent ?node ?label ?title ?hasChildren (COUNT(DISTINCT ?child) as ?childCount) WHERE {
+            GRAPH <http://example.org/ArchivioEvangelisti/Structure/RS1_RS1> {
+              ?parent a <https://www.ica.org/standards/RiC/ontology#RecordSet> .
+              ?parent <https://www.ica.org/standards/RiC/ontology#hasOrHadPart> ?node .
+              ?parent <https://www.ica.org/standards/RiC/ontology#hasOrHadInstantiation> ?pInst .
+              ?pInst <http://example.org/rico-bd#hierarchyDepth> ?depth .
+              OPTIONAL { ?parent rdfs:label ?label }
+              OPTIONAL { ?node rdfs:label ?title }
+              OPTIONAL { ?node <https://www.ica.org/standards/RiC/ontology#hasOrHadPart> ?child . }
+              BIND(EXISTS { ?node <https://www.ica.org/standards/RiC/ontology#hasOrHadPart> ?anyChild . } AS ?hasChildren)
+              FILTER(xsd:integer(?depth) < 2)
+            }
+          } GROUP BY ?parent ?node ?label ?title ?hasChildren
+        "
+        expand-query="
+          SELECT DISTINCT ?parent ?node ?label ?title ?hasChildren (COUNT(DISTINCT ?child) as ?childCount) WHERE {
+            GRAPH <http://example.org/ArchivioEvangelisti/Structure/RS1_RS1> {
+              <{{clickedNode}}> <https://www.ica.org/standards/RiC/ontology#hasOrHadPart> ?node .
+              BIND(<{{clickedNode}}> as ?parent)
+              OPTIONAL { ?parent rdfs:label ?label }
+              OPTIONAL { ?node rdfs:label ?title }
+              OPTIONAL { ?node <https://www.ica.org/standards/RiC/ontology#hasOrHadPart> ?child . }
+              BIND(EXISTS { ?node <https://www.ica.org/standards/RiC/ontology#hasOrHadPart> ?anyChild . } AS ?hasChildren)
+            }
+          } GROUP BY ?parent ?node ?label ?title ?hasChildren
+        "
+        roots='["http://example.org/ArchivioEvangelisti/RS1_RS1"]'
+        has-children-binding="hasChildren"
+        enable-cache="true"
+        loading-template='<i class="fa fa-spinner fa-spin" style="color: #3498db; margin-left: 8px;"></i>'
+        tuple-template='{{> nodeTemplate}}'>
+        
+        <template id='nodeTemplate'>
+          <div>
+            <mp-event-trigger type='Component.TemplateUpdate' data='{"iri": "{{node.value}}"}' targets='["node-details-advanced"]'>
+              <div class="node-content" style="cursor: pointer; padding: 5px; border-radius: 4px; transition: background-color 0.2s; margin-bottom: 3px;">
+                <div style="display: flex; align-items: center;">
+                  {{#if (eq hasChildren.value "true")}}
+                    <i class="fa fa-folder" style="margin-right: 8px; color: #ffc107;"></i>
+                    <span style="font-size: 0.8em; color: #777; margin-right: 5px;">({{childCount.value}})</span>
+                  {{else}}
+                    <i class="fa fa-file-text-o" style="margin-right: 8px; color: #2196F3;"></i>
+                  {{/if}}
+                  
+                  <div>
+                    {{#if title.value}}
+                      <a href="{{node.value}}" target="_blank" style="font-weight: bold; color: #333; text-decoration: none;">{{title.value}}</a>
+                    {{else}}
+                      <a href="{{node.value}}" target="_blank" style="font-weight: bold; color: #333; text-decoration: none;">{{node.value}}</a>
+                    {{/if}}
+                    <div style="font-size: 0.8em; color: #777;">{{node.value}}</div>
+                  </div>
+                </div>
+              </div>
+            </mp-event-trigger>
+          </div>
+        </template>
+      </semantic-tree-advanced>
+    </div>
+    
+    <!-- Right column: Node Details -->
+    <div style="flex: 1; min-width: 0; border-left: 1px solid #eee; padding-left: 20px; background-color: #f9f9f9; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+      <h3 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 8px; margin-bottom: 15px;">Node Details</h3>
+      <mp-event-target-template-render id='node-details-advanced' template='{{> detailsTemplate}}'>
+        <template id='detailsTemplate'>
+          {{#if iri}}
+            <div class="node-details">
+              <h4><semantic-link iri="{{iri}}"></semantic-link></h4>
+              <p><strong>IRI:</strong> {{iri}}</p>
+              <p style="color: #666; font-style: italic;">Click on expandable nodes (with folder icons) to load their children dynamically.</p>
+            </div>
+          {{else}}
+            <div class="node-details-placeholder">
+              <p>Click on a node in the tree to view its details.</p>
+              <p style="color: #666; font-style: italic;">This tree uses lazy loading - children are loaded only when you expand a node.</p>
+            </div>
+          {{/if}}
+        </template>
+      </mp-event-target-template-render>
+    </div>
+  </div>
+  
+  <div style="background-color: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); padding: 15px; margin-top: 30px;">
+    <h3 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 8px; margin-bottom: 15px;">About this Advanced Tree</h3>
+    <p>
+      This tree demonstrates the <strong>SemanticTreeAdvanced</strong> component with lazy loading functionality.
+      Unlike the regular semantic tree that loads all data at once, this version loads data progressively.
+    </p>
+    <strong>Key Features:</strong>
+    <ul>
+      <li><strong>Lazy Loading:</strong> Child nodes are loaded only when you click to expand a parent node</li>
+      <li><strong>Performance:</strong> Initial load is faster as it only loads the first level of the hierarchy</li>
+      <li><strong>Caching:</strong> Once loaded, child nodes are cached to avoid re-querying</li>
+      <li><strong>Loading Indicators:</strong> Shows a spinner while loading child nodes</li>
+      <li><strong>Dynamic Queries:</strong> Uses the <code>{{clickedNode}}</code> variable to inject the expanded node's IRI into the expand query</li>
+    </ul>
+    <strong>Usage:</strong>
+    <ul>
+      <li>Click on a folder icon <i class="fa fa-folder" style="color: #ffc107;"></i> to expand and load children</li>
+      <li>Document icons <i class="fa fa-file-text-o" style="color: #2196F3;"></i> indicate leaf nodes (no children)</li>
+      <li>Watch for the loading spinner when expanding nodes</li>
+    </ul>
+  </div>
+</div>

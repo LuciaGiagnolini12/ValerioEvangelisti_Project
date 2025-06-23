@@ -11,7 +11,7 @@
       <semantic-tree 
         id="evangelisti-tree" 
         query="
-          select distinct ?parent ?node ?label ?title ?hasCildren{
+          select distinct ?parent ?node ?label ?title ?hasChildren{
 
   GRAPH <http://example.org/ArchivioEvangelisti/Structure/RS1_RS1> {
 
@@ -27,7 +27,7 @@
 
   BIND(str(?node) as ?title)
 
-  BIND(1 as ?hasCildren)
+  BIND(EXISTS { ?node <https://www.ica.org/standards/RiC/ontology#hasOrHadPart> ?anyChild . } AS ?hasChildren)
 
   FILTER(xsd:integer(?depth) < 4)
 

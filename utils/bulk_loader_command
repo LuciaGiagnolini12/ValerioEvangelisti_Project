@@ -1,0 +1,2 @@
+java -Xms3g -cp "./blazegraph.jar" com.bigdata.rdf.store.DataLoader -namespace kb RWStore.properties strutturaEvangelisti_HD1.nq
+ 
