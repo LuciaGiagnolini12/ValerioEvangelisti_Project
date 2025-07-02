@@ -1,4 +1,33 @@
 <div class="page" style="background-color: #f5eddc; padding: 20px; border-radius: 10px;">
+  <style>
+    .highlightedTreeNode {
+      background-color: rgba(255, 165, 0, 0.4) !important;
+      border: 2px solid orange !important;
+      padding: 4px 8px !important;
+      margin: 2px 0 !important;
+      border-radius: 6px !important;
+      box-shadow: 0 2px 4px rgba(255, 165, 0, 0.3) !important;
+    }
+    
+    .siblingExpandButton {
+      background-color: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 4px;
+      padding: 4px 8px;
+      margin: 2px 0;
+      cursor: pointer;
+      font-size: 0.85em;
+      color: #6c757d;
+      transition: all 0.2s ease;
+    }
+    
+    .siblingExpandButton:hover {
+      background-color: #e9ecef;
+      border-color: #adb5bd;
+      color: #495057;
+    }
+  </style>
+  
   <h1>Evangelisti Archive Tree - Advanced (Lazy Loading)</h1>
   
   <p>This demonstrates the SemanticTreeAdvanced component with lazy loading functionality.</p>
@@ -16,7 +45,7 @@
               ?parent a <https://www.ica.org/standards/RiC/ontology#RecordSet> .
               ?parent <https://www.ica.org/standards/RiC/ontology#hasOrHadPart> ?node .
               ?parent <https://www.ica.org/standards/RiC/ontology#hasOrHadInstantiation> ?pInst .
-              ?pInst <http://example.org/rico-bd#hierarchyDepth> ?depth .
+              ?pInst <http://example.org/rico-bodi#hierarchyDepth> ?depth .
               OPTIONAL { ?parent rdfs:label ?label }
               OPTIONAL { ?node rdfs:label ?title }
               OPTIONAL { ?node <https://www.ica.org/standards/RiC/ontology#hasOrHadPart> ?child . }
@@ -45,27 +74,36 @@
         
         <template id='nodeTemplate'>
           <div>
-            <mp-event-trigger type='Component.TemplateUpdate' data='{"iri": "{{node.value}}"}' targets='["node-details-advanced"]'>
-              <div class="node-content" style="cursor: pointer; padding: 5px; border-radius: 4px; transition: background-color 0.2s; margin-bottom: 3px;">
-                <div style="display: flex; align-items: center;">
-                  {{#if (eq hasChildren.value "true")}}
-                    <i class="fa fa-folder" style="margin-right: 8px; color: #ffc107;"></i>
-                    <span style="font-size: 0.8em; color: #777; margin-right: 5px;">({{childCount.value}})</span>
-                  {{else}}
-                    <i class="fa fa-file-text-o" style="margin-right: 8px; color: #2196F3;"></i>
-                  {{/if}}
-                  
-                  <div>
-                    {{#if title.value}}
-                      <a href="{{node.value}}" target="_blank" style="font-weight: bold; color: #333; text-decoration: none;">{{title.value}}</a>
+            {{#if (eq expandSiblings.value "true")}}
+              <!-- Expand siblings button -->
+              <div class="siblingExpandButton" style="background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; padding: 4px 8px; margin: 2px 0; cursor: pointer; font-size: 0.85em; color: #6c757d;">
+                <i class="fa fa-plus-circle" style="margin-right: 5px;"></i>
+                Expand {{hiddenCount.value}} siblings...
+              </div>
+            {{else}}
+              <!-- Regular node -->
+              <mp-event-trigger type='Component.TemplateUpdate' data='{"iri": "{{node.value}}"}' targets='["node-details-advanced"]'>
+                <div class="node-content" style="cursor: pointer; padding: 5px; border-radius: 4px; transition: background-color 0.2s; margin-bottom: 3px;">
+                  <div style="display: flex; align-items: center;">
+                    {{#if (eq hasChildren.value "true")}}
+                      <i class="fa fa-folder" style="margin-right: 8px; color: #ffc107;"></i>
+                      <span style="font-size: 0.8em; color: #777; margin-right: 5px;">({{childCount.value}})</span>
                     {{else}}
-                      <a href="{{node.value}}" target="_blank" style="font-weight: bold; color: #333; text-decoration: none;">{{node.value}}</a>
+                      <i class="fa fa-file-text-o" style="margin-right: 8px; color: #2196F3;"></i>
                     {{/if}}
-                    <div style="font-size: 0.8em; color: #777;">{{node.value}}</div>
+                    
+                    <div>
+                      {{#if title.value}}
+                        <a href="{{node.value}}" target="_blank" style="font-weight: bold; color: #333; text-decoration: none;">{{title.value}}</a>
+                      {{else}}
+                        <a href="{{node.value}}" target="_blank" style="font-weight: bold; color: #333; text-decoration: none;">{{node.value}}</a>
+                      {{/if}}
+                      <div style="font-size: 0.8em; color: #777;">{{node.value}}</div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </mp-event-trigger>
+              </mp-event-trigger>
+            {{/if}}
           </div>
         </template>
       </semantic-tree-advanced>
@@ -106,12 +144,66 @@
       <li><strong>Caching:</strong> Once loaded, child nodes are cached to avoid re-querying</li>
       <li><strong>Loading Indicators:</strong> Shows a spinner while loading child nodes</li>
       <li><strong>Dynamic Queries:</strong> Uses the <code>{{clickedNode}}</code> variable to inject the expanded node's IRI into the expand query</li>
+      <li><strong>Node Highlighting:</strong> Supports highlighting specific nodes via events</li>
     </ul>
     <strong>Usage:</strong>
     <ul>
       <li>Click on a folder icon <i class="fa fa-folder" style="color: #ffc107;"></i> to expand and load children</li>
       <li>Document icons <i class="fa fa-file-text-o" style="color: #2196F3;"></i> indicate leaf nodes (no children)</li>
       <li>Watch for the loading spinner when expanding nodes</li>
+      <li>Use the "Highlight Nodes" button below to test the highlighting feature</li>
     </ul>
+  </div>
+  
+  <!-- Event Testing Section -->
+  <div style="background-color: #f8f9fa; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); padding: 15px; margin-top: 20px;">
+    <h3 style="color: #2c3e50; border-bottom: 2px solid #e74c3c; padding-bottom: 8px; margin-bottom: 15px;">
+      <i class="fa fa-bolt" style="color: #e74c3c; margin-right: 8px;"></i>
+      SemanticTreeHighlightNodes Event Testing
+    </h3>
+    <p>Test the new <strong>SemanticTreeHighlightNodes</strong> event by clicking the buttons below. This will highlight specific nodes in the tree and filter the view to show only highlighted paths.</p>
+    
+    <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px;">
+      <mp-event-trigger 
+        type='SemanticTreeHighlightNodes' 
+        targets='["evangelisti-tree-advanced"]'
+        data='{"nodeIds": ["http://example.org/ArchivioEvangelisti/RS1_RS1"]}'>
+        <button class="btn btn-primary" style="background-color: #3498db; border: none; padding: 8px 16px; border-radius: 4px; color: white;">
+          <i class="fa fa-lightbulb-o" style="margin-right: 5px;"></i>
+          Highlight Root Node
+        </button>
+      </mp-event-trigger>
+      
+      <mp-event-trigger 
+        type='SemanticTreeHighlightNodes' 
+        targets='["evangelisti-tree-advanced"]'
+        data='{"nodeIds": ["http://example.org/ArchivioEvangelisti/RS1_RS1_RR10", "http://example.org/ArchivioEvangelisti/RS1_RS1_RS6_RS39_RR112", "http://example.org/ArchivioEvangelisti/RS1_RS1_RR1", "http://example.org/ArchivioEvangelisti/RS1_RS1_RS4_RR14"]}'>
+        <button class="btn btn-warning" style="background-color: #f39c12; border: none; padding: 8px 16px; border-radius: 4px; color: white;">
+          <i class="fa fa-star" style="margin-right: 5px;"></i>
+          Highlight Multiple Nodes
+        </button>
+      </mp-event-trigger>
+      
+      <mp-event-trigger 
+        type='SemanticTreeHighlightNodes' 
+        targets='["evangelisti-tree-advanced"]'
+        data='{"nodeIds": []}'>
+        <button class="btn btn-secondary" style="background-color: #95a5a6; border: none; padding: 8px 16px; border-radius: 4px; color: white;">
+          <i class="fa fa-eraser" style="margin-right: 5px;"></i>
+          Clear Highlighting
+        </button>
+      </mp-event-trigger>
+    </div>
+    
+    <div style="background-color: #e8f4fd; border-left: 4px solid #3498db; padding: 10px; margin-top: 15px;">
+      <strong>How it works:</strong>
+      <ul style="margin: 5px 0 0 0; padding-left: 20px;">
+        <li>The event sends a list of node IRIs to highlight</li>
+        <li>The tree component receives the event and filters the view</li>
+        <li>Only highlighted nodes and their paths to the root are shown</li>
+        <li>Highlighted nodes get an orange background styling</li>
+        <li>Check the browser console for event debugging information</li>
+      </ul>
+    </div>
   </div>
 </div>
