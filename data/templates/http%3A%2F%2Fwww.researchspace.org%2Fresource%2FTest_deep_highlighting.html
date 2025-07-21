@@ -1,0 +1,127 @@
+<div class="page" style="background-color: #f5eddc; padding: 20px; border-radius: 10px;">
+  <style>
+    .highlightedTreeNode {
+      background-color: rgba(255, 165, 0, 0.4) !important;
+      border: 2px solid orange !important;
+      padding: 4px 8px !important;
+      margin: 2px 0 !important;
+      border-radius: 6px !important;
+      box-shadow: 0 2px 4px rgba(255, 165, 0, 0.3) !important;
+    }
+  </style>
+  
+  <h1>Deep Node Highlighting Test</h1>
+  
+  <p>This page tests the fixed deep node highlighting functionality. Click the buttons below to highlight nodes at various depths.</p>
+  
+  <div style="background-color: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); padding: 15px; margin-bottom: 20px;">
+    <h3>Test Controls</h3>
+    
+    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+      <!-- Test highlighting the confirmed existing deep node -->
+      <mp-event-trigger 
+        type='SemanticTreeHighlightNodes' 
+        targets='["test-deep-tree"]'
+        data='{"nodeIds": ["http://example.org/ArchivioEvangelisti/RS1_RS1_RS1_RS1_RS6_RR1"]}'>
+        <button class="btn btn-primary">
+          Highlight Confirmed Deep Node (RS1_RS1_RS6_RR1)
+        </button>
+      </mp-event-trigger>
+      
+      <!-- Test highlighting a deep node -->
+      <mp-event-trigger 
+        type='SemanticTreeHighlightNodes' 
+        targets='["test-deep-tree"]'
+        data='{"nodeIds": ["http://example.org/ArchivioEvangelisti/RS1_RS1_RS6_RS39_RR112"]}'>
+        <button class="btn btn-info">
+          Highlight Deep Node (Level 4)
+        </button>
+      </mp-event-trigger>
+      
+      <!-- Test highlighting multiple nodes at different depths -->
+      <mp-event-trigger 
+        type='SemanticTreeHighlightNodes' 
+        targets='["test-deep-tree"]'
+        data='{"nodeIds": ["http://example.org/ArchivioEvangelisti/RS1_RS1_RR1", "http://example.org/ArchivioEvangelisti/RS1_RS1_RS1_RS1_RS6_RR1", "http://example.org/ArchivioEvangelisti/RS1_RS1_RS4_RR14"]}'>
+        <button class="btn btn-warning">
+          Highlight Multiple Deep Nodes
+        </button>
+      </mp-event-trigger>
+      
+      <!-- Clear highlighting -->
+      <mp-event-trigger 
+        type='SemanticTreeHighlightNodes' 
+        targets='["test-deep-tree"]'
+        data='{"nodeIds": []}'>
+        <button class="btn btn-secondary">
+          Clear Highlighting
+        </button>
+      </mp-event-trigger>
+    </div>
+  </div>
+  
+  <div style="background-color: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); padding: 15px;">
+    <h3>Tree with Deep Node Highlighting</h3>
+    
+    <semantic-tree-advanced 
+      id="test-deep-tree"
+      query="
+        SELECT DISTINCT ?parent ?node ?label ?title ?hasChildren WHERE {
+            ?parent a <https://www.ica.org/standards/RiC/ontology#RecordSet> .
+            ?parent <https://www.ica.org/standards/RiC/ontology#hasOrHadPart> ?node .
+            ?parent <https://www.ica.org/standards/RiC/ontology#hasOrHadInstantiation> ?pInst .
+            ?pInst <http://example.org/rico-bodi#hierarchyDepth> ?depth .
+            OPTIONAL { ?parent rdfs:label ?label }
+            OPTIONAL { ?node rdfs:label ?title }
+            BIND(EXISTS { ?node <https://www.ica.org/standards/RiC/ontology#hasOrHadPart> ?anyChild . } AS ?hasChildren)
+            FILTER(xsd:integer(?depth) < 2)
+        }
+      "
+      expand-query="
+        SELECT DISTINCT ?parent ?node ?label ?title ?hasChildren WHERE {
+            <{{clickedNode}}> <https://www.ica.org/standards/RiC/ontology#hasOrHadPart> ?node .
+            BIND(<{{clickedNode}}> as ?parent)
+            OPTIONAL { ?parent rdfs:label ?label }
+            OPTIONAL { ?node rdfs:label ?title }
+            BIND(EXISTS { ?node <https://www.ica.org/standards/RiC/ontology#hasOrHadPart> ?anyChild . } AS ?hasChildren)
+        }
+      "
+      path-to-root-query="
+        SELECT DISTINCT ?ancestor WHERE {
+            <$__node__> (<https://www.ica.org/standards/RiC/ontology#isOrWasPartOf>)* ?ancestor .
+          }
+      "
+      roots='["http://example.org/ArchivioEvangelisti/RS1_RS1"]'
+      has-children-binding="hasChildren"
+      enable-cache="true"
+      loading-template='<i class="fa fa-spinner fa-spin" style="color: #3498db;"></i>'
+      tuple-template='{{> nodeTemplate}}'>
+      
+      <template id='nodeTemplate'>
+        <div style="cursor: pointer; padding: 5px; border-radius: 4px;">
+          {{#if (eq hasChildren.value "true")}}
+            <i class="fa fa-folder" style="margin-right: 8px; color: #ffc107;"></i>
+          {{else}}
+            <i class="fa fa-file-text-o" style="margin-right: 8px; color: #2196F3;"></i>
+          {{/if}}
+          
+          {{#if title.value}}
+            <span>{{title.value}}</span>
+          {{else}}
+            <span>{{node.value}}</span>
+          {{/if}}
+        </div>
+      </template>
+    </semantic-tree-advanced>
+  </div>
+  
+  <div style="background-color: #e8f4fd; border-left: 4px solid #3498db; padding: 15px; margin-top: 20px;">
+    <h4>Expected Behavior:</h4>
+    <ul>
+      <li>Clicking "Highlight Deep Node (Level 4)" should expand the tree to show the node at path: RS1_RS1 → RS6 → RS39 → RR112</li>
+      <li>The tree should automatically load and expand all intermediate nodes even though they're not in the initial query</li>
+      <li>Only the paths to highlighted nodes should be visible, with other siblings hidden</li>
+      <li>The highlighted nodes should have an orange background</li>
+    </ul>
+  </div>
+</div>

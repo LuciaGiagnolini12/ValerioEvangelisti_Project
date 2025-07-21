@@ -28,45 +28,61 @@
     }
   </style>
   
-  <h1>Evangelisti Archive Tree - Advanced (Lazy Loading)</h1>
+  <h1>Evangelisti Archive Tree - Advanced (Lazy Loading with Search)</h1>
   
-  <p>This demonstrates the SemanticTreeAdvanced component with lazy loading functionality.</p>
+  <p>This demonstrates the SemanticTreeAdvanced component with lazy loading and search functionality.</p>
   
   <!-- Two-column layout -->
   <div style="display: flex; gap: 30px; margin-bottom: 20px;">
     <!-- Left column: Semantic Tree Advanced -->
     <div style="flex: 1; min-width: 0; background-color: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); padding: 15px;">
-      <h3 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 8px; margin-bottom: 15px;">Archive Structure (Lazy Loading)</h3>
+      <h3 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 8px; margin-bottom: 15px;">Archive structure (Lazy Loading with Search)</h3>
       <semantic-tree-advanced 
-        id="evangelisti-tree-advanced" 
+        id="evangelisti-tree-advanced"
+        search-placeholder="Search archive nodes..."
+        search-query="
+          SELECT DISTINCT ?node WHERE {
+            GRAPH <http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS1> {
+              ?node rdfs:label ?label .
+              FILTER(CONTAINS(LCASE(?label), LCASE(&quot;$__searchText__&quot;)))
+            }
+          }
+        "
         query="
           SELECT DISTINCT ?parent ?node ?label ?title ?hasChildren (COUNT(DISTINCT ?child) as ?childCount) WHERE {
-            GRAPH <http://example.org/ArchivioEvangelisti/Structure/RS1_RS1> {
+            GRAPH <http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS1> {
               ?parent a <https://www.ica.org/standards/RiC/ontology#RecordSet> .
-              ?parent <https://www.ica.org/standards/RiC/ontology#hasOrHadPart> ?node .
+              ?parent <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?node .
               ?parent <https://www.ica.org/standards/RiC/ontology#hasOrHadInstantiation> ?pInst .
               ?pInst <http://example.org/rico-bodi#hierarchyDepth> ?depth .
               OPTIONAL { ?parent rdfs:label ?label }
               OPTIONAL { ?node rdfs:label ?title }
-              OPTIONAL { ?node <https://www.ica.org/standards/RiC/ontology#hasOrHadPart> ?child . }
-              BIND(EXISTS { ?node <https://www.ica.org/standards/RiC/ontology#hasOrHadPart> ?anyChild . } AS ?hasChildren)
+              OPTIONAL { ?node <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?child . }
+              BIND(EXISTS { ?node <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?anyChild . } AS ?hasChildren)
               FILTER(xsd:integer(?depth) < 2)
             }
           } GROUP BY ?parent ?node ?label ?title ?hasChildren
         "
         expand-query="
           SELECT DISTINCT ?parent ?node ?label ?title ?hasChildren (COUNT(DISTINCT ?child) as ?childCount) WHERE {
-            GRAPH <http://example.org/ArchivioEvangelisti/Structure/RS1_RS1> {
-              <{{clickedNode}}> <https://www.ica.org/standards/RiC/ontology#hasOrHadPart> ?node .
+            GRAPH <http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS1> {
+              <{{clickedNode}}> <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?node .
               BIND(<{{clickedNode}}> as ?parent)
               OPTIONAL { ?parent rdfs:label ?label }
               OPTIONAL { ?node rdfs:label ?title }
-              OPTIONAL { ?node <https://www.ica.org/standards/RiC/ontology#hasOrHadPart> ?child . }
-              BIND(EXISTS { ?node <https://www.ica.org/standards/RiC/ontology#hasOrHadPart> ?anyChild . } AS ?hasChildren)
+              OPTIONAL { ?node <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?child . }
+              BIND(EXISTS { ?node <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?anyChild . } AS ?hasChildren)
             }
           } GROUP BY ?parent ?node ?label ?title ?hasChildren
         "
-        roots='["http://example.org/ArchivioEvangelisti/RS1_RS1"]'
+        path-to-root-query="
+          SELECT DISTINCT ?ancestor WHERE {
+            GRAPH <http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS1> {
+              <$__node__> (<https://www.ica.org/standards/RiC/ontology#isOrWasPartOf>)* ?ancestor .
+            }
+          }
+        "
+        roots='["http://ficlit.unibo.it/ArchivioEvangelisti/RS1_RS1"]'
         has-children-binding="hasChildren"
         enable-cache="true"
         loading-template='<i class="fa fa-spinner fa-spin" style="color: #3498db; margin-left: 8px;"></i>'
@@ -145,13 +161,15 @@
       <li><strong>Loading Indicators:</strong> Shows a spinner while loading child nodes</li>
       <li><strong>Dynamic Queries:</strong> Uses the <code>{{clickedNode}}</code> variable to inject the expanded node's IRI into the expand query</li>
       <li><strong>Node Highlighting:</strong> Supports highlighting specific nodes via events</li>
+      <li><strong>Search Functionality:</strong> Search bar allows finding and highlighting nodes by label</li>
     </ul>
     <strong>Usage:</strong>
     <ul>
       <li>Click on a folder icon <i class="fa fa-folder" style="color: #ffc107;"></i> to expand and load children</li>
       <li>Document icons <i class="fa fa-file-text-o" style="color: #2196F3;"></i> indicate leaf nodes (no children)</li>
       <li>Watch for the loading spinner when expanding nodes</li>
-      <li>Use the "Highlight Nodes" button below to test the highlighting feature</li>
+      <li>Use the search bar to find nodes by label - matching nodes will be highlighted and their paths expanded</li>
+      <li>Use the "Highlight Nodes" buttons below to test the highlighting feature</li>
     </ul>
   </div>
   
@@ -167,7 +185,7 @@
       <mp-event-trigger 
         type='SemanticTreeHighlightNodes' 
         targets='["evangelisti-tree-advanced"]'
-        data='{"nodeIds": ["http://example.org/ArchivioEvangelisti/RS1_RS1"]}'>
+        data='{"nodeIds": ["http://ficlit.unibo.it/ArchivioEvangelisti/RS1_RS1"]}'>
         <button class="btn btn-primary" style="background-color: #3498db; border: none; padding: 8px 16px; border-radius: 4px; color: white;">
           <i class="fa fa-lightbulb-o" style="margin-right: 5px;"></i>
           Highlight Root Node
@@ -177,10 +195,10 @@
       <mp-event-trigger 
         type='SemanticTreeHighlightNodes' 
         targets='["evangelisti-tree-advanced"]'
-        data='{"nodeIds": ["http://example.org/ArchivioEvangelisti/RS1_RS1_RR10", "http://example.org/ArchivioEvangelisti/RS1_RS1_RS6_RS39_RR112", "http://example.org/ArchivioEvangelisti/RS1_RS1_RR1", "http://example.org/ArchivioEvangelisti/RS1_RS1_RS4_RR14"]}'>
+        data='{"nodeIds": ["http://ficlit.unibo.it/ArchivioEvangelisti/RS1_RS1_RS1_RS1_RS4_RR13", "http://ficlit.unibo.it/ArchivioEvangelisti/RS1_RS1_RS1_RS1_RS4_RR19", "http://ficlit.unibo.it/ArchivioEvangelisti/RS1_RS1_RS1_RS1_RS1_RR20", "http://ficlit.unibo.it/ArchivioEvangelisti/RS1_RS1_RS1_RS1_RS5_RR12"]}'>
         <button class="btn btn-warning" style="background-color: #f39c12; border: none; padding: 8px 16px; border-radius: 4px; color: white;">
           <i class="fa fa-star" style="margin-right: 5px;"></i>
-          Highlight Multiple Nodes
+          Highlight Multiple Deep Nodes
         </button>
       </mp-event-trigger>
       
