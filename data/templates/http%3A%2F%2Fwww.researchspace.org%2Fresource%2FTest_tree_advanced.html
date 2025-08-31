@@ -9,6 +9,37 @@
       box-shadow: 0 2px 4px rgba(255, 165, 0, 0.3) !important;
     }
     
+    /* Sticky metadata panel */
+    .sticky-metadata-container {
+      position: sticky;
+      top: 80px;  /* Increased from 20px to account for navbar */
+      max-height: calc(100vh - 100px);  /* Adjusted to match the new top offset */
+      overflow-y: auto;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      padding: 15px;
+    }
+    
+    /* Smooth scrollbar for metadata panel */
+    .sticky-metadata-container::-webkit-scrollbar {
+      width: 8px;
+    }
+    
+    .sticky-metadata-container::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 4px;
+    }
+    
+    .sticky-metadata-container::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 4px;
+    }
+    
+    .sticky-metadata-container::-webkit-scrollbar-thumb:hover {
+      background: #555;
+    }
+    
     .siblingExpandButton {
       background-color: #f8f9fa;
       border: 1px solid #dee2e6;
@@ -215,7 +246,7 @@
               OPTIONAL { ?node rdfs:label ?title }
               OPTIONAL { ?node <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?child . }
               BIND(EXISTS { ?node <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?anyChild . } AS ?hasChildren)
-              FILTER(xsd:integer(?depth) < 2)
+              FILTER(xsd:integer(?depth) < 1)
             }
           } GROUP BY ?parent ?node ?label ?title ?hasChildren
         "
@@ -261,7 +292,7 @@
               </div>
             {{else}}
               <!-- Regular node -->
-              <mp-event-trigger type='Component.TemplateUpdate' data='{"iri": "{{node.value}}"}' targets='["node-details-advanced"]'>
+              <mp-event-trigger type='Component.TemplateUpdate' data='{"iri": "{{node.value}}", "hasChildren": "{{hasChildren.value}}", "childCount": "{{childCount.value}}"}' targets='["node-details-advanced"]'>
                 <div class="node-content" style="cursor: pointer; padding: 5px; border-radius: 4px; transition: background-color 0.2s; margin-bottom: 3px;">
                   <div style="display: flex; align-items: center;">
                     {{#if (eq hasChildren.value "true")}}
@@ -289,8 +320,10 @@
     </div>
     
     <!-- Right column: Node Details with Metadata -->
-    <div style="flex: 1; min-width: 0; max-height: 80vh; overflow-y: auto;">
-      <mp-event-target-template-render id='node-details-advanced' template='{{> detailsTemplate}}'>
+    <div style="flex: 1; min-width: 0;">
+      <div class="sticky-metadata-container">
+        <h3 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 8px; margin-bottom: 15px;">Node Metadata</h3>
+        <mp-event-target-template-render id='node-details-advanced' template='{{> detailsTemplate}}'>
         <template id='detailsTemplate'>
           {{#if iri}}
             <!-- Fetch metadata for the selected node -->
@@ -387,12 +420,21 @@
                       </div>
                       
                       <div class="metadata-field">
-                        <span class="metadata-label">IRI:</span>
-                        <span class="metadata-value">{{node.value}}</span>
+                        <span class="metadata-label">Type:</span>
+                        <span class="metadata-value">
+                          {{#if (eq ../../hasChildren "true")}}
+                            <i class="fa fa-folder" style="color: #ffc107; margin-right: 5px;"></i>
+                            Folder ({{../../childCount}} children)
+                          {{else}}
+                            <i class="fa fa-file-text-o" style="color: #2196F3; margin-right: 5px;"></i>
+                            Document
+                          {{/if}}
+                        </span>
                       </div>
                       
-                      <div style="color: #666; font-style: italic; margin-top: 10px; font-size: 12px;">
-                        Click on expandable nodes (with folder icons) to load their children dynamically.
+                      <div class="metadata-field">
+                        <span class="metadata-label">IRI:</span>
+                        <span class="metadata-value">{{node.value}}</span>
                       </div>
                       
                       {{#if techDescValue}}
@@ -563,13 +605,11 @@
               <div class="no-metadata">
                 Click on a node in the tree to view its metadata.
               </div>
-              <p style="color: #666; font-style: italic; margin-top: 10px;">
-                This tree uses lazy loading - children are loaded only when you expand a node.
-              </p>
             </div>
           {{/if}}
         </template>
       </mp-event-target-template-render>
+      </div>
     </div>
   </div>
   
