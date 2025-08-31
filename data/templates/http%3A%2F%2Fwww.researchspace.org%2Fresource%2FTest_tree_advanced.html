@@ -1,5 +1,89 @@
 <div class="page" style="background-color: #f5eddc; padding: 20px; border-radius: 10px;">
   <style>
+    /* Tree lines styles - directly in template for visibility */
+    .treeWithLines .tree-view_children {
+      position: relative;
+      margin-left: 12px !important;
+      padding-left: 16px !important;
+    }
+
+    /* Vertical line connecting parent to children */
+    .treeWithLines .tree-view_children::before {
+      content: '';
+      position: absolute;
+      top: -10px;
+      left: 0;
+      bottom: 10px;
+      width: 1px;
+      background: #d4d4d8;
+      z-index: 0;
+    }
+
+    /* Hide vertical line for last child's children */
+    .treeWithLines .tree-view_item:last-child > .tree-view_children::before {
+      bottom: calc(100% - 10px);
+    }
+
+    /* Each tree-view needs relative positioning for horizontal lines */
+    .treeWithLines .tree-view {
+      position: relative;
+    }
+    
+    /* Horizontal line for expandable nodes (folders) */
+    .treeWithLines .tree-view_children > .tree-view::before {
+      content: '';
+      position: absolute;
+      top: 10px;
+      left: -16px;
+      width: 16px;
+      height: 1px;
+      background: #d4d4d8;
+      z-index: 0;
+    }
+    
+    /* Also for non-expandable items (files) directly in tree-view_children */
+    .treeWithLines .tree-view_children > .tree-node-container::before {
+      content: '';
+      position: absolute;
+      top: 10px;
+      left: -16px;
+      width: 16px;
+      height: 1px;
+      background: #d4d4d8;
+      z-index: 0;
+    }
+
+    /* Corner for last child */
+    .treeWithLines .tree-view_item:last-child::after {
+      content: '';
+      position: absolute;
+      left: -16px;
+      top: -100%;
+      bottom: calc(100% - 10px);
+      width: 1px;
+      background: white;
+      z-index: 1;
+    }
+
+    /* Ensure content is above lines */
+    .treeWithLines .tree-view_arrow,
+    .treeWithLines .tree-node-container {
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Dotted lines variant */
+    .treeWithLines.dottedLines .tree-view_children::before {
+      background: none;
+      border-left: 1px dotted #d4d4d8;
+    }
+    
+    .treeWithLines.dottedLines .tree-view_children > .tree-view::before,
+    .treeWithLines.dottedLines .tree-view_children > .tree-node-container::before {
+      background: none;
+      border-bottom: 1px dotted #d4d4d8;
+    }
+
     .highlightedTreeNode {
       background-color: rgba(255, 165, 0, 0.4) !important;
       border: 2px solid orange !important;
@@ -185,7 +269,8 @@
   
   <h1>Evangelisti Archive Tree - Advanced (Lazy Loading with Search)</h1>
   
-  <p>This demonstrates the SemanticTreeAdvanced component with lazy loading and search functionality.</p>
+  <p>This demonstrates the SemanticTreeAdvanced component with lazy loading, search functionality, and tree connector lines.</p>
+
   
   <!-- Two-column layout -->
   <div style="display: flex; gap: 30px; margin-bottom: 20px;">
@@ -194,6 +279,8 @@
       <h3 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 8px; margin-bottom: 15px;">Archive structure (Lazy Loading with Search)</h3>
       <semantic-tree-advanced 
         id="evangelisti-tree-advanced"
+        show-tree-lines="true"
+        tree-line-style="dotted"
         search-placeholder="Search archive nodes..."
         search-query="
           SELECT DISTINCT ?node WHERE {
@@ -631,6 +718,7 @@
       <li><strong>Sorting:</strong> Customizable sorting by any field from the SPARQL query (Title, Node IRI, Child Count)</li>
       <li><strong>Related Nodes:</strong> Hover over any node to see a link icon <i class="fa fa-link"></i> that reveals options to find related nodes</li>
       <li><strong>Comprehensive Metadata:</strong> Click on any node to view detailed metadata including record information, dates, and technical properties</li>
+      <li><strong>Tree Lines:</strong> Visual connector lines between parent and child nodes for better hierarchy visualization</li>
     </ul>
     <strong>Usage:</strong>
     <ul>
