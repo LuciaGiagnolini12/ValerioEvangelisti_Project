@@ -66,6 +66,90 @@
         transform: translateY(0);
       }
     }
+    
+    /* Metadata display styles */
+    .metadata-section {
+      background-color: white;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    .metadata-section h4 {
+      color: #2c3e50;
+      border-bottom: 2px solid #3498db;
+      padding-bottom: 8px;
+      margin-bottom: 15px;
+      font-size: 16px;
+    }
+    
+    .metadata-field {
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+    
+    .metadata-label {
+      font-weight: bold;
+      color: #555;
+      display: inline-block;
+      min-width: 150px;
+    }
+    
+    .metadata-value {
+      color: #333;
+    }
+    
+    .metadata-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 13px;
+    }
+    
+    .metadata-table th {
+      background-color: #f8f9fa;
+      border: 1px solid #dee2e6;
+      padding: 8px;
+      text-align: left;
+      font-weight: 600;
+      color: #495057;
+    }
+    
+    .metadata-table td {
+      border: 1px solid #dee2e6;
+      padding: 8px;
+      color: #333;
+    }
+    
+    .metadata-table tr:nth-child(even) {
+      background-color: #f8f9fa;
+    }
+    
+    .technical-description {
+      background-color: #f0f8ff;
+      border-left: 4px solid #3498db;
+      padding: 10px;
+      margin: 10px 0;
+      font-style: italic;
+      color: #555;
+      font-size: 13px;
+    }
+    
+    .loading-metadata {
+      text-align: center;
+      padding: 20px;
+      color: #666;
+    }
+    
+    .no-metadata {
+      color: #999;
+      font-style: italic;
+      padding: 10px;
+      background-color: #f8f9fa;
+      border-radius: 4px;
+      text-align: center;
+    }
   </style>
   
   <h1>Evangelisti Archive Tree - Advanced (Lazy Loading with Search)</h1>
@@ -90,22 +174,22 @@
         "
         related-node-criteria='[
           {
-            "label": "Same Parent",
-            "icon": "fa fa-folder-o",
-            "query": "SELECT DISTINCT ?node WHERE { GRAPH <http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS1> { ?parent <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> <$__nodeIri__> . ?parent <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?node . FILTER(?node != <$__nodeIri__>) } }",
-            "description": "Find all sibling nodes with the same parent"
+            "label": "Same Creation Date",
+            "icon": "fa fa-calendar",
+            "query": "PREFIX rico: <https://www.ica.org/standards/RiC/ontology#> SELECT DISTINCT ?node WHERE { <$__nodeIri__> rico:hasCreationDate ?sourceDate . ?sourceDate rico:normalizedDateValue ?sourceDateValue . ?node rico:hasCreationDate ?targetDate . ?targetDate rico:normalizedDateValue ?targetDateValue . FILTER(?targetDateValue = ?sourceDateValue && ?node != <$__nodeIri__>) }",
+            "description": "Find all records with the same creation date"
           },
           {
-            "label": "Same File Extension",
-            "icon": "fa fa-file-code-o",
-            "query": "SELECT DISTINCT ?node WHERE { GRAPH <http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS1> { <$__nodeIri__> rdfs:label ?sourceLabel . ?node rdfs:label ?nodeLabel . BIND(STRAFTER(STR(?sourceLabel), \".\") AS ?tempExt) BIND(IF(STRLEN(?tempExt) > 0 && STRLEN(?tempExt) <= 5 && !CONTAINS(?tempExt, \".\"), ?tempExt, \"\") AS ?sourceExt) BIND(STRAFTER(STR(?nodeLabel), \".\") AS ?tempNodeExt) BIND(IF(STRLEN(?tempNodeExt) > 0 && STRLEN(?tempNodeExt) <= 5 && !CONTAINS(?tempNodeExt, \".\"), ?tempNodeExt, \"\") AS ?nodeExt) FILTER(?sourceExt != \"\" && ?nodeExt != \"\" && ?sourceExt = ?nodeExt && ?node != <$__nodeIri__>) } }",
-            "description": "Find all nodes with the same file extension (e.g., .pdf, .docx)"
+            "label": "Same Modification Date",
+            "icon": "fa fa-calendar-check-o",
+            "query": "PREFIX rico: <https://www.ica.org/standards/RiC/ontology#> SELECT DISTINCT ?node WHERE { <$__nodeIri__> rico:hasModificationDate ?sourceDate . ?sourceDate rico:normalizedDateValue ?sourceDateValue . ?node rico:hasModificationDate ?targetDate . ?targetDate rico:normalizedDateValue ?targetDateValue . FILTER(?targetDateValue = ?sourceDateValue && ?node != <$__nodeIri__>) }",
+            "description": "Find all records with the same modification date"
           },
           {
-            "label": "All Children",
-            "icon": "fa fa-sitemap",
-            "query": "SELECT DISTINCT ?node WHERE { GRAPH <http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS1> { <$__nodeIri__> <https://www.ica.org/standards/RiC/ontology#includesOrIncluded>+ ?node } }",
-            "description": "Find all descendant nodes (recursive)"
+            "label": "Same File Type",
+            "icon": "fa fa-file-o",
+            "query": "PREFIX rico: <https://www.ica.org/standards/RiC/ontology#> SELECT DISTINCT ?node WHERE { <$__nodeIri__> rico:hasOrHadInstantiation ?sourceInst . ?sourceInst rico:type ?sourceType . ?node rico:hasOrHadInstantiation ?targetInst . ?targetInst rico:type ?targetType . FILTER(?targetType = ?sourceType && ?node != <$__nodeIri__>) }",
+            "description": "Find all records with the same file type"
           },
           {
             "label": "Direct Children",
@@ -204,21 +288,284 @@
       </semantic-tree-advanced>
     </div>
     
-    <!-- Right column: Node Details -->
-    <div style="flex: 1; min-width: 0; border-left: 1px solid #eee; padding-left: 20px; background-color: #f9f9f9; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-      <h3 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 8px; margin-bottom: 15px;">Node Details</h3>
+    <!-- Right column: Node Details with Metadata -->
+    <div style="flex: 1; min-width: 0; max-height: 80vh; overflow-y: auto;">
       <mp-event-target-template-render id='node-details-advanced' template='{{> detailsTemplate}}'>
         <template id='detailsTemplate'>
           {{#if iri}}
-            <div class="node-details">
-              <h4><semantic-link iri="{{iri}}"></semantic-link></h4>
-              <p><strong>IRI:</strong> {{iri}}</p>
-              <p style="color: #666; font-style: italic;">Click on expandable nodes (with folder icons) to load their children dynamically.</p>
-            </div>
+            <!-- Fetch metadata for the selected node -->
+            <semantic-query 
+              query='
+                PREFIX rico: <https://www.ica.org/standards/RiC/ontology#>
+                PREFIX rico-bodi: <http://example.org/rico-bodi#>
+                PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+                
+                SELECT DISTINCT ?node ?nodeLabel ?nodeType 
+                       ?title ?titleLabel
+                       ?creationDate ?creationDateLabel ?creationDateNormalized
+                       ?modificationDate ?modificationDateLabel ?modificationDateNormalized
+                       ?instantiation ?instLabel ?instType
+                       ?techDesc ?techDescValue
+                       ?techMetadata ?techMetadataLabel ?techMetadataValue ?techMetadataType ?techMetadataTypeLabel
+                       ?metadataSet ?metadataSetLabel
+                WHERE {
+                  BIND(<{{iri}}> as ?node)
+                  
+                  # Get node basic info
+                  OPTIONAL { ?node rdfs:label ?nodeLabel }
+                  OPTIONAL { ?node a ?nodeType }
+                  
+                  # Get title
+                  OPTIONAL { 
+                    ?node rico:hasOrHadTitle ?title .
+                    ?title rdfs:label ?titleLabel .
+                  }
+                  
+                  # Get creation date
+                  OPTIONAL { 
+                    ?node rico:hasCreationDate ?creationDate .
+                    OPTIONAL { ?creationDate rico:expressedDate ?creationDateLabel }
+                    OPTIONAL { ?creationDate rico:normalizedDateValue ?creationDateNormalized }
+                  }
+                  
+                  # Get modification date
+                  OPTIONAL { 
+                    ?node rico:hasModificationDate ?modificationDate .
+                    OPTIONAL { ?modificationDate rico:expressedDate ?modificationDateLabel }
+                    OPTIONAL { ?modificationDate rico:normalizedDateValue ?modificationDateNormalized }
+                  }
+                  
+                  # Get instantiation info
+                  OPTIONAL { 
+                    ?node rico:hasOrHadInstantiation ?instantiation .
+                    OPTIONAL { ?instantiation rdfs:label ?instLabel }
+                    OPTIONAL { ?instantiation rico:type ?instType }
+                    
+                    # Get technical description
+                    OPTIONAL {
+                      ?instantiation rico-bodi:hasTechnicalDescription ?techDesc .
+                      ?techDesc rdf:value ?techDescValue .
+                    }
+                    
+                    # Get technical metadata
+                    OPTIONAL {
+                      ?instantiation rico-bodi:hasTechnicalMetadata ?techMetadata .
+                      ?techMetadata rdfs:label ?techMetadataLabel .
+                      ?techMetadata rdf:value ?techMetadataValue .
+                      OPTIONAL {
+                        ?techMetadata rico-bodi:hasTechnicalMetadataType ?techMetadataType .
+                        ?techMetadataType rdfs:label ?techMetadataTypeLabel .
+                        OPTIONAL {
+                          ?techMetadataType rico:isOrWasPartOf ?metadataSet .
+                          ?metadataSet rdfs:label ?metadataSetLabel .
+                        }
+                      }
+                    }
+                  }
+                }
+                ORDER BY ?metadataSetLabel ?techMetadataTypeLabel
+              '
+              template='{{> metadataDisplay}}'
+            >
+              <template id='metadataDisplay'>
+                {{#if bindings.length}}
+                  {{#with bindings.[0]}}
+                    <!-- Node Details Section -->
+                    <div class="metadata-section">
+                      <h4>Node Details</h4>
+                      
+                      <div class="metadata-field">
+                        <span class="metadata-label">Title:</span>
+                        <span class="metadata-value">
+                          {{#if nodeLabel}}
+                            <strong>{{nodeLabel.value}}</strong>
+                          {{else}}
+                            <strong>{{../iri}}</strong>
+                          {{/if}}
+                        </span>
+                      </div>
+                      
+                      <div class="metadata-field">
+                        <span class="metadata-label">IRI:</span>
+                        <span class="metadata-value">{{node.value}}</span>
+                      </div>
+                      
+                      <div style="color: #666; font-style: italic; margin-top: 10px; font-size: 12px;">
+                        Click on expandable nodes (with folder icons) to load their children dynamically.
+                      </div>
+                      
+                      {{#if techDescValue}}
+                        <div class="technical-description">
+                          <strong>File Technical Description:</strong> {{techDescValue.value}}
+                        </div>
+                      {{/if}}
+                    </div>
+                    
+                    <!-- Record Metadata Section -->
+                    <div class="metadata-section">
+                      <h4>Record Metadata</h4>
+                      
+                      <div class="metadata-field">
+                        <span class="metadata-label">Title:</span>
+                        <span class="metadata-value">
+                          {{#if titleLabel}}
+                            {{titleLabel.value}}
+                          {{else if title}}
+                            {{title.value}}
+                          {{else}}
+                            <em>No title available</em>
+                          {{/if}}
+                        </span>
+                      </div>
+                      
+                      <div class="metadata-field">
+                        <span class="metadata-label">Creation Date:</span>
+                        <span class="metadata-value">
+                          {{#if creationDateLabel}}
+                            {{creationDateLabel.value}}
+                          {{else if creationDateNormalized}}
+                            {{creationDateNormalized.value}}
+                          {{else if creationDate}}
+                            {{creationDate.value}}
+                          {{else}}
+                            <em>No creation date available</em>
+                          {{/if}}
+                        </span>
+                      </div>
+                      
+                      <div class="metadata-field">
+                        <span class="metadata-label">Modification Date:</span>
+                        <span class="metadata-value">
+                          {{#if modificationDateLabel}}
+                            {{modificationDateLabel.value}}
+                          {{else if modificationDateNormalized}}
+                            {{modificationDateNormalized.value}}
+                          {{else if modificationDate}}
+                            {{modificationDate.value}}
+                          {{else}}
+                            <em>No modification date available</em>
+                          {{/if}}
+                        </span>
+                      </div>
+                    </div>
+                    
+                    <!-- Instantiation Metadata Section -->
+                    {{#if instantiation}}
+                      <div class="metadata-section">
+                        <h4>Instantiation Metadata</h4>
+                        
+                        <div class="metadata-field">
+                          <span class="metadata-label">File type:</span>
+                          <span class="metadata-value">
+                            {{#if instType}}
+                              {{instType.value}}
+                            {{else}}
+                              <em>Not specified</em>
+                            {{/if}}
+                          </span>
+                        </div>
+                        
+                        <!-- Group technical metadata by metadata set -->
+                        {{#if ../bindings}}
+                          <!-- File System Metadata -->
+                          <div style="margin-top: 15px;">
+                            <strong>File System Metadata</strong>
+                            <table class="metadata-table">
+                              <thead>
+                                <tr>
+                                  <th>Property</th>
+                                  <th>Value</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {{#each ../bindings}}
+                                  {{#if (and techMetadataLabel (eq metadataSetLabel.value "File system metadata"))}}
+                                    <tr>
+                                      <td>{{techMetadataTypeLabel.value}}</td>
+                                      <td>{{techMetadataValue.value}}</td>
+                                    </tr>
+                                  {{/if}}
+                                {{/each}}
+                              </tbody>
+                            </table>
+                          </div>
+                          
+                          <!-- Content Metadata -->
+                          <div style="margin-top: 15px;">
+                            <strong>Content Metadata</strong>
+                            <table class="metadata-table">
+                              <thead>
+                                <tr>
+                                  <th>Property</th>
+                                  <th>Value</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {{#each ../bindings}}
+                                  {{#if (and techMetadataLabel (or (eq metadataSetLabel.value "Document content metadata") (eq metadataSetLabel.value "Image metadata")))}}
+                                    <tr>
+                                      <td>{{techMetadataTypeLabel.value}}</td>
+                                      <td>{{techMetadataValue.value}}</td>
+                                    </tr>
+                                  {{/if}}
+                                {{/each}}
+                              </tbody>
+                            </table>
+                          </div>
+                          
+                          <!-- Other Technical Metadata -->
+                          <div style="margin-top: 15px;">
+                            <strong>Other Technical Metadata</strong>
+                            <table class="metadata-table">
+                              <thead>
+                                <tr>
+                                  <th>Category</th>
+                                  <th>Property</th>
+                                  <th>Value</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {{#each ../bindings}}
+                                  {{#if (and techMetadataLabel (and (not (eq metadataSetLabel.value "File system metadata")) (and (not (eq metadataSetLabel.value "Document content metadata")) (not (eq metadataSetLabel.value "Image metadata")))))}}
+                                    <tr>
+                                      <td>{{#if metadataSetLabel}}{{metadataSetLabel.value}}{{else}}Other{{/if}}</td>
+                                      <td>{{techMetadataTypeLabel.value}}</td>
+                                      <td>{{techMetadataValue.value}}</td>
+                                    </tr>
+                                  {{/if}}
+                                {{/each}}
+                              </tbody>
+                            </table>
+                          </div>
+                        {{/if}}
+                      </div>
+                    {{else}}
+                      <div class="metadata-section">
+                        <h4>Instantiation Metadata</h4>
+                        <div class="no-metadata">
+                          No instantiation metadata available for this record.
+                        </div>
+                      </div>
+                    {{/if}}
+                  {{/with}}
+                {{else}}
+                  <div class="loading-metadata">
+                    <i class="fa fa-spinner fa-spin" style="font-size: 24px; color: #3498db;"></i>
+                    <p>Loading metadata...</p>
+                  </div>
+                {{/if}}
+              </template>
+            </semantic-query>
           {{else}}
-            <div class="node-details-placeholder">
-              <p>Click on a node in the tree to view its details.</p>
-              <p style="color: #666; font-style: italic;">This tree uses lazy loading - children are loaded only when you expand a node.</p>
+            <div class="metadata-section">
+              <h4>Node Details</h4>
+              <div class="no-metadata">
+                Click on a node in the tree to view its metadata.
+              </div>
+              <p style="color: #666; font-style: italic; margin-top: 10px;">
+                This tree uses lazy loading - children are loaded only when you expand a node.
+              </p>
             </div>
           {{/if}}
         </template>
@@ -229,7 +576,7 @@
   <div style="background-color: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); padding: 15px; margin-top: 30px;">
     <h3 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 8px; margin-bottom: 15px;">About this Advanced Tree</h3>
     <p>
-      This tree demonstrates the <strong>SemanticTreeAdvanced</strong> component with lazy loading functionality.
+      This tree demonstrates the <strong>SemanticTreeAdvanced</strong> component with lazy loading functionality and comprehensive metadata display.
       Unlike the regular semantic tree that loads all data at once, this version loads data progressively.
     </p>
     <strong>Key Features:</strong>
@@ -243,6 +590,7 @@
       <li><strong>Search Functionality:</strong> Search bar allows finding and highlighting nodes by label</li>
       <li><strong>Sorting:</strong> Customizable sorting by any field from the SPARQL query (Title, Node IRI, Child Count)</li>
       <li><strong>Related Nodes:</strong> Hover over any node to see a link icon <i class="fa fa-link"></i> that reveals options to find related nodes</li>
+      <li><strong>Comprehensive Metadata:</strong> Click on any node to view detailed metadata including record information, dates, and technical properties</li>
     </ul>
     <strong>Usage:</strong>
     <ul>
@@ -252,7 +600,8 @@
       <li>Use the search bar to find nodes by label - matching nodes will be highlighted and their paths expanded</li>
       <li>Use the sort controls at the top to sort by Title, Node IRI, or Number of Children</li>
       <li>Click the sort direction button to toggle between ascending/descending order</li>
-      <li><strong>NEW:</strong> Hover over any node to see a link icon <i class="fa fa-link"></i> - click it to find related nodes based on various criteria</li>
+      <li>Hover over any node to see a link icon <i class="fa fa-link"></i> - click it to find related nodes based on various criteria</li>
+      <li>Click on any node to view its comprehensive metadata in the right panel</li>
       <li>Use the "Highlight Nodes" buttons below to test the highlighting feature</li>
     </ul>
   </div>

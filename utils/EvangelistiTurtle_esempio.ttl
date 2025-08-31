@@ -1,0 +1,1501 @@
+@prefix rico: <https://www.ica.org/standards/RiC/ontology#> .
+@prefix rico-bodi: <http://ficlit.unibo.it/ArchivioEvangelisti/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix ae: <http://ficlit.unibo.it/ArchivioEvangelisti/> .
+@prefix lrmoo: <http://iflastandards.info/ns/lrm/lrmoo/> .
+
+# --- Record Set ---
+
+ae:RS1_RS1_RS7_RS15 a rico:RecordSet ;
+  rdfs:label "Copertine" ;
+  rico:includesOrIncluded ae:RS1_RS1_RS7_RS15_R40 .
+
+# --- Record ---
+
+ae:RS1_RS1_RS7_RS15_R40 a rico:Record ;
+  rdfs:label "CherudekPolacco.jpg" ;
+  rico:hasOrHadTitle ae:RS1_RS1_RS7_RS15_R40_title ;
+  rico:hasCreationDate ae:date_20071029 ;
+  rico:hasModificationDate ae:date_20080326 ;
+  rico:hasOrHadInstantiation ae:RS1_RS1_RS7_RS15_R40_inst ;
+  rico:isRelatedTo ae:works/cherudek, ae:works/ciclo_di_eymerich ;
+  rico-bodi:omittedInformation "no" .
+
+# --- Title ---
+
+ae:RS1_RS1_RS7_RS15_R40_title a rico:Title ;
+  rdfs:label "CherudekPolacco.jpg" .
+
+# --- Dates ---
+
+ae:date_20071029 a rico:Date ;
+  rico:expressedDate "29 October 2007" ;
+  rico:normalizedDateValue "2007-10-29"^^xsd:date .
+
+ae:date_20080326 a rico:Date ;
+  rico:expressedDate "26 March 2008" ;
+  rico:normalizedDateValue "2008-03-26"^^xsd:date .
+
+ae:date_20250813_010110 a rico:Date ;
+  rico:expressedDate "13 August 2025 at 01:01" ;
+  rico:normalizedDateValue "2025-08-13T01:01:00"^^xsd:dateTime ;
+  rico:isDateOfOccurrenceOf ae:ai_textgen_activity_8205_008205 .
+
+ae:date_20250813_143015 a rico:Date ;
+  rico:expressedDate "13 August 2025 at 14:30" ;
+  rico:normalizedDateValue "2025-08-13T14:30:15"^^xsd:dateTime ;
+  rico:isDateOfOccurrenceOf ae:ai_textgen_activity_0001_20250813_143015 .
+
+ae:date_20250813_154530 a rico:Date ;
+  rico:expressedDate "13 August 2025 at 15:45" ;
+  rico:normalizedDateValue "2025-08-13T15:45:30"^^xsd:dateTime ;
+  rico:isDateOfOccurrenceOf ae:loc_compliance_activity_RS1_RS1_RS7_RS15_R40_inst_tm0089_loc_compliance_check .
+
+# --- Instantiation ---
+
+ae:RS1_RS1_RS7_RS15_R40_inst a rico:Instantiation ;
+  rdfs:label "CherudekPolacco.jpg" ;
+  rico:type "Immagine (JPEG)" ;
+  rico:hasModificationDate ae:date_20080326 ;
+  rico-bodi:hasTechnicalMetadata
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0001,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0002,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0003,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0004,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0005,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0006,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0007,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0008,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0009,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0010,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0011,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0012,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0013,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0014,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0015,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0016,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0017,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0018,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0019,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0020,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0021,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0022,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0023,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0024,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0025,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0026,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0027,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0028,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0029,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0030,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0031,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0032,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0033,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0034,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0035,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0036,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0037,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0038,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0039,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0040,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0041,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0042,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0043,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0044,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0045,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0046,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0047,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0048,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0049,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0050,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0051,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0052,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0053,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0054,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0055,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0056,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0057,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0058,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0059,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0060,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0061,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0062,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0063,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0064,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0065,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0066,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0067,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0068,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0069,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0070,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0071,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0072,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0073,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0074,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0075,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0076,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0077,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0078,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0079,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0080,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0081,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0082,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0083,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0084,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0085,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0086,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0087,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0088,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0089,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0090,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0091,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0092,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0093,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0094,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0095,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0096,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0097,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0098,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0099,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0100,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0101,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0102,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0103,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0104,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0105,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0106,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0107,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0108,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0109,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0110,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0111,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0112,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0113,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0114,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0115,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0116,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0117,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0118,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0119,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0120,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0121,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0122,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0123,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0124,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0125,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0126,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0127,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0128,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0129,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0130,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0131,
+    ae:RS1_RS1_RS7_RS15_R40_inst_tm0132;
+  rico-bodi:hasTechnicalDescription ae:ai_generated_desc_008205 .
+
+# --- Works ---
+
+ae:works/cherudek a lrmoo:Work ;
+  rdfs:label "Cherudek" .
+
+ae:works/ciclo_di_eymerich a lrmoo:Work ;
+  rdfs:label "Ciclo di Eymerich" .
+
+# --- Technical Metadata Type Sets ---
+
+ae:technical_metadata_set_ImageMetadata a rico:TechnicalMetadataSet ;
+  rdfs:label "Image metadata" .
+
+ae:technical_metadata_set_Other a rico:TechnicalMetadataSet ;
+  rdfs:label "Other metadata" .
+
+ae:technical_metadata_set_DocumentContentMetadata a rico:TechnicalMetadataSet ;
+  rdfs:label "Document content metadata" .
+
+ae:technical_metadata_set_FileSystemMetadata a rico:TechnicalMetadataSet ;
+  rdfs:label "File system metadata" .
+
+ae:technical_metadata_set_ExifMetadata a rico:TechnicalMetadataSet ;
+  rdfs:label "Exif metadata" .
+
+ae:technical_metadata_set_TiffMetadata a rico:TechnicalMetadataSet ;
+  rdfs:label "TIFF metadata" .
+
+ae:technical_metadata_set_PhotoshopMetadata a rico:TechnicalMetadataSet ;
+  rdfs:label "Photoshop metadata" .
+
+ae:technical_metadata_set_IPTCMetadata a rico:TechnicalMetadataSet ;
+  rdfs:label "IPTC metadata" .
+
+ae:technical_metadata_set_JpegMetadata a rico:TechnicalMetadataSet ;
+  rdfs:label "JPEG metadata" .
+
+ae:technical_metadata_set_ApacheTikaMetadata a rico:TechnicalMetadataSet ;
+  rdfs:label "Apache Tika metadata" .
+
+# --- Technical Metadata Types ---
+
+# File System Metadata Types
+ae:exiftool_tmtype_0001 a rico:TechnicalMetadataType ;
+  rdfs:label "FileName" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_FileSystemMetadata .
+
+ae:exiftool_tmtype_0002 a rico:TechnicalMetadataType ;
+  rdfs:label "Directory" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_FileSystemMetadata .
+
+ae:exiftool_tmtype_0003 a rico:TechnicalMetadataType ;
+  rdfs:label "FileSize" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_FileSystemMetadata .
+
+ae:exiftool_tmtype_0004 a rico:TechnicalMetadataType ;
+  rdfs:label "FileModifyDate" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_FileSystemMetadata .
+
+ae:exiftool_tmtype_0005 a rico:TechnicalMetadataType ;
+  rdfs:label "FileAccessDate" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_FileSystemMetadata .
+
+ae:exiftool_tmtype_0006 a rico:TechnicalMetadataType ;
+  rdfs:label "FileInodeChangeDate" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_FileSystemMetadata .
+
+ae:exiftool_tmtype_0007 a rico:TechnicalMetadataType ;
+  rdfs:label "FilePermissions" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_FileSystemMetadata .
+
+ae:exiftool_tmtype_0008 a rico:TechnicalMetadataType ;
+  rdfs:label "FileType" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_FileSystemMetadata .
+
+ae:exiftool_tmtype_0009 a rico:TechnicalMetadataType ;
+  rdfs:label "FileTypeExtension" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_FileSystemMetadata .
+
+ae:exiftool_tmtype_0200 a rico:TechnicalMetadataType ;
+  rdfs:label "MIMEType" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_FileSystemMetadata .
+
+# Document Content Metadata Types
+ae:exiftool_tmtype_0021 a rico:TechnicalMetadataType ;
+  rdfs:label "ModifyDate" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_DocumentContentMetadata .
+
+ae:exiftool_tmtype_0025 a rico:TechnicalMetadataType ;
+  rdfs:label "Software" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_DocumentContentMetadata .
+
+# Image Metadata Types
+ae:exiftool_tmtype_0043 a rico:TechnicalMetadataType ;
+  rdfs:label "ImageWidth" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_ImageMetadata .
+
+ae:exiftool_tmtype_0044 a rico:TechnicalMetadataType ;
+  rdfs:label "ImageHeight" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_ImageMetadata .
+
+ae:exiftool_tmtype_0049 a rico:TechnicalMetadataType ;
+  rdfs:label "ImageSize" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_ImageMetadata .
+
+ae:exiftool_tmtype_0050 a rico:TechnicalMetadataType ;
+  rdfs:label "Megapixels" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_ImageMetadata .
+
+ae:exiftool_tmtype_0067 a rico:TechnicalMetadataType ;
+  rdfs:label "ExifByteOrder" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_ExifMetadata .
+
+ae:exiftool_tmtype_0069 a rico:TechnicalMetadataType ;
+  rdfs:label "BitsPerSample" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_ImageMetadata .
+
+ae:exiftool_tmtype_0070 a rico:TechnicalMetadataType ;
+  rdfs:label "Compression" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_Other .
+
+ae:exiftool_tmtype_0083 a rico:TechnicalMetadataType ;
+  rdfs:label "PhotoshopQuality" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_PhotoshopMetadata .
+
+ae:exiftool_tmtype_0084 a rico:TechnicalMetadataType ;
+  rdfs:label "PhotoshopFormat" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_PhotoshopMetadata .
+
+ae:exiftool_tmtype_0090 a rico:TechnicalMetadataType ;
+  rdfs:label "EncodingProcess" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_JpegMetadata .
+
+ae:exiftool_tmtype_0091 a rico:TechnicalMetadataType ;
+  rdfs:label "ColorComponents" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_ImageMetadata .
+
+ae:exiftool_tmtype_0092 a rico:TechnicalMetadataType ;
+  rdfs:label "YCbCrSubSampling" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_ImageMetadata .
+
+# Additional Technical Metadata Types for missing entries
+ae:apachetika_tmtype_0001 a rico:TechnicalMetadataType ;
+  rdfs:label "st_size" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_ApacheTikaMetadata .
+
+ae:apachetika_tmtype_0002 a rico:TechnicalMetadataType ;
+  rdfs:label "st_mtime" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_ApacheTikaMetadata .
+
+ae:apachetika_tmtype_0003 a rico:TechnicalMetadataType ;
+  rdfs:label "st_ctime" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_ApacheTikaMetadata .
+
+ae:apachetika_tmtype_0004 a rico:TechnicalMetadataType ;
+  rdfs:label "Content-Length" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_ApacheTikaMetadata .
+
+ae:apachetika_tmtype_0005 a rico:TechnicalMetadataType ;
+  rdfs:label "Content-Type" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_ApacheTikaMetadata .
+
+ae:apachetika_tmtype_0006 a rico:TechnicalMetadataType ;
+  rdfs:label "Content-Type-Parser-Override" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_ApacheTikaMetadata .
+
+ae:dcterms_tmtype_0001 a rico:TechnicalMetadataType ;
+  rdfs:label "dcterms:created" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_DocumentContentMetadata .
+
+ae:dcterms_tmtype_0002 a rico:TechnicalMetadataType ;
+  rdfs:label "dcterms:modified" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_DocumentContentMetadata .
+
+# Additional system metadata types
+ae:system_tmtype_0001 a rico:TechnicalMetadataType ;
+  rdfs:label "file_type" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_FileSystemMetadata .
+
+ae:system_tmtype_0002 a rico:TechnicalMetadataType ;
+  rdfs:label "st_atime" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_FileSystemMetadata .
+
+ae:system_tmtype_0003 a rico:TechnicalMetadataType ;
+  rdfs:label "st_blksize" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_FileSystemMetadata .
+
+ae:system_tmtype_0004 a rico:TechnicalMetadataType ;
+  rdfs:label "st_blocks" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_FileSystemMetadata .
+
+ae:system_tmtype_0005 a rico:TechnicalMetadataType ;
+  rdfs:label "st_dev" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_FileSystemMetadata .
+
+ae:system_tmtype_0006 a rico:TechnicalMetadataType ;
+  rdfs:label "st_gid" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_FileSystemMetadata .
+
+ae:system_tmtype_0007 a rico:TechnicalMetadataType ;
+  rdfs:label "st_ino" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_FileSystemMetadata .
+
+ae:system_tmtype_0008 a rico:TechnicalMetadataType ;
+  rdfs:label "st_mode" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_FileSystemMetadata .
+
+ae:system_tmtype_0009 a rico:TechnicalMetadataType ;
+  rdfs:label "st_nlink" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_FileSystemMetadata .
+
+ae:system_tmtype_0010 a rico:TechnicalMetadataType ;
+  rdfs:label "st_uid" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_FileSystemMetadata .
+
+# EXIF specific types
+ae:exif_tmtype_0001 a rico:TechnicalMetadataType ;
+  rdfs:label "Exif IFD0:Date/Time" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_ExifMetadata .
+
+ae:exif_tmtype_0002 a rico:TechnicalMetadataType ;
+  rdfs:label "Exif IFD0:Orientation" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_ExifMetadata .
+
+ae:exif_tmtype_0003 a rico:TechnicalMetadataType ;
+  rdfs:label "Exif IFD0:X Resolution" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_ExifMetadata .
+
+ae:exif_tmtype_0004 a rico:TechnicalMetadataType ;
+  rdfs:label "Exif IFD0:Y Resolution" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_ExifMetadata .
+
+ae:exif_tmtype_0005 a rico:TechnicalMetadataType ;
+  rdfs:label "Exif IFD0:Resolution Unit" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_ExifMetadata .
+
+ae:exif_tmtype_0006 a rico:TechnicalMetadataType ;
+  rdfs:label "Exif IFD0:Software" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_ExifMetadata .
+
+ae:exif_tmtype_0007 a rico:TechnicalMetadataType ;
+  rdfs:label "Exif SubIFD:Color Space" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_ExifMetadata .
+
+ae:exif_tmtype_0008 a rico:TechnicalMetadataType ;
+  rdfs:label "Exif SubIFD:Exif Image Height" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_ExifMetadata .
+
+ae:exif_tmtype_0009 a rico:TechnicalMetadataType ;
+  rdfs:label "Exif SubIFD:Exif Image Width" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_ExifMetadata .
+
+ae:exif_tmtype_0010 a rico:TechnicalMetadataType ;
+  rdfs:label "Exif Thumbnail:Compression" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_ExifMetadata .
+
+ae:exif_tmtype_0011 a rico:TechnicalMetadataType ;
+  rdfs:label "Exif Thumbnail:Resolution Unit" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_ExifMetadata .
+
+ae:exif_tmtype_0012 a rico:TechnicalMetadataType ;
+  rdfs:label "Exif Thumbnail:X Resolution" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_ExifMetadata .
+
+ae:exif_tmtype_0013 a rico:TechnicalMetadataType ;
+  rdfs:label "Exif Thumbnail:Y Resolution" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_ExifMetadata .
+
+ae:exif_tmtype_0014 a rico:TechnicalMetadataType ;
+  rdfs:label "Exif Thumbnail:Thumbnail Length" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_ExifMetadata .
+
+ae:exif_tmtype_0015 a rico:TechnicalMetadataType ;
+  rdfs:label "Exif Thumbnail:Thumbnail Offset" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_ExifMetadata .
+
+# TIFF specific types
+ae:tiff_tmtype_0001 a rico:TechnicalMetadataType ;
+  rdfs:label "tiff:BitsPerSample" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_TiffMetadata .
+
+ae:tiff_tmtype_0002 a rico:TechnicalMetadataType ;
+  rdfs:label "tiff:ImageLength" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_TiffMetadata .
+
+ae:tiff_tmtype_0003 a rico:TechnicalMetadataType ;
+  rdfs:label "tiff:ImageWidth" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_TiffMetadata .
+
+ae:tiff_tmtype_0004 a rico:TechnicalMetadataType ;
+  rdfs:label "tiff:ResolutionUnit" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_TiffMetadata .
+
+ae:tiff_tmtype_0005 a rico:TechnicalMetadataType ;
+  rdfs:label "tiff:XResolution" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_TiffMetadata .
+
+ae:tiff_tmtype_0006 a rico:TechnicalMetadataType ;
+  rdfs:label "tiff:YResolution" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_TiffMetadata .
+
+ae:tiff_tmtype_0007 a rico:TechnicalMetadataType ;
+  rdfs:label "tiff:Orientation" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_TiffMetadata .
+
+ae:tiff_tmtype_0008 a rico:TechnicalMetadataType ;
+  rdfs:label "tiff:Software" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_TiffMetadata .
+
+# Additional metadata types for completeness
+ae:general_tmtype_0001 a rico:TechnicalMetadataType ;
+  rdfs:label "File Name" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_ApacheTikaMetadata .
+
+ae:general_tmtype_0002 a rico:TechnicalMetadataType ;
+  rdfs:label "File Size" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_ApacheTikaMetadata .
+
+ae:general_tmtype_0003 a rico:TechnicalMetadataType ;
+  rdfs:label "File Modified Date" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_ApacheTikaMetadata .
+
+ae:general_tmtype_0004 a rico:TechnicalMetadataType ;
+  rdfs:label "Image Height" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_ImageMetadata .
+
+ae:general_tmtype_0005 a rico:TechnicalMetadataType ;
+  rdfs:label "Image Width" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_ImageMetadata .
+
+# Additional JPEG and Photoshop types
+ae:jpeg_tmtype_0001 a rico:TechnicalMetadataType ;
+  rdfs:label "JFIFVersion" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_JpegMetadata .
+
+ae:jpeg_tmtype_0002 a rico:TechnicalMetadataType ;
+  rdfs:label "JPEG Quality" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_JpegMetadata .
+
+ae:jpeg_tmtype_0003 a rico:TechnicalMetadataType ;
+  rdfs:label "Compression Type" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_JpegMetadata .
+
+ae:jpeg_tmtype_0004 a rico:TechnicalMetadataType ;
+  rdfs:label "Data Precision" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_JpegMetadata .
+
+ae:jpeg_tmtype_0005 a rico:TechnicalMetadataType ;
+  rdfs:label "Number of Components" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_JpegMetadata .
+
+ae:jpeg_tmtype_0006 a rico:TechnicalMetadataType ;
+  rdfs:label "Number of Tables" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_JpegMetadata .
+
+ae:jpeg_tmtype_0007 a rico:TechnicalMetadataType ;
+  rdfs:label "Component 1" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_JpegMetadata .
+
+ae:jpeg_tmtype_0008 a rico:TechnicalMetadataType ;
+  rdfs:label "Component 2" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_JpegMetadata .
+
+ae:jpeg_tmtype_0009 a rico:TechnicalMetadataType ;
+  rdfs:label "Component 3" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_JpegMetadata .
+
+# Photoshop specific types
+ae:photoshop_tmtype_0001 a rico:TechnicalMetadataType ;
+  rdfs:label "PhotoshopThumbnail" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_PhotoshopMetadata .
+
+ae:photoshop_tmtype_0002 a rico:TechnicalMetadataType ;
+  rdfs:label "Thumbnail Data" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_PhotoshopMetadata .
+
+ae:photoshop_tmtype_0003 a rico:TechnicalMetadataType ;
+  rdfs:label "Thumbnail Height Pixels" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_PhotoshopMetadata .
+
+ae:photoshop_tmtype_0004 a rico:TechnicalMetadataType ;
+  rdfs:label "Thumbnail Width Pixels" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_PhotoshopMetadata .
+
+ae:photoshop_tmtype_0005 a rico:TechnicalMetadataType ;
+  rdfs:label "Application Record Version" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_PhotoshopMetadata .
+
+ae:photoshop_tmtype_0006 a rico:TechnicalMetadataType ;
+  rdfs:label "Caption Digest" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_PhotoshopMetadata .
+
+ae:photoshop_tmtype_0007 a rico:TechnicalMetadataType ;
+  rdfs:label "Color Halftoning Information" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_PhotoshopMetadata .
+
+ae:photoshop_tmtype_0008 a rico:TechnicalMetadataType ;
+  rdfs:label "Color Transfer Functions" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_PhotoshopMetadata .
+
+ae:photoshop_tmtype_0009 a rico:TechnicalMetadataType ;
+  rdfs:label "ColorSpace" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_PhotoshopMetadata .
+
+ae:photoshop_tmtype_0010 a rico:TechnicalMetadataType ;
+  rdfs:label "Copyright Flag" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_PhotoshopMetadata .
+
+ae:photoshop_tmtype_0011 a rico:TechnicalMetadataType ;
+  rdfs:label "CopyrightFlag" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_PhotoshopMetadata .
+
+ae:photoshop_tmtype_0012 a rico:TechnicalMetadataType ;
+  rdfs:label "CurrentIPTCDigest" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_PhotoshopMetadata .
+
+ae:photoshop_tmtype_0013 a rico:TechnicalMetadataType ;
+  rdfs:label "DisplayedUnitsX" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_PhotoshopMetadata .
+
+ae:photoshop_tmtype_0014 a rico:TechnicalMetadataType ;
+  rdfs:label "DisplayedUnitsY" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_PhotoshopMetadata .
+
+ae:photoshop_tmtype_0015 a rico:TechnicalMetadataType ;
+  rdfs:label "Global Altitude" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_PhotoshopMetadata .
+
+ae:photoshop_tmtype_0016 a rico:TechnicalMetadataType ;
+  rdfs:label "Global Angle" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_PhotoshopMetadata .
+
+ae:photoshop_tmtype_0017 a rico:TechnicalMetadataType ;
+  rdfs:label "GlobalAltitude" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_PhotoshopMetadata .
+
+ae:photoshop_tmtype_0018 a rico:TechnicalMetadataType ;
+  rdfs:label "GlobalAngle" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_PhotoshopMetadata .
+
+ae:photoshop_tmtype_0019 a rico:TechnicalMetadataType ;
+  rdfs:label "Grid and Guides Information" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_PhotoshopMetadata .
+
+ae:photoshop_tmtype_0020 a rico:TechnicalMetadataType ;
+  rdfs:label "HasRealMergedData" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_PhotoshopMetadata .
+
+ae:photoshop_tmtype_0021 a rico:TechnicalMetadataType ;
+  rdfs:label "ICC Untagged Profile" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_PhotoshopMetadata .
+
+ae:photoshop_tmtype_0022 a rico:TechnicalMetadataType ;
+  rdfs:label "IPTCDigest" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_PhotoshopMetadata .
+
+ae:photoshop_tmtype_0023 a rico:TechnicalMetadataType ;
+  rdfs:label "NumSlices" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_PhotoshopMetadata .
+
+ae:photoshop_tmtype_0024 a rico:TechnicalMetadataType ;
+  rdfs:label "Orientation" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_PhotoshopMetadata .
+
+ae:photoshop_tmtype_0025 a rico:TechnicalMetadataType ;
+  rdfs:label "Pixel Aspect Ratio" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_PhotoshopMetadata .
+
+ae:photoshop_tmtype_0026 a rico:TechnicalMetadataType ;
+  rdfs:label "PixelAspectRatio" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_PhotoshopMetadata .
+
+ae:photoshop_tmtype_0027 a rico:TechnicalMetadataType ;
+  rdfs:label "Plug-in 1 Data" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_PhotoshopMetadata .
+
+ae:photoshop_tmtype_0028 a rico:TechnicalMetadataType ;
+  rdfs:label "Print Flags" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_PhotoshopMetadata .
+
+ae:photoshop_tmtype_0029 a rico:TechnicalMetadataType ;
+  rdfs:label "Print Flags Information" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_PhotoshopMetadata .
+
+ae:photoshop_tmtype_0030 a rico:TechnicalMetadataType ;
+  rdfs:label "Print Scale" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_PhotoshopMetadata .
+
+ae:photoshop_tmtype_0031 a rico:TechnicalMetadataType ;
+  rdfs:label "PrintPosition" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_PhotoshopMetadata .
+
+ae:photoshop_tmtype_0032 a rico:TechnicalMetadataType ;
+  rdfs:label "PrintScale" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_PhotoshopMetadata .
+
+ae:photoshop_tmtype_0033 a rico:TechnicalMetadataType ;
+  rdfs:label "PrintStyle" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_PhotoshopMetadata .
+
+ae:photoshop_tmtype_0034 a rico:TechnicalMetadataType ;
+  rdfs:label "ReaderName" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_PhotoshopMetadata .
+
+ae:photoshop_tmtype_0035 a rico:TechnicalMetadataType ;
+  rdfs:label "Resolution Info" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_PhotoshopMetadata .
+
+ae:photoshop_tmtype_0036 a rico:TechnicalMetadataType ;
+  rdfs:label "Resolution Units" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_PhotoshopMetadata .
+
+ae:photoshop_tmtype_0037 a rico:TechnicalMetadataType ;
+  rdfs:label "ResolutionUnit" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_PhotoshopMetadata .
+
+ae:photoshop_tmtype_0038 a rico:TechnicalMetadataType ;
+  rdfs:label "Seed Number" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_PhotoshopMetadata .
+
+ae:photoshop_tmtype_0039 a rico:TechnicalMetadataType ;
+  rdfs:label "Slices" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_PhotoshopMetadata .
+
+ae:photoshop_tmtype_0040 a rico:TechnicalMetadataType ;
+  rdfs:label "SlicesGroupName" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_PhotoshopMetadata .
+
+ae:photoshop_tmtype_0041 a rico:TechnicalMetadataType ;
+  rdfs:label "ThumbnailImage" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_PhotoshopMetadata .
+
+ae:photoshop_tmtype_0042 a rico:TechnicalMetadataType ;
+  rdfs:label "ThumbnailLength" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_PhotoshopMetadata .
+
+ae:photoshop_tmtype_0043 a rico:TechnicalMetadataType ;
+  rdfs:label "ThumbnailOffset" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_PhotoshopMetadata .
+
+ae:photoshop_tmtype_0044 a rico:TechnicalMetadataType ;
+  rdfs:label "URL List" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_PhotoshopMetadata .
+
+ae:photoshop_tmtype_0045 a rico:TechnicalMetadataType ;
+  rdfs:label "Version Info" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_PhotoshopMetadata .
+
+ae:photoshop_tmtype_0046 a rico:TechnicalMetadataType ;
+  rdfs:label "WriterName" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_PhotoshopMetadata .
+
+ae:photoshop_tmtype_0047 a rico:TechnicalMetadataType ;
+  rdfs:label "X Resolution" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_PhotoshopMetadata .
+
+ae:photoshop_tmtype_0048 a rico:TechnicalMetadataType ;
+  rdfs:label "XResolution" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_PhotoshopMetadata .
+
+ae:photoshop_tmtype_0049 a rico:TechnicalMetadataType ;
+  rdfs:label "Y Resolution" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_PhotoshopMetadata .
+
+ae:photoshop_tmtype_0050 a rico:TechnicalMetadataType ;
+  rdfs:label "YResolution" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_PhotoshopMetadata .
+
+ae:photoshop_tmtype_0051 a rico:TechnicalMetadataType ;
+  rdfs:label "ApplicationRecordVersion" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_PhotoshopMetadata .
+
+ae:photoshop_tmtype_0052 a rico:TechnicalMetadataType ;
+  rdfs:label "ExifImageHeight" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_PhotoshopMetadata .
+
+ae:photoshop_tmtype_0053 a rico:TechnicalMetadataType ;
+  rdfs:label "ExifImageWidth" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_PhotoshopMetadata .
+
+ae:photoshop_tmtype_0054 a rico:TechnicalMetadataType ;
+  rdfs:label "ImageHeight" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_PhotoshopMetadata .
+
+ae:photoshop_tmtype_0055 a rico:TechnicalMetadataType ;
+  rdfs:label "ImageWidth" ;
+  rico:isOrWasPartOf ae:technical_metadata_set_PhotoshopMetadata .
+
+# --- Technical Metadata Instances ---
+
+# File system metadata instances
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0001 a rico:TechnicalMetadata ;
+  rdfs:label "st_size: 29891" ;
+  rdf:value "29891" ;
+  rico-bodi:hasTechnicalMetadataType ae:apachetika_tmtype_0001 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0002 a rico:TechnicalMetadata ;
+  rdfs:label "st_mtime: 1206494324.08" ;
+  rdf:value "1206494324.08" ;
+  rico-bodi:hasTechnicalMetadataType ae:apachetika_tmtype_0002 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0003 a rico:TechnicalMetadata ;
+  rdfs:label "st_ctime: 1754473196.6011586" ;
+  rdf:value "1754473196.6011586" ;
+  rico-bodi:hasTechnicalMetadataType ae:apachetika_tmtype_0003 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0004 a rico:TechnicalMetadata ;
+  rdfs:label "st_atime: 1754473243.036085" ;
+  rdf:value "1754473243.036085" ;
+  rico-bodi:hasTechnicalMetadataType ae:system_tmtype_0002 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0005 a rico:TechnicalMetadata ;
+  rdfs:label "st_mode: 0o555" ;
+  rdf:value "0o555" ;
+  rico-bodi:hasTechnicalMetadataType ae:system_tmtype_0008 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0006 a rico:TechnicalMetadata ;
+  rdfs:label "st_uid: 1000" ;
+  rdf:value "1000" ;
+  rico-bodi:hasTechnicalMetadataType ae:system_tmtype_0010 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0007 a rico:TechnicalMetadata ;
+  rdfs:label "st_gid: 1000" ;
+  rdf:value "1000" ;
+  rico-bodi:hasTechnicalMetadataType ae:system_tmtype_0006 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0008 a rico:TechnicalMetadata ;
+  rdfs:label "file_type: file" ;
+  rdf:value "file" ;
+  rico-bodi:hasTechnicalMetadataType ae:system_tmtype_0001 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0009 a rico:TechnicalMetadata ;
+  rdfs:label "st_nlink: 1" ;
+  rdf:value "1" ;
+  rico-bodi:hasTechnicalMetadataType ae:system_tmtype_0009 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0010 a rico:TechnicalMetadata ;
+  rdfs:label "st_ino: 280496776" ;
+  rdf:value "280496776" ;
+  rico-bodi:hasTechnicalMetadataType ae:system_tmtype_0007 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0011 a rico:TechnicalMetadata ;
+  rdfs:label "st_dev: 2065" ;
+  rdf:value "2065" ;
+  rico-bodi:hasTechnicalMetadataType ae:system_tmtype_0005 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0012 a rico:TechnicalMetadata ;
+  rdfs:label "st_blksize: 4096" ;
+  rdf:value "4096" ;
+  rico-bodi:hasTechnicalMetadataType ae:system_tmtype_0003 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0013 a rico:TechnicalMetadata ;
+  rdfs:label "st_blocks: 64" ;
+  rdf:value "64" ;
+  rico-bodi:hasTechnicalMetadataType ae:system_tmtype_0004 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0014 a rico:TechnicalMetadata ;
+  rdfs:label "Number of Tables: 4 Huffman tables" ;
+  rdf:value "4 Huffman tables" ;
+  rico-bodi:hasTechnicalMetadataType ae:jpeg_tmtype_0006 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0015 a rico:TechnicalMetadata ;
+  rdfs:label "Slices: Evangelisti_Cherudek (0,0,2422,1608) 1 Slices" ;
+  rdf:value "Evangelisti_Cherudek (0,0,2422,1608) 1 Slices" ;
+  rico-bodi:hasTechnicalMetadataType ae:photoshop_tmtype_0039 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0016 a rico:TechnicalMetadata ;
+  rdfs:label "ICC Untagged Profile: 1" ;
+  rdf:value "1" ;
+  rico-bodi:hasTechnicalMetadataType ae:photoshop_tmtype_0021 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0017 a rico:TechnicalMetadata ;
+  rdfs:label "Compression Type: Baseline" ;
+  rdf:value "Baseline" ;
+  rico-bodi:hasTechnicalMetadataType ae:jpeg_tmtype_0003 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0018 a rico:TechnicalMetadata ;
+  rdfs:label "Number of Components: 3" ;
+  rdf:value "3" ;
+  rico-bodi:hasTechnicalMetadataType ae:jpeg_tmtype_0005 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0019 a rico:TechnicalMetadata ;
+  rdfs:label "Component 2: Cb component: Quantization table 1, Sampling factors 1 horiz/1 vert" ;
+  rdf:value "Cb component: Quantization table 1, Sampling factors 1 horiz/1 vert" ;
+  rico-bodi:hasTechnicalMetadataType ae:jpeg_tmtype_0008 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0020 a rico:TechnicalMetadata ;
+  rdfs:label "Component 1: Y component: Quantization table 0, Sampling factors 2 horiz/2 vert" ;
+  rdf:value "Y component: Quantization table 0, Sampling factors 2 horiz/2 vert" ;
+  rico-bodi:hasTechnicalMetadataType ae:jpeg_tmtype_0007 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0021 a rico:TechnicalMetadata ;
+  rdfs:label "Exif SubIFD:Exif Image Width: 1608 pixels" ;
+  rdf:value "1608 pixels" ;
+  rico-bodi:hasTechnicalMetadataType ae:exif_tmtype_0009 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0022 a rico:TechnicalMetadata ;
+  rdfs:label "Exif IFD0:X Resolution: 299 dots per inch" ;
+  rdf:value "299 dots per inch" ;
+  rico-bodi:hasTechnicalMetadataType ae:exif_tmtype_0003 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0023 a rico:TechnicalMetadata ;
+  rdfs:label "tiff:ResolutionUnit: Inch" ;
+  rdf:value "Inch" ;
+  rico-bodi:hasTechnicalMetadataType ae:tiff_tmtype_0004 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0024 a rico:TechnicalMetadata ;
+  rdfs:label "X Resolution: 72 dots" ;
+  rdf:value "72 dots" ;
+  rico-bodi:hasTechnicalMetadataType ae:photoshop_tmtype_0047 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0025 a rico:TechnicalMetadata ;
+  rdfs:label "Copyright Flag: No" ;
+  rdf:value "No" ;
+  rico-bodi:hasTechnicalMetadataType ae:photoshop_tmtype_0010 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0026 a rico:TechnicalMetadata ;
+  rdfs:label "Version Info: 1 (Adobe Photoshop, Adobe Photoshop CS) 1" ;
+  rdf:value "1 (Adobe Photoshop, Adobe Photoshop CS) 1" ;
+  rico-bodi:hasTechnicalMetadataType ae:photoshop_tmtype_0045 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0027 a rico:TechnicalMetadata ;
+  rdfs:label "Component 3: Cr component: Quantization table 1, Sampling factors 1 horiz/1 vert" ;
+  rdf:value "Cr component: Quantization table 1, Sampling factors 1 horiz/1 vert" ;
+  rico-bodi:hasTechnicalMetadataType ae:jpeg_tmtype_0009 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0028 a rico:TechnicalMetadata ;
+  rdfs:label "Exif Thumbnail:Thumbnail Offset: 308 bytes" ;
+  rdf:value "308 bytes" ;
+  rico-bodi:hasTechnicalMetadataType ae:exif_tmtype_0015 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0029 a rico:TechnicalMetadata ;
+  rdfs:label "Thumbnail Data: JpegRGB, 106x160, Decomp 51200 bytes, 1572865 bpp, 7848 bytes" ;
+  rdf:value "JpegRGB, 106x160, Decomp 51200 bytes, 1572865 bpp, 7848 bytes" ;
+  rico-bodi:hasTechnicalMetadataType ae:photoshop_tmtype_0002 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0030 a rico:TechnicalMetadata ;
+  rdfs:label "Plug-in 1 Data: [872 values]" ;
+  rdf:value "[872 values]" ;
+  rico-bodi:hasTechnicalMetadataType ae:photoshop_tmtype_0027 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0031 a rico:TechnicalMetadata ;
+  rdfs:label "tiff:BitsPerSample: 8" ;
+  rdf:value "8" ;
+  rico-bodi:hasTechnicalMetadataType ae:tiff_tmtype_0001 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0032 a rico:TechnicalMetadata ;
+  rdfs:label "Application Record Version: 2" ;
+  rdf:value "2" ;
+  rico-bodi:hasTechnicalMetadataType ae:photoshop_tmtype_0005 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0033 a rico:TechnicalMetadata ;
+  rdfs:label "Caption Digest: 70 12 242 137 38 184 86 218 176 156 1 161 176 167 144 119" ;
+  rdf:value "70 12 242 137 38 184 86 218 176 156 1 161 176 167 144 119" ;
+  rico-bodi:hasTechnicalMetadataType ae:photoshop_tmtype_0006 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0034 a rico:TechnicalMetadata ;
+  rdfs:label "Resolution Info: 300x300 DPI" ;
+  rdf:value "300x300 DPI" ;
+  rico-bodi:hasTechnicalMetadataType ae:photoshop_tmtype_0035 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0035 a rico:TechnicalMetadata ;
+  rdfs:label "Exif Thumbnail:X Resolution: 72 dots per inch" ;
+  rdf:value "72 dots per inch" ;
+  rico-bodi:hasTechnicalMetadataType ae:exif_tmtype_0012 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0036 a rico:TechnicalMetadata ;
+  rdfs:label "Color Halftoning Information: [72 values]" ;
+  rdf:value "[72 values]" ;
+  rico-bodi:hasTechnicalMetadataType ae:photoshop_tmtype_0007 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0037 a rico:TechnicalMetadata ;
+  rdfs:label "Exif IFD0:Orientation: Top, left side (Horizontal / normal)" ;
+  rdf:value "Top, left side (Horizontal / normal)" ;
+  rico-bodi:hasTechnicalMetadataType ae:exif_tmtype_0002 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0038 a rico:TechnicalMetadata ;
+  rdfs:label "tiff:Orientation: 1" ;
+  rdf:value "1" ;
+  rico-bodi:hasTechnicalMetadataType ae:tiff_tmtype_0007 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0039 a rico:TechnicalMetadata ;
+  rdfs:label "tiff:Software: Adobe Photoshop CS Windows" ;
+  rdf:value "Adobe Photoshop CS Windows" ;
+  rico-bodi:hasTechnicalMetadataType ae:tiff_tmtype_0008 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0040 a rico:TechnicalMetadata ;
+  rdfs:label "Color Transfer Functions: [112 values]" ;
+  rdf:value "[112 values]" ;
+  rico-bodi:hasTechnicalMetadataType ae:photoshop_tmtype_0008 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0041 a rico:TechnicalMetadata ;
+  rdfs:label "Global Angle: 30" ;
+  rdf:value "30" ;
+  rico-bodi:hasTechnicalMetadataType ae:photoshop_tmtype_0016 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0042 a rico:TechnicalMetadata ;
+  rdfs:label "Exif IFD0:Software: Adobe Photoshop CS Windows" ;
+  rdf:value "Adobe Photoshop CS Windows" ;
+  rico-bodi:hasTechnicalMetadataType ae:exif_tmtype_0006 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0043 a rico:TechnicalMetadata ;
+  rdfs:label "Exif IFD0:Date/Time: 2007:10:29 10:46:20" ;
+  rdf:value "2007:10:29 10:46:20" ;
+  rico-bodi:hasTechnicalMetadataType ae:exif_tmtype_0001 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0044 a rico:TechnicalMetadata ;
+  rdfs:label "tiff:YResolution: 299.0" ;
+  rdf:value "299.0" ;
+  rico-bodi:hasTechnicalMetadataType ae:tiff_tmtype_0006 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0045 a rico:TechnicalMetadata ;
+  rdfs:label "Y Resolution: 72 dots" ;
+  rdf:value "72 dots" ;
+  rico-bodi:hasTechnicalMetadataType ae:photoshop_tmtype_0049 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0046 a rico:TechnicalMetadata ;
+  rdfs:label "Seed Number: 1" ;
+  rdf:value "1" ;
+  rico-bodi:hasTechnicalMetadataType ae:photoshop_tmtype_0038 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0047 a rico:TechnicalMetadata ;
+  rdfs:label "Data Precision: 8 bits" ;
+  rdf:value "8 bits" ;
+  rico-bodi:hasTechnicalMetadataType ae:jpeg_tmtype_0004 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0048 a rico:TechnicalMetadata ;
+  rdfs:label "tiff:ImageLength: 2422" ;
+  rdf:value "2422" ;
+  rico-bodi:hasTechnicalMetadataType ae:tiff_tmtype_0002 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0049 a rico:TechnicalMetadata ;
+  rdfs:label "Thumbnail Height Pixels: 0" ;
+  rdf:value "0" ;
+  rico-bodi:hasTechnicalMetadataType ae:photoshop_tmtype_0003 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0050 a rico:TechnicalMetadata ;
+  rdfs:label "dcterms:created: 2007-10-29T10:46:20" ;
+  rdf:value "2007-10-29T10:46:20" ;
+  rico-bodi:hasTechnicalMetadataType ae:dcterms_tmtype_0001 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0051 a rico:TechnicalMetadata ;
+  rdfs:label "dcterms:modified: 2007-10-29T10:46:20" ;
+  rdf:value "2007-10-29T10:46:20" ;
+  rico-bodi:hasTechnicalMetadataType ae:dcterms_tmtype_0002 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0052 a rico:TechnicalMetadata ;
+  rdfs:label "Exif SubIFD:Color Space: Undefined" ;
+  rdf:value "Undefined" ;
+  rico-bodi:hasTechnicalMetadataType ae:exif_tmtype_0007 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0053 a rico:TechnicalMetadata ;
+  rdfs:label "File Size: 29891 bytes" ;
+  rdf:value "29891 bytes" ;
+  rico-bodi:hasTechnicalMetadataType ae:general_tmtype_0002 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0054 a rico:TechnicalMetadata ;
+  rdfs:label "Global Altitude: 30" ;
+  rdf:value "30" ;
+  rico-bodi:hasTechnicalMetadataType ae:photoshop_tmtype_0015 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0055 a rico:TechnicalMetadata ;
+  rdfs:label "Exif Thumbnail:Y Resolution: 72 dots per inch" ;
+  rdf:value "72 dots per inch" ;
+  rico-bodi:hasTechnicalMetadataType ae:exif_tmtype_0013 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0056 a rico:TechnicalMetadata ;
+  rdfs:label "Exif Thumbnail:Resolution Unit: Inch" ;
+  rdf:value "Inch" ;
+  rico-bodi:hasTechnicalMetadataType ae:exif_tmtype_0011 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0057 a rico:TechnicalMetadata ;
+  rdfs:label "Grid and Guides Information: 0 0 0 1 0 0 2 64 0 0 2 64 0 0 0 0" ;
+  rdf:value "0 0 0 1 0 0 2 64 0 0 2 64 0 0 0 0" ;
+  rico-bodi:hasTechnicalMetadataType ae:photoshop_tmtype_0019 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0058 a rico:TechnicalMetadata ;
+  rdfs:label "File Name: apache-tika-11696863266236137747.tmp" ;
+  rdf:value "apache-tika-11696863266236137747.tmp" ;
+  rico-bodi:hasTechnicalMetadataType ae:general_tmtype_0001 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0059 a rico:TechnicalMetadata ;
+  rdfs:label "Content-Length: 29891" ;
+  rdf:value "29891" ;
+  rico-bodi:hasTechnicalMetadataType ae:apachetika_tmtype_0004 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0060 a rico:TechnicalMetadata ;
+  rdfs:label "Exif IFD0:Resolution Unit: Inch" ;
+  rdf:value "Inch" ;
+  rico-bodi:hasTechnicalMetadataType ae:exif_tmtype_0005 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0061 a rico:TechnicalMetadata ;
+  rdfs:label "Content-Type: image/jpeg" ;
+  rdf:value "image/jpeg" ;
+  rico-bodi:hasTechnicalMetadataType ae:apachetika_tmtype_0005 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0062 a rico:TechnicalMetadata ;
+  rdfs:label "JPEG Quality: 9 (High), Standard format, 3 scans" ;
+  rdf:value "9 (High), Standard format, 3 scans" ;
+  rico-bodi:hasTechnicalMetadataType ae:jpeg_tmtype_0002 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0063 a rico:TechnicalMetadata ;
+  rdfs:label "Resolution Units: inch" ;
+  rdf:value "inch" ;
+  rico-bodi:hasTechnicalMetadataType ae:photoshop_tmtype_0036 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0064 a rico:TechnicalMetadata ;
+  rdfs:label "File Modified Date: Wed Aug 06 16:22:08 +00:00 2025" ;
+  rdf:value "Wed Aug 06 16:22:08 +00:00 2025" ;
+  rico-bodi:hasTechnicalMetadataType ae:general_tmtype_0003 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0065 a rico:TechnicalMetadata ;
+  rdfs:label "tiff:XResolution: 299.0" ;
+  rdf:value "299.0" ;
+  rico-bodi:hasTechnicalMetadataType ae:tiff_tmtype_0005 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0066 a rico:TechnicalMetadata ;
+  rdfs:label "Image Height: 225 pixels" ;
+  rdf:value "225 pixels" ;
+  rico-bodi:hasTechnicalMetadataType ae:general_tmtype_0004 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0067 a rico:TechnicalMetadata ;
+  rdfs:label "Thumbnail Width Pixels: 0" ;
+  rdf:value "0" ;
+  rico-bodi:hasTechnicalMetadataType ae:photoshop_tmtype_0004 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0068 a rico:TechnicalMetadata ;
+  rdfs:label "Exif Thumbnail:Thumbnail Length: 7848 bytes" ;
+  rdf:value "7848 bytes" ;
+  rico-bodi:hasTechnicalMetadataType ae:exif_tmtype_0014 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0069 a rico:TechnicalMetadata ;
+  rdfs:label "Pixel Aspect Ratio: 1.0" ;
+  rdf:value "1.0" ;
+  rico-bodi:hasTechnicalMetadataType ae:photoshop_tmtype_0025 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0070 a rico:TechnicalMetadata ;
+  rdfs:label "Print Flags: 0 0 0 0 0 0 0 0 1" ;
+  rdf:value "0 0 0 0 0 0 0 0 1" ;
+  rico-bodi:hasTechnicalMetadataType ae:photoshop_tmtype_0028 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0071 a rico:TechnicalMetadata ;
+  rdfs:label "Exif SubIFD:Exif Image Height: 2422 pixels" ;
+  rdf:value "2422 pixels" ;
+  rico-bodi:hasTechnicalMetadataType ae:exif_tmtype_0008 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0072 a rico:TechnicalMetadata ;
+  rdfs:label "Image Width: 150 pixels" ;
+  rdf:value "150 pixels" ;
+  rico-bodi:hasTechnicalMetadataType ae:general_tmtype_0005 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0073 a rico:TechnicalMetadata ;
+  rdfs:label "Print Flags Information: 0 1 0 0 0 0 0 0 0 2" ;
+  rdf:value "0 1 0 0 0 0 0 0 0 2" ;
+  rico-bodi:hasTechnicalMetadataType ae:photoshop_tmtype_0029 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0074 a rico:TechnicalMetadata ;
+  rdfs:label "Exif Thumbnail:Compression: JPEG (old-style)" ;
+  rdf:value "JPEG (old-style)" ;
+  rico-bodi:hasTechnicalMetadataType ae:exif_tmtype_0010 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0075 a rico:TechnicalMetadata ;
+  rdfs:label "Content-Type-Parser-Override: image/ocr-jpeg" ;
+  rdf:value "image/ocr-jpeg" ;
+  rico-bodi:hasTechnicalMetadataType ae:apachetika_tmtype_0006 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0076 a rico:TechnicalMetadata ;
+  rdfs:label "URL List: 0" ;
+  rdf:value "0" ;
+  rico-bodi:hasTechnicalMetadataType ae:photoshop_tmtype_0044 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0077 a rico:TechnicalMetadata ;
+  rdfs:label "Print Scale: Centered, Scale 1.0" ;
+  rdf:value "Centered, Scale 1.0" ;
+  rico-bodi:hasTechnicalMetadataType ae:photoshop_tmtype_0030 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0078 a rico:TechnicalMetadata ;
+  rdfs:label "tiff:ImageWidth: 1608" ;
+  rdf:value "1608" ;
+  rico-bodi:hasTechnicalMetadataType ae:tiff_tmtype_0003 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0079 a rico:TechnicalMetadata ;
+  rdfs:label "Exif IFD0:Y Resolution: 299 dots per inch" ;
+  rdf:value "299 dots per inch" ;
+  rico-bodi:hasTechnicalMetadataType ae:exif_tmtype_0004 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0080 a rico:TechnicalMetadata ;
+  rdfs:label "FileName: CherudekPolacco.jpg" ;
+  rdf:value "CherudekPolacco.jpg" ;
+  rico-bodi:hasTechnicalMetadataType ae:exiftool_tmtype_0001 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0081 a rico:TechnicalMetadata ;
+  rdfs:label "Directory: /media/sdb1/evangelisti/data/HardDiskValerio/Immagini/Copertine" ;
+  rdf:value "/media/sdb1/evangelisti/data/HardDiskValerio/Immagini/Copertine" ;
+  rico-bodi:hasTechnicalMetadataType ae:exiftool_tmtype_0002 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0082 a rico:TechnicalMetadata ;
+  rdfs:label "FileSize: 30 kB" ;
+  rdf:value "30 kB" ;
+  rico-bodi:hasTechnicalMetadataType ae:exiftool_tmtype_0003 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0083 a rico:TechnicalMetadata ;
+  rdfs:label "FileModifyDate: 2008:03:26 02:18:44+01:00" ;
+  rdf:value "2008:03:26 02:18:44+01:00" ;
+  rico-bodi:hasTechnicalMetadataType ae:exiftool_tmtype_0004 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0084 a rico:TechnicalMetadata ;
+  rdfs:label "FileAccessDate: 2025:08:06 11:40:43+02:00" ;
+  rdf:value "2025:08:06 11:40:43+02:00" ;
+  rico-bodi:hasTechnicalMetadataType ae:exiftool_tmtype_0005 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0085 a rico:TechnicalMetadata ;
+  rdfs:label "FileInodeChangeDate: 2025:08:06 11:39:56+02:00" ;
+  rdf:value "2025:08:06 11:39:56+02:00" ;
+  rico-bodi:hasTechnicalMetadataType ae:exiftool_tmtype_0006 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0086 a rico:TechnicalMetadata ;
+  rdfs:label "FilePermissions: -r-xr-xr-x" ;
+  rdf:value "-r-xr-xr-x" ;
+  rico-bodi:hasTechnicalMetadataType ae:exiftool_tmtype_0007 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0087 a rico:TechnicalMetadata ;
+  rdfs:label "FileType: JPEG" ;
+  rdf:value "JPEG" ;
+  rico-bodi:hasTechnicalMetadataType ae:exiftool_tmtype_0008 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0088 a rico:TechnicalMetadata ;
+  rdfs:label "FileTypeExtension: jpg" ;
+  rdf:value "jpg" ;
+  rico-bodi:hasTechnicalMetadataType ae:exiftool_tmtype_0009 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0089 a rico:TechnicalMetadata ;
+  rdfs:label "MIMEType: image/jpeg" ;
+  rdf:value "image/jpeg" ;
+  rico-bodi:hasTechnicalMetadataType ae:exiftool_tmtype_0200 ;
+  rico-bodi:hasTechnicalDescription ae:ai_generated_format_check_000001 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0090 a rico:TechnicalMetadata ;
+  rdfs:label "JFIFVersion: 1.01" ;
+  rdf:value "1.01" ;
+  rico-bodi:hasTechnicalMetadataType ae:jpeg_tmtype_0001 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0091 a rico:TechnicalMetadata ;
+  rdfs:label "ExifByteOrder: Big-endian (Motorola, MM)" ;
+  rdf:value "Big-endian (Motorola, MM)" ;
+  rico-bodi:hasTechnicalMetadataType ae:exiftool_tmtype_0067 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0092 a rico:TechnicalMetadata ;
+  rdfs:label "Orientation: Horizontal (normal)" ;
+  rdf:value "Horizontal (normal)" ;
+  rico-bodi:hasTechnicalMetadataType ae:photoshop_tmtype_0024 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0093 a rico:TechnicalMetadata ;
+  rdfs:label "XResolution: 299" ;
+  rdf:value "299" ;
+  rico-bodi:hasTechnicalMetadataType ae:photoshop_tmtype_0048 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0094 a rico:TechnicalMetadata ;
+  rdfs:label "YResolution: 299" ;
+  rdf:value "299" ;
+  rico-bodi:hasTechnicalMetadataType ae:photoshop_tmtype_0050 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0095 a rico:TechnicalMetadata ;
+  rdfs:label "ResolutionUnit: inches" ;
+  rdf:value "inches" ;
+  rico-bodi:hasTechnicalMetadataType ae:photoshop_tmtype_0037 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0096 a rico:TechnicalMetadata ;
+  rdfs:label "Software: Adobe Photoshop CS Windows" ;
+  rdf:value "Adobe Photoshop CS Windows" ;
+  rico-bodi:hasTechnicalMetadataType ae:exiftool_tmtype_0025 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0097 a rico:TechnicalMetadata ;
+  rdfs:label "ModifyDate: 2007:10:29 10:46:20" ;
+  rdf:value "2007:10:29 10:46:20" ;
+  rico-bodi:hasTechnicalMetadataType ae:exiftool_tmtype_0021 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0098 a rico:TechnicalMetadata ;
+  rdfs:label "ColorSpace: Uncalibrated" ;
+  rdf:value "Uncalibrated" ;
+  rico-bodi:hasTechnicalMetadataType ae:photoshop_tmtype_0009 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0099 a rico:TechnicalMetadata ;
+  rdfs:label "ExifImageWidth: 1608" ;
+  rdf:value "1608" ;
+  rico-bodi:hasTechnicalMetadataType ae:photoshop_tmtype_0053 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0100 a rico:TechnicalMetadata ;
+  rdfs:label "ExifImageHeight: 2422" ;
+  rdf:value "2422" ;
+  rico-bodi:hasTechnicalMetadataType ae:photoshop_tmtype_0052 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0101 a rico:TechnicalMetadata ;
+  rdfs:label "Compression: JPEG (old-style)" ;
+  rdf:value "JPEG (old-style)" ;
+  rico-bodi:hasTechnicalMetadataType ae:exiftool_tmtype_0070 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0102 a rico:TechnicalMetadata ;
+  rdfs:label "ThumbnailOffset: 332" ;
+  rdf:value "332" ;
+  rico-bodi:hasTechnicalMetadataType ae:photoshop_tmtype_0043 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0103 a rico:TechnicalMetadata ;
+  rdfs:label "ThumbnailLength: 7848" ;
+  rdf:value "7848" ;
+  rico-bodi:hasTechnicalMetadataType ae:photoshop_tmtype_0042 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0104 a rico:TechnicalMetadata ;
+  rdfs:label "CurrentIPTCDigest: 460cf28926b856dab09c01a1b0a79077" ;
+  rdf:value "460cf28926b856dab09c01a1b0a79077" ;
+  rico-bodi:hasTechnicalMetadataType ae:photoshop_tmtype_0012 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0105 a rico:TechnicalMetadata ;
+  rdfs:label "ApplicationRecordVersion: 2" ;
+  rdf:value "2" ;
+  rico-bodi:hasTechnicalMetadataType ae:photoshop_tmtype_0051 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0106 a rico:TechnicalMetadata ;
+  rdfs:label "IPTCDigest: 460cf28926b856dab09c01a1b0a79077" ;
+  rdf:value "460cf28926b856dab09c01a1b0a79077" ;
+  rico-bodi:hasTechnicalMetadataType ae:photoshop_tmtype_0022 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0107 a rico:TechnicalMetadata ;
+  rdfs:label "DisplayedUnitsX: inches" ;
+  rdf:value "inches" ;
+  rico-bodi:hasTechnicalMetadataType ae:photoshop_tmtype_0013 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0108 a rico:TechnicalMetadata ;
+  rdfs:label "DisplayedUnitsY: inches" ;
+  rdf:value "inches" ;
+  rico-bodi:hasTechnicalMetadataType ae:photoshop_tmtype_0014 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0109 a rico:TechnicalMetadata ;
+  rdfs:label "PrintStyle: Centered" ;
+  rdf:value "Centered" ;
+  rico-bodi:hasTechnicalMetadataType ae:photoshop_tmtype_0033 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0110 a rico:TechnicalMetadata ;
+  rdfs:label "PrintPosition: 0 0" ;
+  rdf:value "0 0" ;
+  rico-bodi:hasTechnicalMetadataType ae:photoshop_tmtype_0031 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0111 a rico:TechnicalMetadata ;
+  rdfs:label "PrintScale: 1" ;
+  rdf:value "1" ;
+  rico-bodi:hasTechnicalMetadataType ae:photoshop_tmtype_0032 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0112 a rico:TechnicalMetadata ;
+  rdfs:label "GlobalAngle: 30" ;
+  rdf:value "30" ;
+  rico-bodi:hasTechnicalMetadataType ae:photoshop_tmtype_0018 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0113 a rico:TechnicalMetadata ;
+  rdfs:label "GlobalAltitude: 30" ;
+  rdf:value "30" ;
+  rico-bodi:hasTechnicalMetadataType ae:photoshop_tmtype_0017 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0114 a rico:TechnicalMetadata ;
+  rdfs:label "CopyrightFlag: False" ;
+  rdf:value "False" ;
+  rico-bodi:hasTechnicalMetadataType ae:photoshop_tmtype_0011 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0115 a rico:TechnicalMetadata ;
+  rdfs:label "SlicesGroupName: Evangelisti_Cherudek" ;
+  rdf:value "Evangelisti_Cherudek" ;
+  rico-bodi:hasTechnicalMetadataType ae:photoshop_tmtype_0040 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0116 a rico:TechnicalMetadata ;
+  rdfs:label "NumSlices: 1" ;
+  rdf:value "1" ;
+  rico-bodi:hasTechnicalMetadataType ae:photoshop_tmtype_0023 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0117 a rico:TechnicalMetadata ;
+  rdfs:label "PixelAspectRatio: 1" ;
+  rdf:value "1" ;
+  rico-bodi:hasTechnicalMetadataType ae:photoshop_tmtype_0026 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0118 a rico:TechnicalMetadata ;
+  rdfs:label "PhotoshopThumbnail: (Binary data 7848 bytes, use -b option to extract)" ;
+  rdf:value "(Binary data 7848 bytes, use -b option to extract)" ;
+  rico-bodi:hasTechnicalMetadataType ae:photoshop_tmtype_0001 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0119 a rico:TechnicalMetadata ;
+  rdfs:label "HasRealMergedData: Yes" ;
+  rdf:value "Yes" ;
+  rico-bodi:hasTechnicalMetadataType ae:photoshop_tmtype_0020 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0120 a rico:TechnicalMetadata ;
+  rdfs:label "WriterName: Adobe Photoshop" ;
+  rdf:value "Adobe Photoshop" ;
+  rico-bodi:hasTechnicalMetadataType ae:photoshop_tmtype_0046 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0121 a rico:TechnicalMetadata ;
+  rdfs:label "ReaderName: Adobe Photoshop CS" ;
+  rdf:value "Adobe Photoshop CS" ;
+  rico-bodi:hasTechnicalMetadataType ae:photoshop_tmtype_0034 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0122 a rico:TechnicalMetadata ;
+  rdfs:label "PhotoshopQuality: 9" ;
+  rdf:value "9" ;
+  rico-bodi:hasTechnicalMetadataType ae:exiftool_tmtype_0083 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0123 a rico:TechnicalMetadata ;
+  rdfs:label "PhotoshopFormat: Standard" ;
+  rdf:value "Standard" ;
+  rico-bodi:hasTechnicalMetadataType ae:exiftool_tmtype_0084 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0124 a rico:TechnicalMetadata ;
+  rdfs:label "ImageWidth: 150" ;
+  rdf:value "150" ;
+  rico-bodi:hasTechnicalMetadataType ae:photoshop_tmtype_0055 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0125 a rico:TechnicalMetadata ;
+  rdfs:label "ImageHeight: 225" ;
+  rdf:value "225" ;
+  rico-bodi:hasTechnicalMetadataType ae:photoshop_tmtype_0054 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0126 a rico:TechnicalMetadata ;
+  rdfs:label "EncodingProcess: Baseline DCT, Huffman coding" ;
+  rdf:value "Baseline DCT, Huffman coding" ;
+  rico-bodi:hasTechnicalMetadataType ae:exiftool_tmtype_0090 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0127 a rico:TechnicalMetadata ;
+  rdfs:label "BitsPerSample: 8" ;
+  rdf:value "8" ;
+  rico-bodi:hasTechnicalMetadataType ae:exiftool_tmtype_0069 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0128 a rico:TechnicalMetadata ;
+  rdfs:label "ColorComponents: 3" ;
+  rdf:value "3" ;
+  rico-bodi:hasTechnicalMetadataType ae:exiftool_tmtype_0091 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0129 a rico:TechnicalMetadata ;
+  rdfs:label "YCbCrSubSampling: YCbCr4:2:0 (2 2)" ;
+  rdf:value "YCbCr4:2:0 (2 2)" ;
+  rico-bodi:hasTechnicalMetadataType ae:exiftool_tmtype_0092 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0130 a rico:TechnicalMetadata ;
+  rdfs:label "ImageSize: 150x225" ;
+  rdf:value "150x225" ;
+  rico-bodi:hasTechnicalMetadataType ae:exiftool_tmtype_0049 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0131 a rico:TechnicalMetadata ;
+  rdfs:label "Megapixels: 0.034" ;
+  rdf:value "0.034" ;
+  rico-bodi:hasTechnicalMetadataType ae:exiftool_tmtype_0050 .
+
+ae:RS1_RS1_RS7_RS15_R40_inst_tm0132 a rico:TechnicalMetadata ;
+  rdfs:label "ThumbnailImage: (Binary data 7848 bytes, use -b option to extract)" ;
+  rdf:value "(Binary data 7848 bytes, use -b option to extract)" ;
+  rico-bodi:hasTechnicalMetadataType ae:photoshop_tmtype_0041 .
+
+
+  
+
+# --- AI Generated Technical Description ---
+
+ae:ai_generated_desc_008205 a rico-bodi:AIGeneratedText ;
+  rdfs:label "AI generated technical description for CherudekPolacco.jpg" ;
+  rdf:value """This digital file is a JPEG image with dimensions 150x225 pixels, and its original TIFF format has dimensions 1608x2422 pixels. It was created on October 29, 2007, at 10:46 AM, and has undergone no modifications since then.""" ;
+  rico-bodi:hasHumanValidation "false"^^xsd:boolean ;
+  rico-bodi:isTechnicalDescriptionOf ae:RS1_RS1_RS7_RS15_R40_inst ;
+  rico-bodi:generatedBy ae:ai_textgen_activity_8205_008205 .
+
+# --- AI Text Generation Activity ---
+
+ae:ai_textgen_activity_8205_008205 a rico:Activity ;
+  rdfs:label "Text generation" ;
+  rico:occurredAtDate ae:date_20250813_010110 ;
+  rico:isOrWasPerformedBy ae:software_0004 ;
+  rico-bodi:hasOrHadSupervisor ae:person_LuciaGiagnolini ;
+  rico-bodi:hasGenerated ae:ai_generated_desc_008205 .
+
+# --- Software ---
+
+ae:software_0004 a rico-bodi:Software ;
+  rdfs:label "Llama 3.2" ;
+  rico-bodi:hasDocumentation <https://ollama.com/library/llama3.2> .
+
+# --- Person (supervisor) ---
+
+ae:person_LuciaGiagnolini a rico:Person ;
+  rdfs:label "Lucia Giagnolini" ;
+  rico-bodi:isOrWasSupervisorOf ae:ai_textgen_activity_8205_008205 .
+
+# --- AI Generated Format Compliance Check ---
+
+ae:ai_generated_format_check_000001 a rico-bodi:AIGeneratedText ;
+  rdf:value "The format is included in the Library of Congress Recommended Formats Statement 2025-2026 as an ACCEPTABLE format. JPEG is a widely supported lossy compression format suitable for photographic content, though it may not be optimal for long-term preservation due to compression artifacts." ;
+  rico-bodi:hasHumanValidation "false"^^xsd:boolean ;
+  rico-bodi:locCompliant "true"^^xsd:boolean ;
+  rico-bodi:locComplianceLevel "acceptable" ;
+  rico-bodi:isTechnicalDescriptionOf ae:RS1_RS1_RS7_RS15_R40_inst_tm0089 ;
+  rico-bodi:generatedBy ae:loc_compliance_activity_RS1_RS1_RS7_RS15_R40_inst_tm0089_loc_compliance_check .
+
+# --- LOC Compliance Check Activity ---
+
+ae:loc_compliance_activity_RS1_RS1_RS7_RS15_R40_inst_tm0089_loc_compliance_check a rico:Activity ;
+  rdfs:label "LOC compliance check" ;
+  rico:occurredAtDate ae:date_20250813_154530 ;
+  rico:isOrWasPerformedBy ae:software_0004 ;
+  rico-bodi:hasOrHadSupervisor ae:person_LuciaGiagnolini ;
+  rico-bodi:hasGenerated ae:ai_generated_format_check_000001 .
+
+
