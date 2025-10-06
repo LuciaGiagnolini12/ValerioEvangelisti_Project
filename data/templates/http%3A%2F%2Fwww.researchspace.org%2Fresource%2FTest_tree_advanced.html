@@ -292,34 +292,10 @@
         "
         related-node-criteria='[
           {
-            "label": "Same Creation Date",
-            "icon": "fa fa-calendar",
-            "query": "PREFIX rico: <https://www.ica.org/standards/RiC/ontology#> SELECT DISTINCT ?node WHERE { <$__nodeIri__> rico:hasCreationDate ?sourceDate . ?sourceDate rico:normalizedDateValue ?sourceDateValue . ?node rico:hasCreationDate ?targetDate . ?targetDate rico:normalizedDateValue ?targetDateValue . FILTER(?targetDateValue = ?sourceDateValue && ?node != <$__nodeIri__>) }",
-            "description": "Find all records with the same creation date"
-          },
-          {
-            "label": "Same Modification Date",
-            "icon": "fa fa-calendar-check-o",
-            "query": "PREFIX rico: <https://www.ica.org/standards/RiC/ontology#> SELECT DISTINCT ?node WHERE { <$__nodeIri__> rico:hasModificationDate ?sourceDate . ?sourceDate rico:normalizedDateValue ?sourceDateValue . ?node rico:hasModificationDate ?targetDate . ?targetDate rico:normalizedDateValue ?targetDateValue . FILTER(?targetDateValue = ?sourceDateValue && ?node != <$__nodeIri__>) }",
-            "description": "Find all records with the same modification date"
-          },
-          {
-            "label": "Same File Type",
-            "icon": "fa fa-file-o",
-            "query": "PREFIX rico: <https://www.ica.org/standards/RiC/ontology#> SELECT DISTINCT ?node WHERE { <$__nodeIri__> rico:hasOrHadInstantiation ?sourceInst . ?sourceInst rico:type ?sourceType . ?node rico:hasOrHadInstantiation ?targetInst . ?targetInst rico:type ?targetType . FILTER(?targetType = ?sourceType && ?node != <$__nodeIri__>) }",
-            "description": "Find all records with the same file type"
-          },
-          {
-            "label": "Direct Children",
-            "icon": "fa fa-level-down",
-            "query": "SELECT DISTINCT ?node WHERE { GRAPH <http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS1> { <$__nodeIri__> <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?node } }",
-            "description": "Find only direct child nodes"
-          },
-          {
-            "label": "Path to Root",
-            "icon": "fa fa-arrow-up",
-            "query": "SELECT DISTINCT ?node WHERE { GRAPH <http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS1> { <$__nodeIri__> (<https://www.ica.org/standards/RiC/ontology#isOrWasPartOf>)+ ?node } }",
-            "description": "Find all ancestor nodes up to the root"
+            "label": "Same Hash",
+            "icon": "fa fa-copy",
+            "query": "PREFIX rico: <https://www.ica.org/standards/RiC/ontology#> PREFIX rico-bodi: <http://example.org/rico-bodi#> SELECT DISTINCT ?node WHERE { <$__nodeIri__> rico:hasOrHadInstantiation ?inst1 . ?inst1 rico-bodi:hasSameHashCodeAs ?inst2 . ?node rico:hasOrHadInstantiation ?inst2 . FILTER(?node != <$__nodeIri__>) }",
+            "description": "Find all records with the same file hash (duplicate files)"
           }
         ]'
         query="
