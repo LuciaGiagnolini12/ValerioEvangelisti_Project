@@ -290,6 +290,14 @@
             }
           }
         "
+        filter-options='[
+          {
+            "label": "Exclude omitted",
+            "description": "Hide files marked as having omitted information (folders are kept to show non-omitted children)",
+            "condition": "PREFIX rico-bodi: <http://example.org/rico-bodi#> PREFIX rico: <https://www.ica.org/standards/RiC/ontology#> SELECT ?node WHERE { ?node rico-bodi:omittedInformation \"yes\" . FILTER NOT EXISTS { ?node rico:includesOrIncluded ?child } }",
+            "defaultChecked": false
+          }
+        ]'
         related-node-criteria='[
           {
             "label": "Same Hash",
@@ -299,7 +307,7 @@
           }
         ]'
         query="
-          SELECT DISTINCT ?parent ?node ?label ?title ?structuralTitle ?hasChildren (COUNT(DISTINCT ?child) as ?childCount) WHERE {
+          SELECT DISTINCT ?parent ?node ?label ?title ?structuralTitle ?hasChildren (COUNT(DISTINCT ?child) as ?childCount) ?isRoot ?fileType WHERE {
             # Load RS1 and its three parts dynamically using dcterms:hasPart
             VALUES ?parent { <http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1> }
             ?parent <http://purl.org/dc/terms/hasPart> ?node .
@@ -314,16 +322,32 @@
               ?dn <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?anyChild 
             } AS ?hasChildren)
             
-            # Fetch labels from default graph
-            OPTIONAL { ?parent rdfs:label ?label }
+            # Mark RS1 as root
+            BIND(IF(?parent = <http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1>, &quot;true&quot;, &quot;false&quot;) AS ?isRoot)
+            
+            # Set custom label for RS1
+            BIND(IF(?parent = <http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1>, &quot;Valerio Evangelisti Digital Archive&quot;, ?tempLabel) AS ?label)
+            OPTIONAL { 
+              ?parent rdfs:label ?tempLabel 
+            }
+            
+            # Fetch labels for nodes
             OPTIONAL { ?node rdfs:label ?title }
             
             # For structural nodes, fetch the isRelatedTo value
             OPTIONAL { ?node <https://www.ica.org/standards/RiC/ontology#isRelatedTo> ?structuralTitle }
-          } GROUP BY ?parent ?node ?label ?title ?structuralTitle ?hasChildren
+            
+            # Get file type from technical metadata
+            OPTIONAL {
+              ?dataNode <https://www.ica.org/standards/RiC/ontology#hasOrHadInstantiation> ?inst .
+              ?inst <http://example.org/rico-bodi#hasTechnicalMetadata> ?techMeta .
+              ?techMeta <http://example.org/rico-bodi#hasTechnicalMetadataType> <http://ficlit.unibo.it/ArchivioEvangelisti/system_tmtype_0001> .
+              ?techMeta <http://www.w3.org/1999/02/22-rdf-syntax-ns#value> ?fileType .
+            }
+          } GROUP BY ?parent ?node ?label ?title ?structuralTitle ?hasChildren ?isRoot ?fileType
         "
         expand-query="
-          SELECT DISTINCT ?parent ?node ?label ?title ?hasChildren (COUNT(DISTINCT ?child) as ?childCount) WHERE {
+          SELECT DISTINCT ?parent ?node ?label ?title ?hasChildren (COUNT(DISTINCT ?child) as ?childCount) ?fileType WHERE {
             # Convert /structure/ IRI to data IRI by removing &quot;/structure&quot;
             BIND(IRI(REPLACE(STR(<{{clickedNode}}>), &quot;/structure&quot;, &quot;&quot;)) AS ?dataNode)
             
@@ -338,7 +362,15 @@
             # Fetch labels from default graph
             OPTIONAL { ?parent rdfs:label ?label }
             OPTIONAL { ?node rdfs:label ?title }
-          } GROUP BY ?parent ?node ?label ?title ?hasChildren
+            
+            # Get file type from technical metadata
+            OPTIONAL {
+              ?node <https://www.ica.org/standards/RiC/ontology#hasOrHadInstantiation> ?inst .
+              ?inst <http://example.org/rico-bodi#hasTechnicalMetadata> ?techMeta .
+              ?techMeta <http://example.org/rico-bodi#hasTechnicalMetadataType> <http://ficlit.unibo.it/ArchivioEvangelisti/system_tmtype_0001> .
+              ?techMeta <http://www.w3.org/1999/02/22-rdf-syntax-ns#value> ?fileType .
+            }
+          } GROUP BY ?parent ?node ?label ?title ?hasChildren ?fileType
         "
         path-to-root-query="
           SELECT DISTINCT ?ancestor WHERE {
@@ -373,19 +405,35 @@
               <mp-event-trigger type='Component.TemplateUpdate' data='{"iri": "{{node.value}}", "hasChildren": "{{hasChildren.value}}", "childCount": "{{childCount.value}}"}' targets='["node-details-advanced"]'>
                 <div class="node-content" style="cursor: pointer; padding: 5px; border-radius: 4px; transition: background-color 0.2s; margin-bottom: 3px;">
                   <div style="display: flex; align-items: center;">
-                    {{#if structuralTitle.value}}
+                    {{#if (eq node.value "http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1")}}
+                      <!-- Root node - use home icon -->
+                      <i class="fa fa-home" style="margin-right: 8px; color: #27ae60; font-size: 1.2em;"></i>
+                      <span style="font-size: 0.8em; color: #777; margin-right: 5px;">({{childCount.value}})</span>
+                    {{else if structuralTitle.value}}
                       <!-- Structural node - use archive icon -->
                       <i class="fa fa-archive" style="margin-right: 8px; color: #9b59b6;"></i>
                       <span style="font-size: 0.8em; color: #777; margin-right: 5px;">({{childCount.value}})</span>
+                    {{else if (eq fileType.value "directory")}}
+                      <!-- Node explicitly marked as directory -->
+                      <i class="fa fa-folder" style="margin-right: 8px; color: #ffc107;"></i>
+                      <span style="font-size: 0.8em; color: #777; margin-right: 5px;">({{childCount.value}})</span>
+                    {{else if (eq fileType.value "file")}}
+                      <!-- Node explicitly marked as file -->
+                      <i class="fa fa-file-text-o" style="margin-right: 8px; color: #2196F3;"></i>
                     {{else if (eq hasChildren.value "true")}}
+                      <!-- Fallback: has children = folder -->
                       <i class="fa fa-folder" style="margin-right: 8px; color: #ffc107;"></i>
                       <span style="font-size: 0.8em; color: #777; margin-right: 5px;">({{childCount.value}})</span>
                     {{else}}
+                      <!-- Fallback: no children = file -->
                       <i class="fa fa-file-text-o" style="margin-right: 8px; color: #2196F3;"></i>
                     {{/if}}
                     
                     <div>
-                      {{#if structuralTitle.value}}
+                      {{#if (eq node.value "http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1")}}
+                        <!-- Root node - show custom name -->
+                        <a href="{{node.value}}" target="_blank" style="font-weight: bold; color: #27ae60; text-decoration: none; font-size: 1.1em;">Valerio Evangelisti Digital Archive</a>
+                      {{else if structuralTitle.value}}
                         <!-- For structural nodes, show the isRelatedTo value -->
                         <a href="{{node.value}}" target="_blank" style="font-weight: bold; color: #9b59b6; text-decoration: none;">{{structuralTitle.value}}</a>
                       {{else if title.value}}
