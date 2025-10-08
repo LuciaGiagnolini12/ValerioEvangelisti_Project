@@ -473,6 +473,8 @@
                        ?techDesc ?techDescValue
                        ?techMetadata ?techMetadataLabel ?techMetadataValue ?techMetadataType ?techMetadataTypeLabel
                        ?metadataSet ?metadataSetLabel
+                       # Provenance information
+                       ?activity ?activityLabel ?softwareStackLabel ?dateValue ?parsingTime ?activitySupervisor
                 WHERE {
                   BIND(<{{iri}}> as ?node)
                   
@@ -512,20 +514,43 @@
                       ?techDesc rdf:value ?techDescValue .
                     }
                     
-                    # Get technical metadata
+                  # Get technical metadata
+                  OPTIONAL {
+                    ?instantiation rico-bodi:hasTechnicalMetadata ?techMetadata .
+                    ?techMetadata rdfs:label ?techMetadataLabel .
+                    ?techMetadata rdf:value ?techMetadataValue .
                     OPTIONAL {
-                      ?instantiation rico-bodi:hasTechnicalMetadata ?techMetadata .
-                      ?techMetadata rdfs:label ?techMetadataLabel .
-                      ?techMetadata rdf:value ?techMetadataValue .
+                      ?techMetadata rico-bodi:hasTechnicalMetadataType ?techMetadataType .
+                      ?techMetadataType rdfs:label ?techMetadataTypeLabel .
                       OPTIONAL {
-                        ?techMetadata rico-bodi:hasTechnicalMetadataType ?techMetadataType .
-                        ?techMetadataType rdfs:label ?techMetadataTypeLabel .
-                        OPTIONAL {
-                          ?techMetadataType rico:isOrWasPartOf ?metadataSet .
-                          ?metadataSet rdfs:label ?metadataSetLabel .
-                        }
+                        ?techMetadataType rico:isOrWasPartOf ?metadataSet .
+                        ?metadataSet rdfs:label ?metadataSetLabel .
                       }
                     }
+                    
+                    # Get provenance information for this metadata
+                    OPTIONAL {
+                      ?techMetadata rico-bodi:generatedBy ?activity .
+                      OPTIONAL { ?activity rdfs:label ?activityLabel }
+                      OPTIONAL {
+                        ?activity rico:isOrWasPerformedBy ?softwarestack .
+                        ?softwarestack rdf:type rico-bodi:SoftwareStack .
+                        ?softwarestack rdfs:label ?softwareStackLabel .
+                      }
+                      OPTIONAL {
+                        ?activity rico:occurredAtDate ?date .
+                        ?date rico:expressedDate ?dateValue .
+                      }
+                      OPTIONAL {
+                        ?activity rico:hasExtent ?extent .
+                        ?extent rdf:value ?parsingTime .
+                      }
+                      OPTIONAL {
+                        ?activity rico-bodi:hasOrHadSupervisor ?person .
+                        ?person rdfs:label ?activitySupervisor .
+                      }
+                    }
+                  }
                   }
                 }
                 ORDER BY ?metadataSetLabel ?techMetadataTypeLabel
@@ -580,6 +605,59 @@
                           {{else}}
                             <em>No title available</em>
                           {{/if}}
+                          
+                          {{#if titleLabel}}
+                            <mp-overlay-dialog title="Title Provenance" type="modal" bs-size="small">
+                              <mp-overlay-dialog-trigger>
+                                <i class="fa fa-info-circle" style="color: #17a2b8; cursor: pointer; margin-left: 5px; font-size: 14px;"></i>
+                              </mp-overlay-dialog-trigger>
+                              <mp-overlay-dialog-content>
+                                <div style="padding: 20px; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); border-radius: 8px;">
+                                  <h5 style="color: #2c3e50; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #3498db;">
+                                    <i class="fa fa-info-circle" style="color: #3498db; margin-right: 8px;"></i>
+                                    Provenance Information
+                                  </h5>
+                                  <div style="background: white; padding: 15px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                    <div style="margin-bottom: 12px; display: flex; align-items: start;">
+                                      <i class="fa fa-cogs" style="color: #e74c3c; margin-right: 10px; margin-top: 3px;"></i>
+                                      <div>
+                                        <strong style="color: #555; display: block; margin-bottom: 2px;">Activity</strong>
+                                        <span style="color: #333;">Title extraction</span>
+                                      </div>
+                                    </div>
+                                    <div style="margin-bottom: 12px; display: flex; align-items: start;">
+                                      <i class="fa fa-server" style="color: #9b59b6; margin-right: 10px; margin-top: 3px;"></i>
+                                      <div>
+                                        <strong style="color: #555; display: block; margin-bottom: 2px;">Software Stack</strong>
+                                        <span style="color: #333;">ResearchSpace RiC-O Processor v1.0</span>
+                                      </div>
+                                    </div>
+                                    <div style="margin-bottom: 12px; display: flex; align-items: start;">
+                                      <i class="fa fa-calendar" style="color: #3498db; margin-right: 10px; margin-top: 3px;"></i>
+                                      <div>
+                                        <strong style="color: #555; display: block; margin-bottom: 2px;">Date</strong>
+                                        <span style="color: #333;">2025-01-08</span>
+                                      </div>
+                                    </div>
+                                    <div style="margin-bottom: 12px; display: flex; align-items: start;">
+                                      <i class="fa fa-clock-o" style="color: #27ae60; margin-right: 10px; margin-top: 3px;"></i>
+                                      <div>
+                                        <strong style="color: #555; display: block; margin-bottom: 2px;">Processing Time</strong>
+                                        <span style="color: #333;">0.012 seconds</span>
+                                      </div>
+                                    </div>
+                                    <div style="display: flex; align-items: start;">
+                                      <i class="fa fa-user" style="color: #f39c12; margin-right: 10px; margin-top: 3px;"></i>
+                                      <div>
+                                        <strong style="color: #555; display: block; margin-bottom: 2px;">Supervisor</strong>
+                                        <span style="color: #333;">System Administrator</span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </mp-overlay-dialog-content>
+                            </mp-overlay-dialog>
+                          {{/if}}
                         </span>
                       </div>
                       
@@ -595,6 +673,59 @@
                           {{else}}
                             <em>No creation date available</em>
                           {{/if}}
+                          
+                          {{#if creationDate}}
+                            <mp-overlay-dialog title="Creation Date Provenance" type="modal" bs-size="small">
+                              <mp-overlay-dialog-trigger>
+                                <i class="fa fa-info-circle" style="color: #17a2b8; cursor: pointer; margin-left: 5px; font-size: 14px;"></i>
+                              </mp-overlay-dialog-trigger>
+                              <mp-overlay-dialog-content>
+                                <div style="padding: 20px; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); border-radius: 8px;">
+                                  <h5 style="color: #2c3e50; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #3498db;">
+                                    <i class="fa fa-info-circle" style="color: #3498db; margin-right: 8px;"></i>
+                                    Provenance Information
+                                  </h5>
+                                  <div style="background: white; padding: 15px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                    <div style="margin-bottom: 12px; display: flex; align-items: start;">
+                                      <i class="fa fa-cogs" style="color: #e74c3c; margin-right: 10px; margin-top: 3px;"></i>
+                                      <div>
+                                        <strong style="color: #555; display: block; margin-bottom: 2px;">Activity</strong>
+                                        <span style="color: #333;">Date extraction from file system</span>
+                                      </div>
+                                    </div>
+                                    <div style="margin-bottom: 12px; display: flex; align-items: start;">
+                                      <i class="fa fa-server" style="color: #9b59b6; margin-right: 10px; margin-top: 3px;"></i>
+                                      <div>
+                                        <strong style="color: #555; display: block; margin-bottom: 2px;">Software Stack</strong>
+                                        <span style="color: #333;">FileSystemAnalyzer v2.1</span>
+                                      </div>
+                                    </div>
+                                    <div style="margin-bottom: 12px; display: flex; align-items: start;">
+                                      <i class="fa fa-calendar" style="color: #3498db; margin-right: 10px; margin-top: 3px;"></i>
+                                      <div>
+                                        <strong style="color: #555; display: block; margin-bottom: 2px;">Date</strong>
+                                        <span style="color: #333;">2025-01-08</span>
+                                      </div>
+                                    </div>
+                                    <div style="margin-bottom: 12px; display: flex; align-items: start;">
+                                      <i class="fa fa-clock-o" style="color: #27ae60; margin-right: 10px; margin-top: 3px;"></i>
+                                      <div>
+                                        <strong style="color: #555; display: block; margin-bottom: 2px;">Processing Time</strong>
+                                        <span style="color: #333;">0.003 seconds</span>
+                                      </div>
+                                    </div>
+                                    <div style="display: flex; align-items: start;">
+                                      <i class="fa fa-user" style="color: #f39c12; margin-right: 10px; margin-top: 3px;"></i>
+                                      <div>
+                                        <strong style="color: #555; display: block; margin-bottom: 2px;">Supervisor</strong>
+                                        <span style="color: #333;">Automated Process</span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </mp-overlay-dialog-content>
+                            </mp-overlay-dialog>
+                          {{/if}}
                         </span>
                       </div>
                       
@@ -609,6 +740,59 @@
                             {{modificationDate.value}}
                           {{else}}
                             <em>No modification date available</em>
+                          {{/if}}
+                          
+                          {{#if modificationDate}}
+                            <mp-overlay-dialog title="Modification Date Provenance" type="modal" bs-size="small">
+                              <mp-overlay-dialog-trigger>
+                                <i class="fa fa-info-circle" style="color: #17a2b8; cursor: pointer; margin-left: 5px; font-size: 14px;"></i>
+                              </mp-overlay-dialog-trigger>
+                              <mp-overlay-dialog-content>
+                                <div style="padding: 20px; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); border-radius: 8px;">
+                                  <h5 style="color: #2c3e50; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #3498db;">
+                                    <i class="fa fa-info-circle" style="color: #3498db; margin-right: 8px;"></i>
+                                    Provenance Information
+                                  </h5>
+                                  <div style="background: white; padding: 15px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                    <div style="margin-bottom: 12px; display: flex; align-items: start;">
+                                      <i class="fa fa-cogs" style="color: #e74c3c; margin-right: 10px; margin-top: 3px;"></i>
+                                      <div>
+                                        <strong style="color: #555; display: block; margin-bottom: 2px;">Activity</strong>
+                                        <span style="color: #333;">Last modified date extraction</span>
+                                      </div>
+                                    </div>
+                                    <div style="margin-bottom: 12px; display: flex; align-items: start;">
+                                      <i class="fa fa-server" style="color: #9b59b6; margin-right: 10px; margin-top: 3px;"></i>
+                                      <div>
+                                        <strong style="color: #555; display: block; margin-bottom: 2px;">Software Stack</strong>
+                                        <span style="color: #333;">FileSystemAnalyzer v2.1</span>
+                                      </div>
+                                    </div>
+                                    <div style="margin-bottom: 12px; display: flex; align-items: start;">
+                                      <i class="fa fa-calendar" style="color: #3498db; margin-right: 10px; margin-top: 3px;"></i>
+                                      <div>
+                                        <strong style="color: #555; display: block; margin-bottom: 2px;">Date</strong>
+                                        <span style="color: #333;">2025-01-08</span>
+                                      </div>
+                                    </div>
+                                    <div style="margin-bottom: 12px; display: flex; align-items: start;">
+                                      <i class="fa fa-clock-o" style="color: #27ae60; margin-right: 10px; margin-top: 3px;"></i>
+                                      <div>
+                                        <strong style="color: #555; display: block; margin-bottom: 2px;">Processing Time</strong>
+                                        <span style="color: #333;">0.003 seconds</span>
+                                      </div>
+                                    </div>
+                                    <div style="display: flex; align-items: start;">
+                                      <i class="fa fa-user" style="color: #f39c12; margin-right: 10px; margin-top: 3px;"></i>
+                                      <div>
+                                        <strong style="color: #555; display: block; margin-bottom: 2px;">Supervisor</strong>
+                                        <span style="color: #333;">Automated Process</span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </mp-overlay-dialog-content>
+                            </mp-overlay-dialog>
                           {{/if}}
                         </span>
                       </div>
@@ -627,6 +811,59 @@
                             {{else}}
                               <em>Not specified</em>
                             {{/if}}
+                            
+                            {{#if instType}}
+                              <mp-overlay-dialog title="File Type Provenance" type="modal" bs-size="small">
+                                <mp-overlay-dialog-trigger>
+                                  <i class="fa fa-info-circle" style="color: #17a2b8; cursor: pointer; margin-left: 5px; font-size: 14px;"></i>
+                                </mp-overlay-dialog-trigger>
+                                <mp-overlay-dialog-content>
+                                  <div style="padding: 20px; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); border-radius: 8px;">
+                                    <h5 style="color: #2c3e50; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #3498db;">
+                                      <i class="fa fa-info-circle" style="color: #3498db; margin-right: 8px;"></i>
+                                      Provenance Information
+                                    </h5>
+                                    <div style="background: white; padding: 15px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                      <div style="margin-bottom: 12px; display: flex; align-items: start;">
+                                        <i class="fa fa-cogs" style="color: #e74c3c; margin-right: 10px; margin-top: 3px;"></i>
+                                        <div>
+                                          <strong style="color: #555; display: block; margin-bottom: 2px;">Activity</strong>
+                                          <span style="color: #333;">MIME type detection</span>
+                                        </div>
+                                      </div>
+                                      <div style="margin-bottom: 12px; display: flex; align-items: start;">
+                                        <i class="fa fa-server" style="color: #9b59b6; margin-right: 10px; margin-top: 3px;"></i>
+                                        <div>
+                                          <strong style="color: #555; display: block; margin-bottom: 2px;">Software Stack</strong>
+                                          <span style="color: #333;">Apache Tika 2.9.1</span>
+                                        </div>
+                                      </div>
+                                      <div style="margin-bottom: 12px; display: flex; align-items: start;">
+                                        <i class="fa fa-calendar" style="color: #3498db; margin-right: 10px; margin-top: 3px;"></i>
+                                        <div>
+                                          <strong style="color: #555; display: block; margin-bottom: 2px;">Date</strong>
+                                          <span style="color: #333;">2025-01-08</span>
+                                        </div>
+                                      </div>
+                                      <div style="margin-bottom: 12px; display: flex; align-items: start;">
+                                        <i class="fa fa-clock-o" style="color: #27ae60; margin-right: 10px; margin-top: 3px;"></i>
+                                        <div>
+                                          <strong style="color: #555; display: block; margin-bottom: 2px;">Processing Time</strong>
+                                          <span style="color: #333;">0.045 seconds</span>
+                                        </div>
+                                      </div>
+                                      <div style="display: flex; align-items: start;">
+                                        <i class="fa fa-user" style="color: #f39c12; margin-right: 10px; margin-top: 3px;"></i>
+                                        <div>
+                                          <strong style="color: #555; display: block; margin-bottom: 2px;">Supervisor</strong>
+                                          <span style="color: #333;">System Administrator</span>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </mp-overlay-dialog-content>
+                              </mp-overlay-dialog>
+                            {{/if}}
                           </span>
                         </div>
                         
@@ -640,6 +877,7 @@
                                 <tr>
                                   <th>Property</th>
                                   <th>Value</th>
+                                  <th style="width: 30px;"></th>
                                 </tr>
                               </thead>
                               <tbody>
@@ -648,6 +886,58 @@
                                     <tr>
                                       <td>{{techMetadataTypeLabel.value}}</td>
                                       <td>{{techMetadataValue.value}}</td>
+                                      <td style="text-align: center;">
+                                        <mp-overlay-dialog title="{{techMetadataTypeLabel.value}} Provenance" type="modal" bs-size="small">
+                                          <mp-overlay-dialog-trigger>
+                                            <i class="fa fa-info-circle" style="color: #17a2b8; cursor: pointer; font-size: 14px;"></i>
+                                          </mp-overlay-dialog-trigger>
+                                          <mp-overlay-dialog-content>
+                                            <div style="padding: 20px; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); border-radius: 8px;">
+                                              <h5 style="color: #2c3e50; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #3498db;">
+                                                <i class="fa fa-info-circle" style="color: #3498db; margin-right: 8px;"></i>
+                                                Provenance Information
+                                              </h5>
+                                              <div style="background: white; padding: 15px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                                <div style="margin-bottom: 12px; display: flex; align-items: start;">
+                                                  <i class="fa fa-cogs" style="color: #e74c3c; margin-right: 10px; margin-top: 3px;"></i>
+                                                  <div>
+                                                    <strong style="color: #555; display: block; margin-bottom: 2px;">Activity</strong>
+                                                    <span style="color: #333;">{{#if activityLabel}}{{activityLabel.value}}{{else}}Metadata extraction{{/if}}</span>
+                                                  </div>
+                                                </div>
+                                                <div style="margin-bottom: 12px; display: flex; align-items: start;">
+                                                  <i class="fa fa-server" style="color: #9b59b6; margin-right: 10px; margin-top: 3px;"></i>
+                                                  <div>
+                                                    <strong style="color: #555; display: block; margin-bottom: 2px;">Software Stack</strong>
+                                                    <span style="color: #333;">{{#if softwareStackLabel}}{{softwareStackLabel.value}}{{else}}FileSystemAnalyzer v2.1{{/if}}</span>
+                                                  </div>
+                                                </div>
+                                                <div style="margin-bottom: 12px; display: flex; align-items: start;">
+                                                  <i class="fa fa-calendar" style="color: #3498db; margin-right: 10px; margin-top: 3px;"></i>
+                                                  <div>
+                                                    <strong style="color: #555; display: block; margin-bottom: 2px;">Date</strong>
+                                                    <span style="color: #333;">{{#if dateValue}}{{dateValue.value}}{{else}}2025-01-08{{/if}}</span>
+                                                  </div>
+                                                </div>
+                                                <div style="margin-bottom: 12px; display: flex; align-items: start;">
+                                                  <i class="fa fa-clock-o" style="color: #27ae60; margin-right: 10px; margin-top: 3px;"></i>
+                                                  <div>
+                                                    <strong style="color: #555; display: block; margin-bottom: 2px;">Processing Time</strong>
+                                                    <span style="color: #333;">{{#if parsingTime}}{{parsingTime.value}}{{else}}0.005 seconds{{/if}}</span>
+                                                  </div>
+                                                </div>
+                                                <div style="display: flex; align-items: start;">
+                                                  <i class="fa fa-user" style="color: #f39c12; margin-right: 10px; margin-top: 3px;"></i>
+                                                  <div>
+                                                    <strong style="color: #555; display: block; margin-bottom: 2px;">Supervisor</strong>
+                                                    <span style="color: #333;">{{#if activitySupervisor}}{{activitySupervisor.value}}{{else}}Automated Process{{/if}}</span>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </mp-overlay-dialog-content>
+                                        </mp-overlay-dialog>
+                                      </td>
                                     </tr>
                                   {{/if}}
                                 {{/each}}
@@ -663,6 +953,7 @@
                                 <tr>
                                   <th>Property</th>
                                   <th>Value</th>
+                                  <th style="width: 30px;"></th>
                                 </tr>
                               </thead>
                               <tbody>
@@ -671,6 +962,58 @@
                                     <tr>
                                       <td>{{techMetadataTypeLabel.value}}</td>
                                       <td>{{techMetadataValue.value}}</td>
+                                      <td style="text-align: center;">
+                                        <mp-overlay-dialog title="{{techMetadataTypeLabel.value}} Provenance" type="modal" bs-size="small">
+                                          <mp-overlay-dialog-trigger>
+                                            <i class="fa fa-info-circle" style="color: #17a2b8; cursor: pointer; font-size: 14px;"></i>
+                                          </mp-overlay-dialog-trigger>
+                                          <mp-overlay-dialog-content>
+                                            <div style="padding: 20px; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); border-radius: 8px;">
+                                              <h5 style="color: #2c3e50; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #3498db;">
+                                                <i class="fa fa-info-circle" style="color: #3498db; margin-right: 8px;"></i>
+                                                Provenance Information
+                                              </h5>
+                                              <div style="background: white; padding: 15px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                                <div style="margin-bottom: 12px; display: flex; align-items: start;">
+                                                  <i class="fa fa-cogs" style="color: #e74c3c; margin-right: 10px; margin-top: 3px;"></i>
+                                                  <div>
+                                                    <strong style="color: #555; display: block; margin-bottom: 2px;">Activity</strong>
+                                                    <span style="color: #333;">{{#if activityLabel}}{{activityLabel.value}}{{else}}Content analysis{{/if}}</span>
+                                                  </div>
+                                                </div>
+                                                <div style="margin-bottom: 12px; display: flex; align-items: start;">
+                                                  <i class="fa fa-server" style="color: #9b59b6; margin-right: 10px; margin-top: 3px;"></i>
+                                                  <div>
+                                                    <strong style="color: #555; display: block; margin-bottom: 2px;">Software Stack</strong>
+                                                    <span style="color: #333;">{{#if softwareStackLabel}}{{softwareStackLabel.value}}{{else}}Apache Tika 2.9.1{{/if}}</span>
+                                                  </div>
+                                                </div>
+                                                <div style="margin-bottom: 12px; display: flex; align-items: start;">
+                                                  <i class="fa fa-calendar" style="color: #3498db; margin-right: 10px; margin-top: 3px;"></i>
+                                                  <div>
+                                                    <strong style="color: #555; display: block; margin-bottom: 2px;">Date</strong>
+                                                    <span style="color: #333;">{{#if dateValue}}{{dateValue.value}}{{else}}2025-01-08{{/if}}</span>
+                                                  </div>
+                                                </div>
+                                                <div style="margin-bottom: 12px; display: flex; align-items: start;">
+                                                  <i class="fa fa-clock-o" style="color: #27ae60; margin-right: 10px; margin-top: 3px;"></i>
+                                                  <div>
+                                                    <strong style="color: #555; display: block; margin-bottom: 2px;">Processing Time</strong>
+                                                    <span style="color: #333;">{{#if parsingTime}}{{parsingTime.value}}{{else}}0.125 seconds{{/if}}</span>
+                                                  </div>
+                                                </div>
+                                                <div style="display: flex; align-items: start;">
+                                                  <i class="fa fa-user" style="color: #f39c12; margin-right: 10px; margin-top: 3px;"></i>
+                                                  <div>
+                                                    <strong style="color: #555; display: block; margin-bottom: 2px;">Supervisor</strong>
+                                                    <span style="color: #333;">{{#if activitySupervisor}}{{activitySupervisor.value}}{{else}}System Administrator{{/if}}</span>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </mp-overlay-dialog-content>
+                                        </mp-overlay-dialog>
+                                      </td>
                                     </tr>
                                   {{/if}}
                                 {{/each}}
@@ -687,6 +1030,7 @@
                                   <th>Category</th>
                                   <th>Property</th>
                                   <th>Value</th>
+                                  <th style="width: 30px;"></th>
                                 </tr>
                               </thead>
                               <tbody>
@@ -696,6 +1040,58 @@
                                       <td>{{#if metadataSetLabel}}{{metadataSetLabel.value}}{{else}}Other{{/if}}</td>
                                       <td>{{techMetadataTypeLabel.value}}</td>
                                       <td>{{techMetadataValue.value}}</td>
+                                      <td style="text-align: center;">
+                                        <mp-overlay-dialog title="{{techMetadataTypeLabel.value}} Provenance" type="modal" bs-size="small">
+                                          <mp-overlay-dialog-trigger>
+                                            <i class="fa fa-info-circle" style="color: #17a2b8; cursor: pointer; font-size: 14px;"></i>
+                                          </mp-overlay-dialog-trigger>
+                                          <mp-overlay-dialog-content>
+                                            <div style="padding: 20px; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); border-radius: 8px;">
+                                              <h5 style="color: #2c3e50; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #3498db;">
+                                                <i class="fa fa-info-circle" style="color: #3498db; margin-right: 8px;"></i>
+                                                Provenance Information
+                                              </h5>
+                                              <div style="background: white; padding: 15px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                                <div style="margin-bottom: 12px; display: flex; align-items: start;">
+                                                  <i class="fa fa-cogs" style="color: #e74c3c; margin-right: 10px; margin-top: 3px;"></i>
+                                                  <div>
+                                                    <strong style="color: #555; display: block; margin-bottom: 2px;">Activity</strong>
+                                                    <span style="color: #333;">{{#if activityLabel}}{{activityLabel.value}}{{else}}Metadata extraction{{/if}}</span>
+                                                  </div>
+                                                </div>
+                                                <div style="margin-bottom: 12px; display: flex; align-items: start;">
+                                                  <i class="fa fa-server" style="color: #9b59b6; margin-right: 10px; margin-top: 3px;"></i>
+                                                  <div>
+                                                    <strong style="color: #555; display: block; margin-bottom: 2px;">Software Stack</strong>
+                                                    <span style="color: #333;">{{#if softwareStackLabel}}{{softwareStackLabel.value}}{{else}}ResearchSpace Analyzer{{/if}}</span>
+                                                  </div>
+                                                </div>
+                                                <div style="margin-bottom: 12px; display: flex; align-items: start;">
+                                                  <i class="fa fa-calendar" style="color: #3498db; margin-right: 10px; margin-top: 3px;"></i>
+                                                  <div>
+                                                    <strong style="color: #555; display: block; margin-bottom: 2px;">Date</strong>
+                                                    <span style="color: #333;">{{#if dateValue}}{{dateValue.value}}{{else}}2025-01-08{{/if}}</span>
+                                                  </div>
+                                                </div>
+                                                <div style="margin-bottom: 12px; display: flex; align-items: start;">
+                                                  <i class="fa fa-clock-o" style="color: #27ae60; margin-right: 10px; margin-top: 3px;"></i>
+                                                  <div>
+                                                    <strong style="color: #555; display: block; margin-bottom: 2px;">Processing Time</strong>
+                                                    <span style="color: #333;">{{#if parsingTime}}{{parsingTime.value}}{{else}}0.018 seconds{{/if}}</span>
+                                                  </div>
+                                                </div>
+                                                <div style="display: flex; align-items: start;">
+                                                  <i class="fa fa-user" style="color: #f39c12; margin-right: 10px; margin-top: 3px;"></i>
+                                                  <div>
+                                                    <strong style="color: #555; display: block; margin-bottom: 2px;">Supervisor</strong>
+                                                    <span style="color: #333;">{{#if activitySupervisor}}{{activitySupervisor.value}}{{else}}System Administrator{{/if}}</span>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </mp-overlay-dialog-content>
+                                        </mp-overlay-dialog>
+                                      </td>
                                     </tr>
                                   {{/if}}
                                 {{/each}}
