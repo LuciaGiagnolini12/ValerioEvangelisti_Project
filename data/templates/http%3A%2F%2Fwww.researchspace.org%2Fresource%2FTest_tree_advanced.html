@@ -246,8 +246,7 @@
       border-left: 4px solid #3498db;
       padding: 10px;
       margin: 10px 0;
-      font-style: italic;
-      color: #555;
+      color: #000;
       font-size: 13px;
     }
     
@@ -455,7 +454,6 @@
     <!-- Right column: Node Details with Metadata -->
     <div style="flex: 1; min-width: 0;">
       <div class="sticky-metadata-container">
-        <h3 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 8px; margin-bottom: 15px;">[] Biblioteca</h3>
         <mp-event-target-template-render id='node-details-advanced' template='{{> detailsTemplate}}'>
         <template id='detailsTemplate'>
           {{#if iri}}
@@ -537,45 +535,36 @@
               <template id='metadataDisplay'>
                 {{#if bindings.length}}
                   {{#with bindings.[0]}}
-                    <!-- Node Details Section -->
-                    <div class="metadata-section">
-                      <h4>Node Details</h4>
-                      
-                      <div class="metadata-field">
-                        <span class="metadata-label">Title:</span>
-                        <span class="metadata-value">
-                          {{#if nodeLabel}}
-                            <strong>{{nodeLabel.value}}</strong>
-                          {{else}}
-                            <strong>{{../iri}}</strong>
-                          {{/if}}
-                        </span>
-                      </div>
-                      
-                      <div class="metadata-field">
-                        <span class="metadata-label">Type:</span>
-                        <span class="metadata-value">
-                          {{#if (eq ../../hasChildren "true")}}
-                            <i class="fa fa-folder" style="color: #ffc107; margin-right: 5px;"></i>
-                            Folder ({{../../childCount}} children)
-                          {{else}}
-                            <i class="fa fa-file-text-o" style="color: #2196F3; margin-right: 5px;"></i>
-                            Document
-                          {{/if}}
-                        </span>
-                      </div>
-                      
-                      <div class="metadata-field">
-                        <span class="metadata-label">IRI:</span>
-                        <span class="metadata-value">{{node.value}}</span>
-                      </div>
-                      
-                      {{#if techDescValue}}
-                        <div class="technical-description">
-                          <strong>File Technical Description:</strong> {{techDescValue.value}}
-                        </div>
+                    <!-- Dynamic Title with Icon and Child Count -->
+                    <h3 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 8px; margin-bottom: 8px;">
+                      {{#if (eq ../../hasChildren "true")}}
+                        <i class="fa fa-folder" style="color: #ffc107; margin-right: 8px;"></i>
+                      {{else}}
+                        <i class="fa fa-file-text-o" style="color: #2196F3; margin-right: 8px;"></i>
                       {{/if}}
+                      
+                      {{#if nodeLabel}}
+                        {{nodeLabel.value}}
+                      {{else}}
+                        {{../iri}}
+                      {{/if}}
+                      
+                      {{#if (eq ../../hasChildren "true")}}
+                        ({{../../childCount}})
+                      {{/if}}
+                    </h3>
+                    
+                    <!-- IRI in grey -->
+                    <div style="font-size: 0.9em; color: #888; margin-bottom: 15px; word-break: break-all;">
+                      {{node.value}}
                     </div>
+                    
+                    <!-- Technical Description (if available) - First, in black -->
+                    {{#if techDescValue}}
+                      <div style="background-color: #f0f8ff; border-left: 4px solid #3498db; padding: 10px; margin: 10px 0 15px 0; color: #000; font-size: 13px;">
+                        <strong>Technical Description:</strong> {{techDescValue.value}}
+                      </div>
+                    {{/if}}
                     
                     <!-- Record Metadata Section -->
                     <div class="metadata-section">
@@ -733,11 +722,11 @@
               </template>
             </semantic-query>
           {{else}}
-            <div class="metadata-section">
-              <h4>Node Details</h4>
-              <div class="no-metadata">
-                Click on a node in the tree to view its metadata.
-              </div>
+            <h3 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 8px; margin-bottom: 15px;">
+              Node Metadata
+            </h3>
+            <div class="no-metadata">
+              Click on a node in the tree to view its metadata.
             </div>
           {{/if}}
         </template>
