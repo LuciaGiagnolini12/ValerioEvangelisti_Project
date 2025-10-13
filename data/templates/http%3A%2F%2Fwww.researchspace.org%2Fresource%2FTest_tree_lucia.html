@@ -1,0 +1,269 @@
+<div class="page" style="background-color: #f5eddc; padding: 20px; border-radius: 10px;">
+  <style>
+    .highlightedTreeNode {
+      background-color: rgba(255, 165, 0, 0.4) !important;
+      border: 2px solid orange !important;
+      padding: 4px 8px !important;
+      margin: 2px 0 !important;
+      border-radius: 6px !important;
+      box-shadow: 0 2px 4px rgba(255, 165, 0, 0.3) !important;
+    }
+    
+    .siblingExpandButton {
+      background-color: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 4px;
+      padding: 4px 8px;
+      margin: 2px 0;
+      cursor: pointer;
+      font-size: 0.85em;
+      color: #6c757d;
+      transition: all 0.2s ease;
+    }
+    
+    .siblingExpandButton:hover {
+      background-color: #e9ecef;
+      border-color: #adb5bd;
+      color: #495057;
+    }
+  </style>
+  
+  <h1>Evangelisti Archive Tree - Advanced (Lazy Loading with Search)</h1>
+  
+  <p>This demonstrates the SemanticTreeAdvanced component with lazy loading and search functionality.</p>
+  
+  <!-- Two-column layout -->
+  <div style="display: flex; gap: 30px; margin-bottom: 20px;">
+    <!-- Left column: Semantic Tree Advanced -->
+    <div style="flex: 1; min-width: 0; background-color: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); padding: 15px;">
+      <h3 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 8px; margin-bottom: 15px;">Archive structure (Lazy Loading with Search)</h3>
+      <semantic-tree-advanced 
+        id="evangelisti-tree-advanced"
+        search-placeholder="Search archive nodes..."
+        search-query="
+          PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+          PREFIX ric: <https://www.ica.org/standards/RiC/ontology#>
+          SELECT DISTINCT ?node ?label WHERE {
+            GRAPH <http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS1> {
+              {
+                ?node rdfs:label ?label .
+              } UNION {
+                ?node ric:title ?label .
+              }
+              FILTER(CONTAINS(LCASE(?label), LCASE(&quot;$__searchText__&quot;)))
+            }
+          }
+        "
+        query="
+          PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+          PREFIX ric: <https://www.ica.org/standards/RiC/ontology#>
+          PREFIX bodi: <http://example.org/rico-bodi#>
+          SELECT DISTINCT ?parent ?node ?parentLabel ?nodeLabel ?hasChildren (COUNT(DISTINCT ?child) as ?childCount) WHERE {
+            GRAPH <http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS1> {
+              {
+                # RecordSet nodes
+                ?parent a ric:RecordSet .
+                ?parent ric:includesOrIncluded ?node .
+                ?parent ric:hasOrHadInstantiation ?pInst .
+                ?pInst bodi:hierarchyDepth ?depth .
+                FILTER(xsd:integer(?depth) < 2)
+              } UNION {
+                # Record nodes (leaves)
+                ?parent ric:includesOrIncluded ?node .
+                ?node a ric:Record .
+              }
+              
+              # Recupera label dai parent (RecordSet)
+              OPTIONAL { ?parent rdfs:label ?parentLabelOpt1 }
+              OPTIONAL { ?parent ric:title ?parentLabelOpt2 }
+              
+              # Recupera label dai nodi (RecordSet o Record)
+              OPTIONAL { ?node rdfs:label ?nodeLabelOpt1 }
+              OPTIONAL { ?node ric:title ?nodeLabelOpt2 }
+              
+              # Crea label con priorità: rdfs:label, poi ric:title, poi local name
+              BIND(COALESCE(?parentLabelOpt1, ?parentLabelOpt2, STRAFTER(STR(?parent), '#'), STRAFTER(STR(?parent), '/')) AS ?parentLabel)
+              BIND(COALESCE(?nodeLabelOpt1, ?nodeLabelOpt2, STRAFTER(STR(?node), '#'), STRAFTER(STR(?node), '/')) AS ?nodeLabel)
+              
+              OPTIONAL { ?node ric:includesOrIncluded ?child . }
+              BIND(EXISTS { ?node ric:includesOrIncluded ?anyChild . } AS ?hasChildren)
+            }
+          } GROUP BY ?parent ?node ?parentLabel ?nodeLabel ?hasChildren
+        "
+        expand-query="
+          PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+          PREFIX ric: <https://www.ica.org/standards/RiC/ontology#>
+          SELECT DISTINCT ?parent ?node ?parentLabel ?nodeLabel ?hasChildren (COUNT(DISTINCT ?child) as ?childCount) WHERE {
+            GRAPH <http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS1> {
+              <{{clickedNode}}> ric:includesOrIncluded ?node .
+              BIND(<{{clickedNode}}> as ?parent)
+              
+              # Recupera label dai parent
+              OPTIONAL { ?parent rdfs:label ?parentLabelOpt1 }
+              OPTIONAL { ?parent ric:title ?parentLabelOpt2 }
+              
+              # Recupera label dai nodi (possono essere RecordSet o Record)
+              OPTIONAL { ?node rdfs:label ?nodeLabelOpt1 }
+              OPTIONAL { ?node ric:title ?nodeLabelOpt2 }
+              
+              # Crea label con priorità: rdfs:label, poi ric:title, poi local name
+              BIND(COALESCE(?parentLabelOpt1, ?parentLabelOpt2, STRAFTER(STR(?parent), '#'), STRAFTER(STR(?parent), '/')) AS ?parentLabel)
+              BIND(COALESCE(?nodeLabelOpt1, ?nodeLabelOpt2, STRAFTER(STR(?node), '#'), STRAFTER(STR(?node), '/')) AS ?nodeLabel)
+              
+              OPTIONAL { ?node ric:includesOrIncluded ?child . }
+              BIND(EXISTS { ?node ric:includesOrIncluded ?anyChild . } AS ?hasChildren)
+            }
+          } GROUP BY ?parent ?node ?parentLabel ?nodeLabel ?hasChildren
+        "
+        path-to-root-query="
+          PREFIX ric: <https://www.ica.org/standards/RiC/ontology#>
+          SELECT DISTINCT ?ancestor WHERE {
+            GRAPH <http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS1> {
+              <$__node__> (ric:isOrWasPartOf)* ?ancestor .
+            }
+          }
+        "
+        roots='["http://ficlit.unibo.it/ArchivioEvangelisti/RS1_RS1"]'
+        has-children-binding="hasChildren"
+        enable-cache="true"
+        loading-template='<i class="fa fa-spinner fa-spin" style="color: #3498db; margin-left: 8px;"></i>'
+        tuple-template='{{> nodeTemplate}}'>
+        
+        <template id='nodeTemplate'>
+          <div>
+            {{#if (eq expandSiblings.value "true")}}
+              <!-- Expand siblings button -->
+              <div class="siblingExpandButton" style="background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; padding: 4px 8px; margin: 2px 0; cursor: pointer; font-size: 0.85em; color: #6c757d;">
+                <i class="fa fa-plus-circle" style="margin-right: 5px;"></i>
+                Expand {{hiddenCount.value}} siblings...
+              </div>
+            {{else}}
+              <!-- Regular node -->
+              <mp-event-trigger type='Component.TemplateUpdate' data='{"iri": "{{node.value}}"}' targets='["node-details-advanced"]'>
+                <div class="node-content" style="cursor: pointer; padding: 5px; border-radius: 4px; transition: background-color 0.2s; margin-bottom: 3px;">
+                  <div style="display: flex; align-items: center;">
+                    {{#if (eq hasChildren.value "true")}}
+                      <i class="fa fa-folder" style="margin-right: 8px; color: #ffc107;"></i>
+                      <span style="font-size: 0.8em; color: #777; margin-right: 5px;">({{childCount.value}})</span>
+                    {{else}}
+                      <i class="fa fa-file-text-o" style="margin-right: 8px; color: #2196F3;"></i>
+                    {{/if}}
+                    
+                    <div>
+                      <!-- Usa sempre nodeLabel che ora ha un fallback garantito -->
+                      <a href="{{node.value}}" target="_blank" style="font-weight: bold; color: #333; text-decoration: none;">
+                        {{nodeLabel.value}}
+                      </a>
+                      <div style="font-size: 0.8em; color: #777;">{{node.value}}</div>
+                    </div>
+                  </div>
+                </div>
+              </mp-event-trigger>
+            {{/if}}
+          </div>
+        </template>
+      </semantic-tree-advanced>
+    </div>
+    
+    <!-- Right column: Node Details -->
+    <div style="flex: 1; min-width: 0; border-left: 1px solid #eee; padding-left: 20px; background-color: #f9f9f9; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+      <h3 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 8px; margin-bottom: 15px;">Node Details</h3>
+      <mp-event-target-template-render id='node-details-advanced' template='{{> detailsTemplate}}'>
+        <template id='detailsTemplate'>
+          {{#if iri}}
+            <div class="node-details">
+              <h4><semantic-link iri="{{iri}}"></semantic-link></h4>
+              <p><strong>IRI:</strong> {{iri}}</p>
+              <p style="color: #666; font-style: italic;">Click on expandable nodes (with folder icons) to load their children dynamically.</p>
+            </div>
+          {{else}}
+            <div class="node-details-placeholder">
+              <p>Click on a node in the tree to view its details.</p>
+              <p style="color: #666; font-style: italic;">This tree uses lazy loading - children are loaded only when you expand a node.</p>
+            </div>
+          {{/if}}
+        </template>
+      </mp-event-target-template-render>
+    </div>
+  </div>
+  
+  <div style="background-color: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); padding: 15px; margin-top: 30px;">
+    <h3 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 8px; margin-bottom: 15px;">About this Advanced Tree</h3>
+    <p>
+      This tree demonstrates the <strong>SemanticTreeAdvanced</strong> component with lazy loading functionality.
+      Unlike the regular semantic tree that loads all data at once, this version loads data progressively.
+    </p>
+    <strong>Key Features:</strong>
+    <ul>
+      <li><strong>Lazy Loading:</strong> Child nodes are loaded only when you click to expand a parent node</li>
+      <li><strong>Performance:</strong> Initial load is faster as it only loads the first level of the hierarchy</li>
+      <li><strong>Caching:</strong> Once loaded, child nodes are cached to avoid re-querying</li>
+      <li><strong>Loading Indicators:</strong> Shows a spinner while loading child nodes</li>
+      <li><strong>Dynamic Queries:</strong> Uses the <code>{{clickedNode}}</code> variable to inject the expanded node's IRI into the expand query</li>
+      <li><strong>Node Highlighting:</strong> Supports highlighting specific nodes via events</li>
+      <li><strong>Search Functionality:</strong> Search bar allows finding and highlighting nodes by label</li>
+      <li><strong>Smart Labels:</strong> Now uses rdfs:label and ric:title with intelligent fallback to local names</li>
+      <li><strong>Record Support:</strong> Properly handles both ric:RecordSet containers and ric:Record leaves</li>
+    </ul>
+    <strong>Usage:</strong>
+    <ul>
+      <li>Click on a folder icon <i class="fa fa-folder" style="color: #ffc107;"></i> to expand and load children</li>
+      <li>Document icons <i class="fa fa-file-text-o" style="color: #2196F3;"></i> indicate leaf nodes (no children)</li>
+      <li>Watch for the loading spinner when expanding nodes</li>
+      <li>Use the search bar to find nodes by label - matching nodes will be highlighted and their paths expanded</li>
+      <li>Use the "Highlight Nodes" buttons below to test the highlighting feature</li>
+    </ul>
+  </div>
+  
+  <!-- Event Testing Section -->
+  <div style="background-color: #f8f9fa; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); padding: 15px; margin-top: 20px;">
+    <h3 style="color: #2c3e50; border-bottom: 2px solid #e74c3c; padding-bottom: 8px; margin-bottom: 15px;">
+      <i class="fa fa-bolt" style="color: #e74c3c; margin-right: 8px;"></i>
+      SemanticTreeHighlightNodes Event Testing
+    </h3>
+    <p>Test the new <strong>SemanticTreeHighlightNodes</strong> event by clicking the buttons below. This will highlight specific nodes in the tree and filter the view to show only highlighted paths.</p>
+    
+    <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px;">
+      <mp-event-trigger 
+        type='SemanticTreeHighlightNodes' 
+        targets='["evangelisti-tree-advanced"]'
+        data='{"nodeIds": ["http://ficlit.unibo.it/ArchivioEvangelisti/RS1_RS1"]}'>
+        <button class="btn btn-primary" style="background-color: #3498db; border: none; padding: 8px 16px; border-radius: 4px; color: white;">
+          <i class="fa fa-lightbulb-o" style="margin-right: 5px;"></i>
+          Highlight Root Node
+        </button>
+      </mp-event-trigger>
+      
+      <mp-event-trigger 
+        type='SemanticTreeHighlightNodes' 
+        targets='["evangelisti-tree-advanced"]'
+        data='{"nodeIds": ["http://ficlit.unibo.it/ArchivioEvangelisti/RS1_RS1_RS1_RS1_RS4_RR13", "http://ficlit.unibo.it/ArchivioEvangelisti/RS1_RS1_RS1_RS1_RS4_RR19", "http://ficlit.unibo.it/ArchivioEvangelisti/RS1_RS1_RS1_RS1_RS1_RR20", "http://ficlit.unibo.it/ArchivioEvangelisti/RS1_RS1_RS1_RS1_RS5_RR12"]}'>
+        <button class="btn btn-warning" style="background-color: #f39c12; border: none; padding: 8px 16px; border-radius: 4px; color: white;">
+          <i class="fa fa-star" style="margin-right: 5px;"></i>
+          Highlight Multiple Deep Nodes
+        </button>
+      </mp-event-trigger>
+      
+      <mp-event-trigger 
+        type='SemanticTreeHighlightNodes' 
+        targets='["evangelisti-tree-advanced"]'
+        data='{"nodeIds": []}'>
+        <button class="btn btn-secondary" style="background-color: #95a5a6; border: none; padding: 8px 16px; border-radius: 4px; color: white;">
+          <i class="fa fa-eraser" style="margin-right: 5px;"></i>
+          Clear Highlighting
+        </button>
+      </mp-event-trigger>
+    </div>
+    
+    <div style="background-color: #e8f4fd; border-left: 4px solid #3498db; padding: 10px; margin-top: 15px;">
+      <strong>How it works:</strong>
+      <ul style="margin: 5px 0 0 0; padding-left: 20px;">
+        <li>The event sends a list of node IRIs to highlight</li>
+        <li>The tree component receives the event and filters the view</li>
+        <li>Only highlighted nodes and their paths to the root are shown</li>
+        <li>Highlighted nodes get an orange background styling</li>
+        <li>Check the browser console for event debugging information</li>
+      </ul>
+    </div>
+  </div>
+</div>

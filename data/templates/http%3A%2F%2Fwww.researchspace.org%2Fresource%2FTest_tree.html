@@ -17,7 +17,7 @@
 
   ?parent a <https://www.ica.org/standards/RiC/ontology#RecordSet>.
 
-  ?parent <https://www.ica.org/standards/RiC/ontology#hasOrHadPart> ?node.
+  ?parent <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?node.
 
   ?parent <https://www.ica.org/standards/RiC/ontology#hasOrHadInstantiation> ?pInst.
 
@@ -27,7 +27,7 @@
 
   BIND(str(?node) as ?title)
 
-  BIND(EXISTS { ?node <https://www.ica.org/standards/RiC/ontology#hasOrHadPart> ?anyChild . } AS ?hasChildren)
+  BIND(EXISTS { ?node <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?anyChild . } AS ?hasChildren)
 
   FILTER(xsd:integer(?depth) < 4)
 
@@ -104,7 +104,7 @@
                         # Parent relationship
                         ?value rico:includesOrIncluded <{{iri}}> .
                         ?value rdfs:label ?valueLabel .
-                        BIND(rico:isOrWasIncludedIn AS ?property)
+                        BIND(rico:includesOrIncluded AS ?property)
                         BIND("Parent" AS ?propertyLabel)
                         BIND("Relationships" AS ?section)
                       } UNION {
