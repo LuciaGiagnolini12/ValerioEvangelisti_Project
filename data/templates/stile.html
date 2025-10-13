@@ -1,0 +1,273 @@
+<style>
+/* Tree lines styles - directly in template for visibility */
+    .treeWithLines .tree-view_children {
+      position: relative;
+      margin-left: 12px !important;
+      padding-left: 16px !important;
+    }
+
+    /* Vertical line connecting parent to children */
+    .treeWithLines .tree-view_children::before {
+      content: '';
+      position: absolute;
+      top: -10px;
+      left: 0;
+      bottom: 10px;
+      width: 1px;
+      background: #d4d4d8;
+      z-index: 0;
+    }
+
+    /* Hide vertical line for last child's children */
+    .treeWithLines .tree-view_item:last-child > .tree-view_children::before {
+      bottom: calc(100% - 10px);
+    }
+
+    /* Each tree-view needs relative positioning for horizontal lines */
+    .treeWithLines .tree-view {
+      position: relative;
+    }
+    
+    /* Horizontal line for expandable nodes (folders) */
+    .treeWithLines .tree-view_children > .tree-view::before {
+      content: '';
+      position: absolute;
+      top: 10px;
+      left: -16px;
+      width: 16px;
+      height: 1px;
+      background: #d4d4d8;
+      z-index: 0;
+    }
+    
+    /* Also for non-expandable items (files) directly in tree-view_children */
+    .treeWithLines .tree-view_children > .tree-node-container::before {
+      content: '';
+      position: absolute;
+      top: 10px;
+      left: -16px;
+      width: 16px;
+      height: 1px;
+      background: #d4d4d8;
+      z-index: 0;
+    }
+
+    /* Corner for last child */
+    .treeWithLines .tree-view_item:last-child::after {
+      content: '';
+      position: absolute;
+      left: -16px;
+      top: -100%;
+      bottom: calc(100% - 10px);
+      width: 1px;
+      background: white;
+      z-index: 1;
+    }
+
+    /* Ensure content is above lines */
+    .treeWithLines .tree-view_arrow,
+    .treeWithLines .tree-node-container {
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Dotted lines variant */
+    .treeWithLines.dottedLines .tree-view_children::before {
+      background: none;
+      border-left: 1px dotted #d4d4d8;
+    }
+    
+    .treeWithLines.dottedLines .tree-view_children > .tree-view::before,
+    .treeWithLines.dottedLines .tree-view_children > .tree-node-container::before {
+      background: none;
+      border-bottom: 1px dotted #d4d4d8;
+    }
+
+    .highlightedTreeNode {
+      background-color: rgba(255, 165, 0, 0.4) !important;
+      border: 2px solid orange !important;
+      padding: 4px 8px !important;
+      margin: 2px 0 !important;
+      border-radius: 6px !important;
+      box-shadow: 0 2px 4px rgba(255, 165, 0, 0.3) !important;
+    }
+    
+    /* Sticky metadata panel */
+    .sticky-metadata-container {
+      position: sticky;
+      top: 80px;  /* Increased from 20px to account for navbar */
+      max-height: calc(100vh - 100px);  /* Adjusted to match the new top offset */
+      overflow-y: auto;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      padding: 15px;
+    }
+    
+    /* Smooth scrollbar for metadata panel */
+    .sticky-metadata-container::-webkit-scrollbar {
+      width: 8px;
+    }
+    
+    .sticky-metadata-container::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 4px;
+    }
+    
+    .sticky-metadata-container::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 4px;
+    }
+    
+    .sticky-metadata-container::-webkit-scrollbar-thumb:hover {
+      background: #555;
+    }
+    
+    .siblingExpandButton {
+      background-color: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 4px;
+      padding: 4px 8px;
+      margin: 2px 0;
+      cursor: pointer;
+      font-size: 0.85em;
+      color: #6c757d;
+      transition: all 0.2s ease;
+    }
+    
+    .siblingExpandButton:hover {
+      background-color: #e9ecef;
+      border-color: #adb5bd;
+      color: #495057;
+    }
+    
+    /* Styles for related nodes icon */
+    .tree-node-container {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      width: 100%;
+    }
+    
+    .related-nodes-icon-btn {
+      transition: all 0.2s ease;
+    }
+    
+    .related-nodes-icon-btn:hover {
+      background-color: #f0f0f0 !important;
+      border-color: #999 !important;
+      color: #333 !important;
+    }
+    
+    .related-nodes-dropdown {
+      animation: fadeIn 0.2s ease;
+      /* Ensure dropdown is not constrained by parent overflow */
+      position: fixed !important;
+    }
+    
+    /* Ensure tree containers don't hide dropdowns */
+    .tree-view_children {
+      overflow: visible !important;
+    }
+    
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-5px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    /* Metadata display styles */
+    .metadata-section {
+      background-color: white;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    .metadata-section h4 {
+      color: #2c3e50;
+      border-bottom: 2px solid #3498db;
+      padding-bottom: 8px;
+      margin-bottom: 15px;
+      font-size: 16px;
+    }
+    
+    .metadata-field {
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+    
+    .metadata-label {
+      font-weight: bold;
+      color: #555;
+      display: inline-block;
+      min-width: 150px;
+    }
+    
+    .metadata-value {
+      color: #333;
+    }
+    
+    .metadata-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 13px;
+    }
+    
+    .metadata-table th {
+      background-color: #f8f9fa;
+      border: 1px solid #dee2e6;
+      padding: 8px;
+      text-align: left;
+      font-weight: 600;
+      color: #495057;
+    }
+    
+    .metadata-table td {
+      border: 1px solid #dee2e6;
+      padding: 8px;
+      color: #333;
+    }
+    
+    .metadata-table tr:nth-child(even) {
+      background-color: #f8f9fa;
+    }
+    
+    .technical-description {
+      background-color: #f0f8ff;
+      border-left: 4px solid #3498db;
+      padding: 10px;
+      margin: 10px 0;
+      color: #000;
+      font-size: 13px;
+    }
+    
+    .loading-metadata {
+      text-align: center;
+      padding: 20px;
+      color: #666;
+    }
+    
+    .no-metadata {
+      color: #999;
+      font-style: italic;
+      padding: 10px;
+      background-color: #f8f9fa;
+      border-radius: 4px;
+      text-align: center;
+    }
+
+    
+h1 {
+    font-size: 190pt !important;
+}
+
+
+</style>
