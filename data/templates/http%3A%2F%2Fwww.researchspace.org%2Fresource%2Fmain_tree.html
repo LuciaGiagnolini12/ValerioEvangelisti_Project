@@ -27,9 +27,9 @@
         "
         filter-options='[
           {
-            "label": "Exclude omitted",
+            "label": "Exclude records with omitted information",
             "description": "Hide files marked as having omitted information (folders are kept to show non-omitted children)",
-            "condition": "PREFIX rico-bodi: <http://example.org/rico-bodi#> PREFIX rico: <https://www.ica.org/standards/RiC/ontology#> SELECT ?node WHERE { ?node rico-bodi:omittedInformation \"yes\" . FILTER NOT EXISTS { ?node rico:includesOrIncluded ?child } }",
+            "condition": "PREFIX bodi: <http://w3id.org/bodi#> PREFIX rico: <https://www.ica.org/standards/RiC/ontology#> SELECT ?node WHERE { ?node bodi:omittedInformation \"yes\" . FILTER NOT EXISTS { ?node rico:includesOrIncluded ?child } }",
             "defaultChecked": false
           }
         ]'
@@ -37,7 +37,7 @@
           {
             "label": "Same Hash",
             "icon": "fa fa-copy",
-            "query": "PREFIX rico: <https://www.ica.org/standards/RiC/ontology#> PREFIX rico-bodi: <http://example.org/rico-bodi#> SELECT DISTINCT ?node WHERE { <$__nodeIri__> rico:hasOrHadInstantiation ?inst1 . ?inst1 rico-bodi:hasSameHashCodeAs ?inst2 . ?node rico:hasOrHadInstantiation ?inst2 . FILTER(?node != <$__nodeIri__>) }",
+            "query": "PREFIX rico: <https://www.ica.org/standards/RiC/ontology#> PREFIX bodi: <http://w3id.org/bodi#> SELECT DISTINCT ?node WHERE { <$__nodeIri__> rico:hasOrHadInstantiation ?inst1 . ?inst1 bodi:hasSameHashCodeAs ?inst2 . ?node rico:hasOrHadInstantiation ?inst2 . FILTER(?node != <$__nodeIri__>) }",
             "description": "Find all records with the same file hash (duplicate files)"
           }
         ]'
@@ -109,8 +109,8 @@
             # Get file type from technical metadata
             OPTIONAL {
               ?node <https://www.ica.org/standards/RiC/ontology#hasOrHadInstantiation> ?inst .
-              ?inst <http://example.org/rico-bodi#hasTechnicalMetadata> ?techMeta .
-              ?techMeta <http://example.org/rico-bodi#hasTechnicalMetadataType> <http://ficlit.unibo.it/ArchivioEvangelisti/system_tmtype_0001> .
+              ?inst <http://w3id.org/bodi#hasTechnicalMetadata> ?techMeta .
+              ?techMeta <http://w3id.org/bodi#hasTechnicalMetadataType> <http://ficlit.unibo.it/ArchivioEvangelisti/system_tmtype_0001> .
               ?techMeta <http://www.w3.org/1999/02/22-rdf-syntax-ns#value> ?fileType .
             }
           } GROUP BY ?parent ?node ?label ?title ?hasChildren ?fileType
@@ -150,44 +150,44 @@
                   <div style="display: flex; align-items: center;">
                     {{#if (eq node.value "http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1")}}
                       <!-- Root node - use home icon -->
-                      <i class="fa fa-home" style="margin-right: 8px; color: #27ae60; font-size: 1.2em;"></i>
+                      <i class="fa fa-home" style="margin-right: 8px; color: #777; font-size: 1.2em;"></i>
                       <span style="font-size: 0.8em; color: #777; margin-right: 5px;">({{childCount.value}})</span>
                     {{else if structuralTitle.value}}
                       <!-- Structural node - use archive icon -->
-                      <i class="fa fa-archive" style="margin-right: 8px; color: #9b59b6;"></i>
+                      <i class="fa fa-archive" style="margin-right: 8px; color:#E86A33;"></i>
                       <span style="font-size: 0.8em; color: #777; margin-right: 5px;">({{childCount.value}})</span>
                     {{else if (eq fileType.value "directory")}}
                       <!-- Node explicitly marked as directory -->
-                      <i class="fa fa-folder" style="margin-right: 8px; color: #ffc107;"></i>
+                      <i class="fa fa-folder" style="margin-right: 8px; color: #d4c7b2;"></i>
                       <span style="font-size: 0.8em; color: #777; margin-right: 5px;">({{childCount.value}})</span>
                     {{else if (eq fileType.value "file")}}
                       <!-- Node explicitly marked as file -->
-                      <i class="fa fa-file-text-o" style="margin-right: 8px; color: #2196F3;"></i>
+                      <i class="fa fa-file-text-o" style="margin-right: 8px; color: #777;"></i>
                     {{else if (eq hasChildren.value "true")}}
                       <!-- Fallback: has children = folder -->
-                      <i class="fa fa-folder" style="margin-right: 8px; color: #ffc107;"></i>
+                      <i class="fa fa-folder" style="margin-right: 8px; color: #d4c7b2;"></i>
                       <span style="font-size: 0.8em; color: #777; margin-right: 5px;">({{childCount.value}})</span>
                     {{else}}
                       <!-- Fallback: no children = file -->
-                      <i class="fa fa-file-text-o" style="margin-right: 8px; color: #2196F3;"></i>
+                      <i class="fa fa-file-text-o" style="margin-right: 8px; color: #777;"></i>
                     {{/if}}
                     
                     <div>
                       {{#if (eq node.value "http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1")}}
                         <!-- Root node - show custom name -->
-                        <a href="{{node.value}}" target="_blank" style="font-weight: bold; color: #27ae60; text-decoration: none; font-size: 1.1em;">Born-Digital Materials</a>
+                        <a href="{{node.value}}" target="_blank" style="font-weight: bold; color: #333; text-decoration: none; font-size: 1.1em;">Born-Digital Materials</a>
                       {{else if (eq node.value "http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS1")}}
                         <!-- RS1_RS1 custom title -->
-                        <a href="{{node.value}}" target="_blank" style="font-weight: bold; color: #9b59b6; text-decoration: none;">{{title.value}}</a>
+                        <a href="{{node.value}}" target="_blank" style="font-weight: bold; color: #333; text-decoration: none;">{{title.value}}</a>
                       {{else if (eq node.value "http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS2")}}
                         <!-- RS1_RS2 custom title -->
-                        <a href="{{node.value}}" target="_blank" style="font-weight: bold; color: #9b59b6; text-decoration: none;">{{title.value}}</a>
+                        <a href="{{node.value}}" target="_blank" style="font-weight: bold; color: #333; text-decoration: none;">{{title.value}}</a>
                       {{else if (eq node.value "http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS3")}}
                         <!-- RS1_RS3 custom title -->
-                        <a href="{{node.value}}" target="_blank" style="font-weight: bold; color: #9b59b6; text-decoration: none;">{{title.value}}</a>
+                        <a href="{{node.value}}" target="_blank" style="font-weight: bold; color: #333; text-decoration: none;">{{title.value}}</a>
                       {{else if structuralTitle.value}}
                         <!-- For other structural nodes, show the isRelatedTo value -->
-                        <a href="{{node.value}}" target="_blank" style="font-weight: bold; color: #9b59b6; text-decoration: none;">{{structuralTitle.value}}</a>
+                        <a href="{{node.value}}" target="_blank" style="font-weight: bold; color: #333; text-decoration: none;">{{structuralTitle.value}}</a>
                       {{else if title.value}}
                         <a href="{{node.value}}" target="_blank" style="font-weight: bold; color: #333; text-decoration: none;">{{title.value}}</a>
                       {{else}}
@@ -215,7 +215,7 @@
             <semantic-query 
               query='
                 PREFIX rico: <https://www.ica.org/standards/RiC/ontology#>
-                PREFIX rico-bodi: <http://example.org/rico-bodi#>
+                PREFIX bodi: <http://w3id.org/bodi#>
                 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
                 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
                 
@@ -264,17 +264,17 @@
                     
                     # Get technical description
                     OPTIONAL {
-                      ?instantiation rico-bodi:hasTechnicalDescription ?techDesc .
+                      ?instantiation bodi:hasTechnicalDescription ?techDesc .
                       ?techDesc rdf:value ?techDescValue .
                     }
                     
                   # Get technical metadata
                   OPTIONAL {
-                    ?instantiation rico-bodi:hasTechnicalMetadata ?techMetadata .
+                    ?instantiation bodi:hasTechnicalMetadata ?techMetadata .
                     ?techMetadata rdfs:label ?techMetadataLabel .
                     ?techMetadata rdf:value ?techMetadataValue .
                     OPTIONAL {
-                      ?techMetadata rico-bodi:hasTechnicalMetadataType ?techMetadataType .
+                      ?techMetadata bodi:hasTechnicalMetadataType ?techMetadataType .
                       ?techMetadataType rdfs:label ?techMetadataTypeLabel .
                       OPTIONAL {
                         ?techMetadataType rico:isOrWasPartOf ?metadataSet .
@@ -284,11 +284,11 @@
                     
                     # Get provenance information for this metadata
                     OPTIONAL {
-                      ?techMetadata rico-bodi:generatedBy ?activity .
+                      ?techMetadata bodi:generatedBy ?activity .
                       OPTIONAL { ?activity rdfs:label ?activityLabel }
                       OPTIONAL {
                         ?activity rico:isOrWasPerformedBy ?softwarestack .
-                        ?softwarestack rdf:type rico-bodi:SoftwareStack .
+                        ?softwarestack rdf:type bodi:SoftwareStack .
                         ?softwarestack rdfs:label ?softwareStackLabel .
                       }
                       OPTIONAL {
@@ -300,7 +300,7 @@
                         ?extent rdf:value ?parsingTime .
                       }
                       OPTIONAL {
-                        ?activity rico-bodi:hasOrHadSupervisor ?person .
+                        ?activity bodi:hasOrHadSupervisor ?person .
                         ?person rdfs:label ?activitySupervisor .
                       }
                     }
@@ -315,11 +315,11 @@
                 {{#if bindings.length}}
                   {{#with bindings.[0]}}
                     <!-- Dynamic Title with Icon and Child Count -->
-              <h3 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 8px; margin-bottom: 8px;">
+              <h3 style="color: #2c3e50; border-bottom: 2px solid #E86A33; padding-bottom: 8px; margin-bottom: 8px;">
                 {{#if (eq ../../hasChildren "true")}}
-                  <i class="fa fa-folder" style="color: #ffc107; margin-right: 8px;"></i>
+                  <i class="fa fa-folder" style="color: #d4c7b2; margin-right: 8px;"></i>
                 {{else}}
-                  <i class="fa fa-file-text-o" style="color: #2196F3; margin-right: 8px;"></i>
+                  <i class="fa fa-file-text-o" style="color: #777; margin-right: 8px;"></i>
                 {{/if}}
                 
                 {{#if (eq ../iri "http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS1")}}
@@ -357,8 +357,8 @@
                                   (eq ../iri "http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS3")))}}
                       
                       <!-- Custom Information for RS1_RS1, RS1_RS2, RS1_RS3 -->
-                      <div class="metadata-section" style="background-color: #fff3cd; border-left: 4px solid #ffc107;">
-                        <h4 style="color: #856404; border-bottom: 2px solid #ffc107;">
+                      <div class="metadata-section" style="background-color: #f5eddc; border-left: 4px solid #d4c7b2;">
+                        <h4 style="color: #856404; border-bottom: 2px solid #d4c7b2;">
                           <i class="fa fa-star" style="margin-right: 8px;"></i>
                           Directory Information
                         </h4>
@@ -1002,58 +1002,7 @@
                             <em>No modification date available</em>
                           {{/if}}
                           
-                          {{#if modificationDate}}
-                            <mp-overlay-dialog title="Modification Date Provenance" type="modal" bs-size="small">
-                              <mp-overlay-dialog-trigger>
-                                <i class="fa fa-info-circle" style="color: #17a2b8; cursor: pointer; margin-left: 5px; font-size: 14px;"></i>
-                              </mp-overlay-dialog-trigger>
-                              <mp-overlay-dialog-content>
-                                <div style="padding: 20px; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); border-radius: 8px;">
-                                  <h5 style="color: #2c3e50; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #3498db;">
-                                    <i class="fa fa-info-circle" style="color: #3498db; margin-right: 8px;"></i>
-                                    Provenance Information
-                                  </h5>
-                                  <div style="background: white; padding: 15px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                                    <div style="margin-bottom: 12px; display: flex; align-items: start;">
-                                      <i class="fa fa-cogs" style="color: #e74c3c; margin-right: 10px; margin-top: 3px;"></i>
-                                      <div>
-                                        <strong style="color: #555; display: block; margin-bottom: 2px;">Activity</strong>
-                                        <span style="color: #333;">Last modified date extraction</span>
-                                      </div>
-                                    </div>
-                                    <div style="margin-bottom: 12px; display: flex; align-items: start;">
-                                      <i class="fa fa-server" style="color: #9b59b6; margin-right: 10px; margin-top: 3px;"></i>
-                                      <div>
-                                        <strong style="color: #555; display: block; margin-bottom: 2px;">Software Stack</strong>
-                                        <span style="color: #333;">FileSystemAnalyzer v2.1</span>
-                                      </div>
-                                    </div>
-                                    <div style="margin-bottom: 12px; display: flex; align-items: start;">
-                                      <i class="fa fa-calendar" style="color: #3498db; margin-right: 10px; margin-top: 3px;"></i>
-                                      <div>
-                                        <strong style="color: #555; display: block; margin-bottom: 2px;">Date</strong>
-                                        <span style="color: #333;">2025-01-08</span>
-                                      </div>
-                                    </div>
-                                    <div style="margin-bottom: 12px; display: flex; align-items: start;">
-                                      <i class="fa fa-clock-o" style="color: #27ae60; margin-right: 10px; margin-top: 3px;"></i>
-                                      <div>
-                                        <strong style="color: #555; display: block; margin-bottom: 2px;">Processing Time</strong>
-                                        <span style="color: #333;">0.003 seconds</span>
-                                      </div>
-                                    </div>
-                                    <div style="display: flex; align-items: start;">
-                                      <i class="fa fa-user" style="color: #f39c12; margin-right: 10px; margin-top: 3px;"></i>
-                                      <div>
-                                        <strong style="color: #555; display: block; margin-bottom: 2px;">Supervisor</strong>
-                                        <span style="color: #333;">Automated Process</span>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                              </mp-overlay-dialog-content>
-                            </mp-overlay-dialog>
-                          {{/if}}
+                        
                         </span>
                       </div>
                     </div>
@@ -1131,81 +1080,8 @@
                         {{#if ../bindings}}
                           <!-- File System Metadata -->
                           <div style="margin-top: 15px;">
-                            <strong>File System Metadata</strong>
-                            <table class="metadata-table">
-                              <thead>
-                                <tr>
-                                  <th>Property</th>
-                                  <th>Value</th>
-                                  <th style="width: 30px;"></th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {{#each ../bindings}}
-                                  {{#if (and techMetadataLabel (eq metadataSetLabel.value "File system metadata"))}}
-                                    <tr>
-                                      <td>{{techMetadataTypeLabel.value}}</td>
-                                      <td>{{techMetadataValue.value}}</td>
-                                      <td style="text-align: center;">
-                                        <mp-overlay-dialog title="{{techMetadataTypeLabel.value}} Provenance" type="modal" bs-size="small">
-                                          <mp-overlay-dialog-trigger>
-                                            <i class="fa fa-info-circle" style="color: #17a2b8; cursor: pointer; font-size: 14px;"></i>
-                                          </mp-overlay-dialog-trigger>
-                                          <mp-overlay-dialog-content>
-                                            <div style="padding: 20px; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); border-radius: 8px;">
-                                              <h5 style="color: #2c3e50; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #3498db;">
-                                                <i class="fa fa-info-circle" style="color: #3498db; margin-right: 8px;"></i>
-                                                Provenance Information
-                                              </h5>
-                                              <div style="background: white; padding: 15px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                                                <div style="margin-bottom: 12px; display: flex; align-items: start;">
-                                                  <i class="fa fa-cogs" style="color: #e74c3c; margin-right: 10px; margin-top: 3px;"></i>
-                                                  <div>
-                                                    <strong style="color: #555; display: block; margin-bottom: 2px;">Activity</strong>
-                                                    <span style="color: #333;">{{#if activityLabel}}{{activityLabel.value}}{{else}}Metadata extraction{{/if}}</span>
-                                                  </div>
-                                                </div>
-                                                <div style="margin-bottom: 12px; display: flex; align-items: start;">
-                                                  <i class="fa fa-server" style="color: #9b59b6; margin-right: 10px; margin-top: 3px;"></i>
-                                                  <div>
-                                                    <strong style="color: #555; display: block; margin-bottom: 2px;">Software Stack</strong>
-                                                    <span style="color: #333;">{{#if softwareStackLabel}}{{softwareStackLabel.value}}{{else}}FileSystemAnalyzer v2.1{{/if}}</span>
-                                                  </div>
-                                                </div>
-                                                <div style="margin-bottom: 12px; display: flex; align-items: start;">
-                                                  <i class="fa fa-calendar" style="color: #3498db; margin-right: 10px; margin-top: 3px;"></i>
-                                                  <div>
-                                                    <strong style="color: #555; display: block; margin-bottom: 2px;">Date</strong>
-                                                    <span style="color: #333;">{{#if dateValue}}{{dateValue.value}}{{else}}2025-01-08{{/if}}</span>
-                                                  </div>
-                                                </div>
-                                                <div style="margin-bottom: 12px; display: flex; align-items: start;">
-                                                  <i class="fa fa-clock-o" style="color: #27ae60; margin-right: 10px; margin-top: 3px;"></i>
-                                                  <div>
-                                                    <strong style="color: #555; display: block; margin-bottom: 2px;">Processing Time</strong>
-                                                    <span style="color: #333;">{{#if parsingTime}}{{parsingTime.value}}{{else}}0.005 seconds{{/if}}</span>
-                                                  </div>
-                                                </div>
-                                                <div style="display: flex; align-items: start;">
-                                                  <i class="fa fa-user" style="color: #f39c12; margin-right: 10px; margin-top: 3px;"></i>
-                                                  <div>
-                                                    <strong style="color: #555; display: block; margin-bottom: 2px;">Supervisor</strong>
-                                                    <span style="color: #333;">{{#if activitySupervisor}}{{activitySupervisor.value}}{{else}}Automated Process{{/if}}</span>
-                                                  </div>
-                                                </div>
-                                              </div>
-                                            </div>
-                                          </mp-overlay-dialog-content>
-                                        </mp-overlay-dialog>
-                                      </td>
-                                    </tr>
-                                  {{/if}}
-                                {{/each}}
-                              </tbody>
-                            </table>
-                          </div>
-                          
-                          <!-- Content Metadata -->
+
+                            <!-- Content Metadata -->
                           <div style="margin-top: 15px;">
                             <strong>Content Metadata</strong>
                             <table class="metadata-table">
@@ -1280,6 +1156,80 @@
                               </tbody>
                             </table>
                           </div>
+                            <strong>File System Metadata</strong>
+                            <table class="metadata-table">
+                              <thead>
+                                <tr>
+                                  <th>Property</th>
+                                  <th>Value</th>
+                                  <th style="width: 30px;"></th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {{#each ../bindings}}
+                                  {{#if (and techMetadataLabel (eq metadataSetLabel.value "File system metadata"))}}
+                                    <tr>
+                                      <td>{{techMetadataTypeLabel.value}}</td>
+                                      <td>{{techMetadataValue.value}}</td>
+                                      <td style="text-align: center;">
+                                        <mp-overlay-dialog title="{{techMetadataTypeLabel.value}} Provenance" type="modal" bs-size="small">
+                                          <mp-overlay-dialog-trigger>
+                                            <i class="fa fa-info-circle" style="color: #17a2b8; cursor: pointer; font-size: 14px;"></i>
+                                          </mp-overlay-dialog-trigger>
+                                          <mp-overlay-dialog-content>
+                                            <div style="padding: 20px; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); border-radius: 8px;">
+                                              <h5 style="color: #2c3e50; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #3498db;">
+                                                <i class="fa fa-info-circle" style="color: #3498db; margin-right: 8px;"></i>
+                                                Provenance Information
+                                              </h5>
+                                              <div style="background: white; padding: 15px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                                <div style="margin-bottom: 12px; display: flex; align-items: start;">
+                                                  <i class="fa fa-cogs" style="color: #e74c3c; margin-right: 10px; margin-top: 3px;"></i>
+                                                  <div>
+                                                    <strong style="color: #555; display: block; margin-bottom: 2px;">Activity</strong>
+                                                    <span style="color: #333;">{{#if activityLabel}}{{activityLabel.value}}{{else}}Metadata extraction{{/if}}</span>
+                                                  </div>
+                                                </div>
+                                                <div style="margin-bottom: 12px; display: flex; align-items: start;">
+                                                  <i class="fa fa-server" style="color: #9b59b6; margin-right: 10px; margin-top: 3px;"></i>
+                                                  <div>
+                                                    <strong style="color: #555; display: block; margin-bottom: 2px;">Software Stack</strong>
+                                                    <span style="color: #333;">{{#if softwareStackLabel}}{{softwareStackLabel.value}}{{else}}FileSystemAnalyzer v2.1{{/if}}</span>
+                                                  </div>
+                                                </div>
+                                                <div style="margin-bottom: 12px; display: flex; align-items: start;">
+                                                  <i class="fa fa-calendar" style="color: #3498db; margin-right: 10px; margin-top: 3px;"></i>
+                                                  <div>
+                                                    <strong style="color: #555; display: block; margin-bottom: 2px;">Date</strong>
+                                                    <span style="color: #333;">{{#if dateValue}}{{dateValue.value}}{{else}}2025-01-08{{/if}}</span>
+                                                  </div>
+                                                </div>
+                                                <div style="margin-bottom: 12px; display: flex; align-items: start;">
+                                                  <i class="fa fa-clock-o" style="color: #27ae60; margin-right: 10px; margin-top: 3px;"></i>
+                                                  <div>
+                                                    <strong style="color: #555; display: block; margin-bottom: 2px;">Processing Time</strong>
+                                                    <span style="color: #333;">{{#if parsingTime}}{{parsingTime.value}}{{else}}0.005 seconds{{/if}}</span>
+                                                  </div>
+                                                </div>
+                                                <div style="display: flex; align-items: start;">
+                                                  <i class="fa fa-user" style="color: #f39c12; margin-right: 10px; margin-top: 3px;"></i>
+                                                  <div>
+                                                    <strong style="color: #555; display: block; margin-bottom: 2px;">Supervisor</strong>
+                                                    <span style="color: #333;">{{#if activitySupervisor}}{{activitySupervisor.value}}{{else}}Automated Process{{/if}}</span>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </mp-overlay-dialog-content>
+                                        </mp-overlay-dialog>
+                                      </td>
+                                    </tr>
+                                  {{/if}}
+                                {{/each}}
+                              </tbody>
+                            </table>
+                          </div>
+                          
                           
                           <!-- Other Technical Metadata -->
                           <div style="margin-top: 15px;">
@@ -1379,7 +1329,7 @@
               </template>
             </semantic-query>
           {{else}}
-            <h3 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 8px; margin-bottom: 15px;">
+            <h3 style="color: #2c3e50; border-bottom: 2px solid #E86A33; padding-bottom: 8px; margin-bottom: 15px;">
               Node Metadata
             </h3>
             <div class="no-metadata">
