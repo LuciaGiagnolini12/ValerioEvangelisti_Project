@@ -1,15 +1,129 @@
-<div class="page" style="background-color: #f5eddc; padding: 20px; border-radius: 10px;">
+<style>
+  :root {
+    --color-beige: #f5eddc;
+    --color-dark-beige: #e8dcc8;
+    --color-black: #1a1a1a;
+    --color-orange: #E86A33;
+    --color-light-orange: #FF8C5A;
+    --color-white: #FFFFFF;
+    --color-text-light: #4a5568;
+    --color-text-dark: #2d3748;
+    --navbar-height: 80px; /* Matches the actual navbar height */
+  }
 
-  <h1>Evangelisti Digital Archive</h1>
-  
-  <p>Our Vision </p>
+  /* Only reset vertical margins to eliminate gaps */
+  body {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
 
-  
+  /* Ensure template-content fills available height */
+  #template-content {
+    height: calc(100vh - var(--navbar-height) + 16px);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .page {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    padding-top: 0 !important;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .full-height-page {
+    flex: 1;
+    background-color: var(--color-beige);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+  }
+
+  .page-header {
+    flex-shrink: 0;
+    margin-bottom: 20px;
+  }
+
+  .page-header h1 {
+    color: var(--color-dark);
+    margin: 0 0 10px 0;
+    font-size: 2.5em;
+    font-weight: 300;
+  }
+
+  .page-header p {
+    color: var(--color-text-dark);
+    margin: 0;
+    font-size: 1.1em;
+  }
+
+  .content-columns {
+    display: flex;
+    gap: 30px;
+    flex: 1;
+    min-height: 0; /* Important for flex children */
+  }
+
+  .tree-column {
+    flex: 1;
+    min-width: 0;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .tree-column h3 {
+    flex-shrink: 0;
+    color: #2c3e50;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 8px;
+    margin-bottom: 15px;
+  }
+
+  .tree-container {
+    flex: 1;
+    overflow-y: auto;
+    min-height: 0;
+  }
+
+  .metadata-column {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .sticky-metadata-container {
+    flex: 1;
+    overflow-y: auto;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    padding: 15px;
+  }
+</style>
+
+<div class="page full-height-page">
+  <!-- Page Header -->
+  <div class="page-header">
+    <h1>Evangelisti Digital Archive</h1>
+    <p>Explore the comprehensive digital archive of Valerio Evangelisti's works and materials</p>
+  </div>
+
   <!-- Two-column layout -->
-  <div style="display: flex; gap: 30px; margin-bottom: 20px;">
+  <div class="content-columns">
     <!-- Left column: Semantic Tree Advanced -->
-    <div style="flex: 1; min-width: 0; background-color: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); padding: 15px;">
-      <h3 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 8px; margin-bottom: 15px;">Archive structure</h3>
+    <div class="tree-column">
+      <h3>Archive Structure</h3>
+      <div class="tree-container">
       <semantic-tree-advanced 
         id="evangelisti-tree-advanced"
         show-tree-lines="true"
@@ -183,10 +297,11 @@
           </div>
         </template>
       </semantic-tree-advanced>
+      </div>
     </div>
     
     <!-- Right column: Node Details with Metadata -->
-    <div style="flex: 1; min-width: 0;">
+    <div class="metadata-column">
       <div class="sticky-metadata-container">
         <mp-event-target-template-render id='node-details-advanced' template='{{> detailsTemplate}}'>
         <template id='detailsTemplate'>
