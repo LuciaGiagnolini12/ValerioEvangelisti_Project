@@ -293,7 +293,7 @@
           {
             "label": "Exclude omitted",
             "description": "Hide files marked as having omitted information (folders are kept to show non-omitted children)",
-            "condition": "PREFIX rico-bodi: <http://example.org/rico-bodi#> PREFIX rico: <https://www.ica.org/standards/RiC/ontology#> SELECT ?node WHERE { ?node rico-bodi:omittedInformation \"yes\" . FILTER NOT EXISTS { ?node rico:includesOrIncluded ?child } }",
+            "condition": "PREFIX bodi: <http://w3id.org/bodi#> PREFIX rico: <https://www.ica.org/standards/RiC/ontology#> SELECT ?node WHERE { ?node bodi:omittedInformation \"yes\" . FILTER NOT EXISTS { ?node rico:includesOrIncluded ?child } }",
             "defaultChecked": false
           }
         ]'
@@ -301,7 +301,7 @@
           {
             "label": "Same Hash",
             "icon": "fa fa-copy",
-            "query": "PREFIX rico: <https://www.ica.org/standards/RiC/ontology#> PREFIX rico-bodi: <http://example.org/rico-bodi#> SELECT DISTINCT ?node WHERE { <$__nodeIri__> rico:hasOrHadInstantiation ?inst1 . ?inst1 rico-bodi:hasSameHashCodeAs ?inst2 . ?node rico:hasOrHadInstantiation ?inst2 . FILTER(?node != <$__nodeIri__>) }",
+            "query": "PREFIX rico: <https://www.ica.org/standards/RiC/ontology#> PREFIX bodi: <http://w3id.org/bodi#> SELECT DISTINCT ?node WHERE { <$__nodeIri__> rico:hasOrHadInstantiation ?inst1 . ?inst1 bodi:hasSameHashCodeAs ?inst2 . ?node rico:hasOrHadInstantiation ?inst2 . FILTER(?node != <$__nodeIri__>) }",
             "description": "Find all records with the same file hash (duplicate files)"
           }
         ]'
@@ -339,8 +339,8 @@
             # Get file type from technical metadata
             OPTIONAL {
               ?dataNode <https://www.ica.org/standards/RiC/ontology#hasOrHadInstantiation> ?inst .
-              ?inst <http://example.org/rico-bodi#hasTechnicalMetadata> ?techMeta .
-              ?techMeta <http://example.org/rico-bodi#hasTechnicalMetadataType> <http://ficlit.unibo.it/ArchivioEvangelisti/system_tmtype_0001> .
+              ?inst <http://w3id.org/bodi#hasTechnicalMetadata> ?techMeta .
+              ?techMeta <http://w3id.org/bodi#hasTechnicalMetadataType> <http://ficlit.unibo.it/ArchivioEvangelisti/system_tmtype_0001> .
               ?techMeta <http://www.w3.org/1999/02/22-rdf-syntax-ns#value> ?fileType .
             }
           } GROUP BY ?parent ?node ?label ?title ?structuralTitle ?hasChildren ?isRoot ?fileType
@@ -365,8 +365,8 @@
             # Get file type from technical metadata
             OPTIONAL {
               ?node <https://www.ica.org/standards/RiC/ontology#hasOrHadInstantiation> ?inst .
-              ?inst <http://example.org/rico-bodi#hasTechnicalMetadata> ?techMeta .
-              ?techMeta <http://example.org/rico-bodi#hasTechnicalMetadataType> <http://ficlit.unibo.it/ArchivioEvangelisti/system_tmtype_0001> .
+              ?inst <http://w3id.org/bodi#hasTechnicalMetadata> ?techMeta .
+              ?techMeta <http://w3id.org/bodi#hasTechnicalMetadataType> <http://ficlit.unibo.it/ArchivioEvangelisti/system_tmtype_0001> .
               ?techMeta <http://www.w3.org/1999/02/22-rdf-syntax-ns#value> ?fileType .
             }
           } GROUP BY ?parent ?node ?label ?title ?hasChildren ?fileType
@@ -461,7 +461,7 @@
             <semantic-query 
               query='
                 PREFIX rico: <https://www.ica.org/standards/RiC/ontology#>
-                PREFIX rico-bodi: <http://example.org/rico-bodi#>
+                PREFIX bodi: <http://w3id.org/bodi#>
                 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
                 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
                 
@@ -510,17 +510,17 @@
                     
                     # Get technical description
                     OPTIONAL {
-                      ?instantiation rico-bodi:hasTechnicalDescription ?techDesc .
+                      ?instantiation bodi:hasTechnicalDescription ?techDesc .
                       ?techDesc rdf:value ?techDescValue .
                     }
                     
                   # Get technical metadata
                   OPTIONAL {
-                    ?instantiation rico-bodi:hasTechnicalMetadata ?techMetadata .
+                    ?instantiation bodi:hasTechnicalMetadata ?techMetadata .
                     ?techMetadata rdfs:label ?techMetadataLabel .
                     ?techMetadata rdf:value ?techMetadataValue .
                     OPTIONAL {
-                      ?techMetadata rico-bodi:hasTechnicalMetadataType ?techMetadataType .
+                      ?techMetadata bodi:hasTechnicalMetadataType ?techMetadataType .
                       ?techMetadataType rdfs:label ?techMetadataTypeLabel .
                       OPTIONAL {
                         ?techMetadataType rico:isOrWasPartOf ?metadataSet .
@@ -530,11 +530,11 @@
                     
                     # Get provenance information for this metadata
                     OPTIONAL {
-                      ?techMetadata rico-bodi:generatedBy ?activity .
+                      ?techMetadata bodi:generatedBy ?activity .
                       OPTIONAL { ?activity rdfs:label ?activityLabel }
                       OPTIONAL {
                         ?activity rico:isOrWasPerformedBy ?softwarestack .
-                        ?softwarestack rdf:type rico-bodi:SoftwareStack .
+                        ?softwarestack rdf:type bodi:SoftwareStack .
                         ?softwarestack rdfs:label ?softwareStackLabel .
                       }
                       OPTIONAL {
@@ -546,7 +546,7 @@
                         ?extent rdf:value ?parsingTime .
                       }
                       OPTIONAL {
-                        ?activity rico-bodi:hasOrHadSupervisor ?person .
+                        ?activity bodi:hasOrHadSupervisor ?person .
                         ?person rdfs:label ?activitySupervisor .
                       }
                     }
@@ -1218,4 +1218,4 @@
   </div>
 </div>
 
-[[> provolone ]]
+[[> stile ]]
