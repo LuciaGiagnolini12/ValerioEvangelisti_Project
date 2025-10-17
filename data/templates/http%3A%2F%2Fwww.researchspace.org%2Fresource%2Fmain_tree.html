@@ -8,7 +8,7 @@
     <!-- Left column: Semantic Tree Advanced -->
     <div class="tree-column">
       <h3>Archival Structure</h3>
-      <p>Explore the born-digital ar and navigate through its hierarchical structure, discovering related actors, events, places, objects, and concepts interconnected within the archive</p>
+      <p>Explore the born-digital ar and navigate through its hierarchical structure.</p>
 
       <div class="tree-container">
       <semantic-tree-advanced 
@@ -26,7 +26,7 @@
         "
         filter-options='[
         {
-          "label": "Exclude records with omitted information",
+          "label": "Hide anonymized information",
           "description": "Hide files marked as having omitted information (folders are kept to show non-omitted children)",
           "condition": "PREFIX bodi: <http://w3id.org/bodi#> PREFIX rico: <https://www.ica.org/standards/RiC/ontology#> SELECT ?node WHERE { ?node bodi:omittedInformation \"yes\" . FILTER NOT EXISTS { ?node rico:includesOrIncluded ?child } }",
           "defaultChecked": false
@@ -70,9 +70,9 @@
             
             # Set custom titles for specific nodes (RS1_RS1, RS1_RS2, RS1_RS3)
             BIND(
-              IF(?node = <http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS1>, &quot;Primary Hard Disk&quot;,
-              IF(?node = <http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS2>, &quot;External Hard Disk&quot;,
-              IF(?node = <http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS3>, &quot;Floppy Disks&quot;,
+              IF(?node = <http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS1>, &quot;Primary Hard Drive&quot;,
+              IF(?node = <http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS2>, &quot;External Hard Drive&quot;,
+              IF(?node = <http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS3>, &quot;Floppy Disks Collection&quot;,
               ?tempTitle)))
             AS ?title)
             
@@ -330,11 +330,11 @@
                 {{/if}}
                 
                 {{#if (eq ../iri "http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS1")}}
-                  Primary Hard Disk 
+                  Primary Hard Drive 
                 {{else if (eq ../iri "http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS2")}}
-                  External Hard Disk
+                  External Hard Drive
                 {{else if (eq ../iri "http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS3")}}
-                  Floppy Disks
+                  Floppy Disks Collection
                 {{else if nodeLabel}}
                   {{nodeLabel.value}}
                 {{else}}
@@ -373,12 +373,12 @@
                         {{#if (eq ../iri "http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS1")}}
                         <div class="metadata-field">
                           <span class="metadata-label">Directory Type:</span>
-                          <span class="metadata-value">Materials originally stored on the hard disk of Evangelisti's desktop computer</span>
+                          <span class="metadata-value">Materials originally stored on the hard drive of Evangelisti's desktop computer</span>
                         </div>
                         <div class="metadata-field">
                           <span class="metadata-label">Description:</span>
                           <span class="metadata-value">
-                            This hard disk preserves the primary workspace of Evangelisti, containing 65,448 items (~674 GB) spanning creative, academic, and personal activities. Includes narrative drafts, research materials, high-definition scans, personal media, system backups, software, and emails. The collection reflects over three decades of activity, showing the evolution of his intellectual and literary production, digital organization, and creative experimentation.
+                            The content of the hard drive from Evangelisti’s desktop computer documents more than three decades of activity, tracing the evolution of his intellectual and literary production, digital organization, and creative experimentation. The collection comprises 65,448 items (approximately 674 GB) related to creative, academic, and personal spheres, including narrative drafts, research materials, high-definition scans, personal media, system backups, software, and email correspondence.
                           </span>
                         </div>
                       {{else if (eq ../iri "http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS2")}}
@@ -389,7 +389,7 @@
                         <div class="metadata-field">
                           <span class="metadata-label">Description:</span>
                           <span class="metadata-value">
-                            The external hard drive (1.53 TB, 19,817 items) served mainly as a backup for selected important data from the primary desktop. Its structure is simpler, focused on key documents, digital collections, and research material, reflecting a curated archive of significant creative and intellectual content.
+                            Materials contained in the external hard drive: a curated collection of key documents, digital collections, and research resources, representing significant creative and intellectual work. The archive comprises 19,817 items totaling 1.53 TB and was likely used as a backup of essential data from the primary desktop.
                           </span>
                         </div>
                       {{else if (eq ../iri "http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS3")}}
@@ -400,7 +400,7 @@
                         <div class="metadata-field">
                           <span class="metadata-label">Description:</span>
                           <span class="metadata-value">
-                            These floppy disks (2,214 items, 4.85 GB) constitute the earliest digital portion of Evangelisti's archive. They include drafts of early novels, initial issues of "Carmilla," BBS messages, personal notes, and software applications. They provide unique insight into his early digital practices, combining textual production, software use, and engagement with underground computing and gaming culture.
+                            This collection of floppy disks (2,214 items, 4.85 GB) constitutes the earliest digital segment of Evangelisti's archive. It includes drafts of early novels, initial issues of Carmilla, BBS messages, personal notes, and software applications. As a floppy-based archive, it offers unique insight into his early digital practices, combining textual production, software use, and engagement with underground computing and gaming culture.
                           </span>
                         </div>
                       {{/if}}
