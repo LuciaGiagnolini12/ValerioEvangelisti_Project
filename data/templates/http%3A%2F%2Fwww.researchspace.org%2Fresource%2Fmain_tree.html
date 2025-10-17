@@ -1,4 +1,3 @@
-
 <div class="page full-height-page">
   <!-- Page Header -->
   <div class="page-header">
@@ -123,6 +122,7 @@
           }
         "
       roots='["http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1"]'
+      keys-opened='["http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1"]'
       has-children-binding="hasChildren"
       enable-cache="true"
       loading-template='<i class="fa fa-spinner fa-spin" style="color: #3498db; margin-left: 8px;"></i>'
@@ -211,7 +211,7 @@
         <mp-event-target-template-render id='node-details-advanced' template='{{> detailsTemplate}}'>
         <template id='detailsTemplate'>
           {{#if iri}}
-            <!-- Fetch metadata for the selected node -->
+            <!-- Fetch metadata for the selected node - QUERY CORRETTA SENZA PRODOTTO CARTESIANO -->
             <semantic-query 
               query='
                 PREFIX rico: <https://www.ica.org/standards/RiC/ontology#>
@@ -219,95 +219,102 @@
                 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
                 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
                 
-                SELECT DISTINCT ?node ?nodeLabel ?nodeType 
+                SELECT ?node ?nodeLabel ?nodeType 
                        ?title ?titleLabel
                        ?creationDate ?creationDateLabel ?creationDateNormalized
                        ?modificationDate ?modificationDateLabel ?modificationDateNormalized
-                       ?instantiation ?instLabel ?instType
-                       ?techDesc ?techDescValue
-                       ?techMetadata ?techMetadataLabel ?techMetadataValue ?techMetadataType ?techMetadataTypeLabel
-                       ?metadataSet ?metadataSetLabel
-                       # Provenance information
-                       ?activity ?activityLabel ?softwareStackLabel ?dateValue ?parsingTime ?activitySupervisor
+                       (SAMPLE(?inst) as ?instantiation) 
+                       (SAMPLE(?instLabel) as ?instLabel) 
+                       (SAMPLE(?instType) as ?instType)
+                       (SAMPLE(?techDescValue) as ?techDescValue)
+                       ?techMetadataLabel ?techMetadataValue 
+                       (SAMPLE(?techMetadataType) as ?techMetadataType)
+                       (SAMPLE(?techMetadataTypeLabel) as ?techMetadataTypeLabel)
+                       (SAMPLE(?metadataSet) as ?metadataSet)
+                       (SAMPLE(?metadataSetLabel) as ?metadataSetLabel)
+                       (SAMPLE(?activity) as ?activity) 
+                       (SAMPLE(?activityLabel) as ?activityLabel) 
+                       (SAMPLE(?softwareStackLabel) as ?softwareStackLabel) 
+                       (SAMPLE(?dateValue) as ?dateValue) 
+                       (SAMPLE(?parsingTime) as ?parsingTime) 
+                       (SAMPLE(?activitySupervisor) as ?activitySupervisor)
                 WHERE {
                   BIND(<{{iri}}> as ?node)
                   
-                  # Get node basic info
                   OPTIONAL { ?node rdfs:label ?nodeLabel }
                   OPTIONAL { ?node a ?nodeType }
                   
-                  # Get title
                   OPTIONAL { 
                     ?node rico:hasOrHadTitle ?title .
                     ?title rdfs:label ?titleLabel .
                   }
                   
-                  # Get creation date
                   OPTIONAL { 
                     ?node rico:hasCreationDate ?creationDate .
                     OPTIONAL { ?creationDate rico:expressedDate ?creationDateLabel }
                     OPTIONAL { ?creationDate rico:normalizedDateValue ?creationDateNormalized }
                   }
                   
-                  # Get modification date
                   OPTIONAL { 
                     ?node rico:hasModificationDate ?modificationDate .
                     OPTIONAL { ?modificationDate rico:expressedDate ?modificationDateLabel }
                     OPTIONAL { ?modificationDate rico:normalizedDateValue ?modificationDateNormalized }
                   }
                   
-                  # Get instantiation info
-                  OPTIONAL { 
-                    ?node rico:hasOrHadInstantiation ?instantiation .
-                    OPTIONAL { ?instantiation rdfs:label ?instLabel }
-                    OPTIONAL { ?instantiation rico:type ?instType }
+                  OPTIONAL {
+                    ?node rico:hasOrHadInstantiation ?inst .
+                    OPTIONAL { ?inst rdfs:label ?instLabel }
+                    OPTIONAL { ?inst rico:type ?instType }
                     
-                    # Get technical description
                     OPTIONAL {
-                      ?instantiation bodi:hasTechnicalDescription ?techDesc .
+                      ?inst bodi:hasTechnicalDescription ?techDesc .
                       ?techDesc rdf:value ?techDescValue .
                     }
                     
-                  # Get technical metadata
-                  OPTIONAL {
-                    ?instantiation bodi:hasTechnicalMetadata ?techMetadata .
-                    ?techMetadata rdfs:label ?techMetadataLabel .
-                    ?techMetadata rdf:value ?techMetadataValue .
                     OPTIONAL {
-                      ?techMetadata bodi:hasTechnicalMetadataType ?techMetadataType .
-                      ?techMetadataType rdfs:label ?techMetadataTypeLabel .
+                      ?inst bodi:hasTechnicalMetadata ?techMetadata .
+                      ?techMetadata rdfs:label ?techMetadataLabel .
+                      ?techMetadata rdf:value ?techMetadataValue .
+                      
                       OPTIONAL {
-                        ?techMetadataType rico:isOrWasPartOf ?metadataSet .
-                        ?metadataSet rdfs:label ?metadataSetLabel .
+                        ?techMetadata bodi:hasTechnicalMetadataType ?techMetadataType .
+                        ?techMetadataType rdfs:label ?techMetadataTypeLabel .
+                        OPTIONAL {
+                          ?techMetadataType rico:isOrWasPartOf ?metadataSet .
+                          ?metadataSet rdfs:label ?metadataSetLabel .
+                        }
+                      }
+                      
+                      OPTIONAL {
+                        ?techMetadata bodi:generatedBy ?activity .
+                        OPTIONAL { ?activity rdfs:label ?activityLabel }
+                        OPTIONAL {
+                          ?activity rico:isOrWasPerformedBy ?softwarestack .
+                          ?softwarestack rdf:type bodi:SoftwareStack .
+                          ?softwarestack rdfs:label ?softwareStackLabel .
+                        }
+                        OPTIONAL {
+                          ?activity rico:occurredAtDate ?date .
+                          ?date rico:expressedDate ?dateValue .
+                        }
+                        OPTIONAL {
+                          ?activity rico:hasExtent ?extent .
+                          ?extent rdf:value ?parsingTime .
+                        }
+                        OPTIONAL {
+                          ?activity bodi:hasOrHadSupervisor ?person .
+                          ?person rdfs:label ?activitySupervisor .
+                        }
                       }
                     }
-                    
-                    # Get provenance information for this metadata
-                    OPTIONAL {
-                      ?techMetadata bodi:generatedBy ?activity .
-                      OPTIONAL { ?activity rdfs:label ?activityLabel }
-                      OPTIONAL {
-                        ?activity rico:isOrWasPerformedBy ?softwarestack .
-                        ?softwarestack rdf:type bodi:SoftwareStack .
-                        ?softwarestack rdfs:label ?softwareStackLabel .
-                      }
-                      OPTIONAL {
-                        ?activity rico:occurredAtDate ?date .
-                        ?date rico:expressedDate ?dateValue .
-                      }
-                      OPTIONAL {
-                        ?activity rico:hasExtent ?extent .
-                        ?extent rdf:value ?parsingTime .
-                      }
-                      OPTIONAL {
-                        ?activity bodi:hasOrHadSupervisor ?person .
-                        ?person rdfs:label ?activitySupervisor .
-                      }
-                    }
-                  }
                   }
                 }
-                ORDER BY ?metadataSetLabel ?techMetadataTypeLabel
+                GROUP BY ?node ?nodeLabel ?nodeType 
+                         ?title ?titleLabel
+                         ?creationDate ?creationDateLabel ?creationDateNormalized
+                         ?modificationDate ?modificationDateLabel ?modificationDateNormalized
+                         ?techMetadataLabel ?techMetadataValue
+                ORDER BY ?metadataSetLabel ?techMetadataTypeLabel ?techMetadataLabel
               '
               template='{{> metadataDisplay}}'
             >
@@ -427,7 +434,7 @@
                                   <td>Current Medium</td>
                                   <td>
                                     Server Dell PowerEdge R7525
-                                    <mp-overlay-dialog title="Current Medium Derivation Info" type="modal" bs-size="small">
+                                    <mp-overlay-dialog title="Current Medium Derivation Info" type="modal" bs-size="medium">
                                       <mp-overlay-dialog-trigger>
                                         <i class="fa fa-info-circle" style="color: #17a2b8; cursor: pointer; margin-left: 5px; font-size: 14px;"></i>
                                       </mp-overlay-dialog-trigger>
@@ -476,7 +483,7 @@
                                   <td>Previous Medium</td>
                                   <td>
                                     Samsung Portable SSD T7 1 TB USB tipo-C 3.2 Gen 2
-                                    <mp-overlay-dialog title="Previous Medium Derivation Info" type="modal" bs-size="small">
+                                    <mp-overlay-dialog title="Previous Medium Derivation Info" type="modal" bs-size="medium">
                                       <mp-overlay-dialog-trigger>
                                         <i class="fa fa-info-circle" style="color: #17a2b8; cursor: pointer; margin-left: 5px; font-size: 14px;"></i>
                                       </mp-overlay-dialog-trigger>
@@ -525,7 +532,7 @@
                                   <td>Original Medium</td>
                                   <td>
                                     Unknown Microsoft Windows PC
-                                    <mp-overlay-dialog title="Original Medium Info" type="modal" bs-size="small">
+                                    <mp-overlay-dialog title="Original Medium Info" type="modal" bs-size="medium">
                                       <mp-overlay-dialog-trigger>
                                         <i class="fa fa-info-circle" style="color: #17a2b8; cursor: pointer; margin-left: 5px; font-size: 14px;"></i>
                                       </mp-overlay-dialog-trigger>
@@ -573,7 +580,7 @@
                                   <td>Current Medium</td>
                                   <td>
                                     Server Dell PowerEdge R7525
-                                    <mp-overlay-dialog title="Current Medium Derivation Info" type="modal" bs-size="small">
+                                    <mp-overlay-dialog title="Current Medium Derivation Info" type="modal" bs-size="medium">
                                       <mp-overlay-dialog-trigger>
                                         <i class="fa fa-info-circle" style="color: #17a2b8; cursor: pointer; margin-left: 5px; font-size: 14px;"></i>
                                       </mp-overlay-dialog-trigger>
@@ -622,7 +629,7 @@
                                   <td>Previous Medium</td>
                                   <td>
                                     Samsung Portable SSD T7 1 TB USB tipo-C 3.2 Gen 2
-                                    <mp-overlay-dialog title="Previous Medium Derivation Info" type="modal" bs-size="small">
+                                    <mp-overlay-dialog title="Previous Medium Derivation Info" type="modal" bs-size="medium">
                                       <mp-overlay-dialog-trigger>
                                         <i class="fa fa-info-circle" style="color: #17a2b8; cursor: pointer; margin-left: 5px; font-size: 14px;"></i>
                                       </mp-overlay-dialog-trigger>
@@ -671,7 +678,7 @@
                                   <td>Original Medium</td>
                                   <td>
                                     Western Digital WDBACW0020HBK-01 My Book 2TB USB 3.0 Series External Hard Drive
-                                    <mp-overlay-dialog title="Original Medium Info" type="modal" bs-size="small">
+                                    <mp-overlay-dialog title="Original Medium Info" type="modal" bs-size="medium">
                                       <mp-overlay-dialog-trigger>
                                         <i class="fa fa-info-circle" style="color: #17a2b8; cursor: pointer; margin-left: 5px; font-size: 14px;"></i>
                                       </mp-overlay-dialog-trigger>
@@ -719,7 +726,7 @@
                                   <td>Current Medium</td>
                                   <td>
                                     Server Dell PowerEdge R7525
-                                    <mp-overlay-dialog title="Current Medium Derivation Info" type="modal" bs-size="small">
+                                    <mp-overlay-dialog title="Current Medium Derivation Info" type="modal" bs-size="medium">
                                       <mp-overlay-dialog-trigger>
                                         <i class="fa fa-info-circle" style="color: #17a2b8; cursor: pointer; margin-left: 5px; font-size: 14px;"></i>
                                       </mp-overlay-dialog-trigger>
@@ -768,8 +775,8 @@
                                 <tr>
                                   <td>Previous Medium</td>
                                   <td>
-                                    Samsung Portable SSD T7 1 TB USB tipo-C 3.2 Gen 2
-                                    <mp-overlay-dialog title="Previous Medium Derivation Info" type="modal" bs-size="small">
+                                    Samsung Portable SSD T7 1 TB USB tipo-C 3.2 Gen 2
+                                    <mp-overlay-dialog title="Previous Medium Derivation Info" type="modal" bs-size="medium">
                                       <mp-overlay-dialog-trigger>
                                         <i class="fa fa-info-circle" style="color: #17a2b8; cursor: pointer; margin-left: 5px; font-size: 14px;"></i>
                                       </mp-overlay-dialog-trigger>
@@ -819,7 +826,7 @@
                                   <td>Original Medium</td>
                                   <td>
                                     Individual floppy disks
-                                    <mp-overlay-dialog title="Original Medium Info" type="modal" bs-size="small">
+                                    <mp-overlay-dialog title="Original Medium Info" type="modal" bs-size="medium">
                                       <mp-overlay-dialog-trigger>
                                         <i class="fa fa-info-circle" style="color: #17a2b8; cursor: pointer; margin-left: 5px; font-size: 14px;"></i>
                                       </mp-overlay-dialog-trigger>
@@ -848,7 +855,7 @@
                           </table>
                         </div>
                       </div>
-                  
+                      
                     {{else}}
                     
                     <!-- Record Metadata Section -->
@@ -895,8 +902,6 @@
                           {{else}}
                             <em>No modification date available</em>
                           {{/if}}
-                          
-                        
                         </span>
                       </div>
                     </div>
@@ -914,15 +919,12 @@
                             {{else}}
                               <em>Not specified</em>
                             {{/if}}
-                            
-                            
                           </span>
                         </div>
                         
-                        <!-- Group technical metadata by metadata set -->
                         {{#if ../bindings}}
                           
-                            <!-- Content Metadata -->
+                          <!-- Content Metadata -->
                           <div style="margin-top: 15px;">
                             <strong>Content Metadata</strong>
                             <table class="metadata-table">
@@ -940,13 +942,13 @@
                                       <td>{{techMetadataTypeLabel.value}}</td>
                                       <td>{{techMetadataValue.value}}</td>
                                       <td style="text-align: center;">
-                                        <mp-overlay-dialog title="{{techMetadataTypeLabel.value}} Provenance" type="modal" bs-size="small">
+                                        <mp-overlay-dialog title="{{techMetadataTypeLabel.value}} Provenance" type="modal" bs-size="medium">
                                           <mp-overlay-dialog-trigger>
                                             <i class="fa fa-info-circle" style="color: #17a2b8; cursor: pointer; font-size: 14px;"></i>
                                           </mp-overlay-dialog-trigger>
                                           <mp-overlay-dialog-content>
-                                            <div style="padding: 20px; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); border-radius: 8px;">
-                                              <h5 style="color: #2c3e50; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #3498db;">
+                                            <div style="padding: 20px; background: linear-gradient(135deg, #f5eddc 0%, #e8dcc8 100%); border-radius: 8px;">
+                                              <h5 style="color: #2c3e50; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #E86A33;">
                                                 <i class="fa fa-info-circle" style="color: #3498db; margin-right: 8px;"></i>
                                                 Provenance Information
                                               </h5>
@@ -997,6 +999,7 @@
                               </tbody>
                             </table>
                           </div>
+                          
                           <!-- File System Metadata -->
                           <div style="margin-top: 15px;">
                             <strong>File System Metadata</strong>
@@ -1015,14 +1018,14 @@
                                       <td>{{techMetadataTypeLabel.value}}</td>
                                       <td>{{techMetadataValue.value}}</td>
                                       <td style="text-align: center;">
-                                        <mp-overlay-dialog title="{{techMetadataTypeLabel.value}} Provenance" type="modal" bs-size="small">
+                                        <mp-overlay-dialog title="{{techMetadataTypeLabel.value}} Provenance" type="modal" bs-size="medium">
                                           <mp-overlay-dialog-trigger>
                                             <i class="fa fa-info-circle" style="color: #17a2b8; cursor: pointer; font-size: 14px;"></i>
                                           </mp-overlay-dialog-trigger>
                                           <mp-overlay-dialog-content>
                                             <div style="padding: 20px; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); border-radius: 8px;">
-                                              <h5 style="color: #2c3e50; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #3498db;">
-                                                <i class="fa fa-info-circle" style="color: #3498db; margin-right: 8px;"></i>
+                                              <h5 style="color: #2c3e50; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #E86A33;">
+                                                <i class="fa fa-info-circle" style="color: #E86A33; margin-right: 8px;"></i>
                                                 Provenance Information
                                               </h5>
                                               <div style="background: white; padding: 15px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
@@ -1073,7 +1076,6 @@
                             </table>
                           </div>
                           
-                          
                           <!-- Other Technical Metadata -->
                           <div style="margin-top: 15px;">
                             <strong>Other Technical Metadata</strong>
@@ -1094,7 +1096,7 @@
                                       <td>{{techMetadataTypeLabel.value}}</td>
                                       <td>{{techMetadataValue.value}}</td>
                                       <td style="text-align: center;">
-                                        <mp-overlay-dialog title="{{techMetadataTypeLabel.value}} Provenance" type="modal" bs-size="small">
+                                        <mp-overlay-dialog title="{{techMetadataTypeLabel.value}} Provenance" type="modal" bs-size="medium">
                                           <mp-overlay-dialog-trigger>
                                             <i class="fa fa-info-circle" style="color: #17a2b8; cursor: pointer; font-size: 14px;"></i>
                                           </mp-overlay-dialog-trigger>

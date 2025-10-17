@@ -365,10 +365,102 @@
       text-align: center;
     }
 
+    h1 {
+      font-size: 30pt !important;
+    }
 
-h1 {
-    font-size: 30pt !important;
+    /* Modal/Dialog customization for provenance information */
+    .modal-dialog.modal-sm {
+      max-width: 600px !important; /* Wider than default small */
+      width: 90% !important;
+    }
+
+    .modal-dialog.modal-medium,
+    .modal-dialog.bs-size-medium {
+      max-width: 600px !important;
+      width: 90% !important;
+    }
+
+    .modal-content {
+  border-radius: 20px !important;
+  border: none !important;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15) !important;
+  overflow: hidden !important; /* evita che i contenuti squadrati escano */
 }
 
+.modal-header {
+  border-top-left-radius: 20px !important;
+  border-top-right-radius: 20px !important;
+}
+
+.modal-body {
+  border-bottom-left-radius: 20px !important;
+  border-bottom-right-radius: 20px !important;
+}
+
+
+    .modal-body::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .modal-body::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 4px;
+    }
+
+    .modal-body::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 4px;
+    }
+
+    .modal-body::-webkit-scrollbar-thumb:hover {
+      background: #555;
+    }
+
+    /* Ensure provenance info containers don't add extra padding */
+    .modal-body > div {
+      margin: 0 !important;
+    }
+
+    /* Responsive modal for smaller screens */
+    @media (max-width: 768px) {
+      .modal-dialog.modal-sm,
+      .modal-dialog.modal-medium,
+      .modal-dialog.bs-size-medium {
+        max-width: 95% !important;
+        margin: 10px auto !important;
+      }
+      
+      .modal-body {
+        max-height: 60vh !important;
+      }
+    }
+
+    /* Improve spacing in provenance info */
+    .modal-body .fa {
+      flex-shrink: 0;
+    }
+
+    .modal-body strong {
+      font-size: 13px;
+    }
+
+    .modal-body span {
+      word-break: break-word;
+    }
+
+    /* Override inline styles for provenance modals - beige gradient */
+    .modal-body > div[style*="background: linear-gradient"] {
+      background: linear-gradient(135deg, #f5eddc 0%, #e8dcc8 100%) !important;
+    }
+
+    /* Override blue colors in provenance info headers */
+    .modal-body h5[style*="border-bottom"] {
+      border-bottom: 2px solid #E86A33 !important;
+    }
+
+    .modal-body h5 .fa-info-circle {
+      color: #E86A33 !important;
+    }
 
 </style>
