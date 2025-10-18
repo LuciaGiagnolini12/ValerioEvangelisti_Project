@@ -93,6 +93,10 @@ body {
   min-height: 0;
 }
 
+.navbar-nav li a.active {
+  color: #E86A33 !important;
+  font-weight: 600;
+}
 
 .metadata-column {
   flex: 1;
@@ -320,7 +324,7 @@ body {
   font-weight: bold;
   color: #555;
   display: inline-block;
-  min-width: 150px;
+  margin-right: 5px;
 }
 
 .metadata-value {
@@ -528,4 +532,56 @@ h1 {
 .modal-body h5 .fa-info-circle {
   color: #E86A33 !important;
 }
+
+/* Targeting super specifico per il container dei filtri E sort */
+#evangelisti-tree-advanced div[style*="rgb(240, 248, 255)"],
+semantic-tree-advanced#evangelisti-tree-advanced div[style*="background-color"],
+.tree-container div[style*="margin-bottom: 10px"][style*="padding: 8px"],
+semantic-tree-advanced div[style*="margin-bottom"][style*="padding"][style*="border"] {
+  background-color: rgba(232, 106, 51, 0.1) !important;
+  border: 1px solid rgba(232, 106, 51, 0.3) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 1px 3px rgba(232, 106, 51, 0.15) !important;
+}
+
+/* Titoli "Filters:" e "Sort by:" */
+#evangelisti-tree-advanced div[style*="font-weight: bold"][style*="font-size: 14px"],
+semantic-tree-advanced div[style*="font-weight: bold"] {
+  color: #2c3e50 !important;
+  border-bottom: 2px solid var(--color-orange) !important;
+  padding-bottom: 6px !important;
+  margin-bottom: 10px !important;
+}
+
+/* Select dropdown del sort */
+semantic-tree-advanced select {
+  border: 1px solid rgba(232, 106, 51, 0.3) !important;
+  border-radius: 4px !important;
+  padding: 6px 10px !important;
+  background-color: white !important;
+  color: var(--color-text-dark) !important;
+  cursor: pointer !important;
+}
+
+semantic-tree-advanced select:focus {
+  outline: none !important;
+  border-color: var(--color-orange) !important;
+  box-shadow: 0 0 0 2px rgba(232, 106, 51, 0.2) !important;
+}
+
+/* Solo il bottone Search (probabilmente vicino all'input di ricerca) */
+semantic-tree-advanced div[style*="display: flex"] > button[style*="rgb(0, 123, 255)"],
+#evangelisti-tree-advanced button[style*="display: flex"][style*="gap: 6px"],
+.tree-container > div button[style*="background-color: rgb(0, 123, 255)"] {
+  background-color: #E86A33 !important;
+  color: white !important;
+}
+
+#evangelisti-tree-advanced button[style*="display: flex"][style*="gap: 6px"]:hover {
+  background-color: #d15a28 !important;
+  box-shadow: 0 2px 6px rgba(232, 106, 51, 0.3) !important;
+}
+
+
+
 </style>
