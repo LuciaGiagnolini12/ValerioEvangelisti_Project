@@ -8,9 +8,34 @@
     <!-- Left column: Semantic Tree Advanced -->
     <div class="tree-column">
       <h3>Archival Structure</h3>
-      <p>Explore the born-digital ar and navigate through its hierarchical structure.</p>
+      <p>Explore the born-digital archive and navigate through its hierarchical structure.</p>
 
       <div class="tree-container">
+      <style>
+        .Tree--tree {
+          max-height: calc(100vh - 200px) !important;
+          overflow-y: auto !important;
+          overflow-x: hidden !important;
+        }
+        
+        .Tree--tree::-webkit-scrollbar {
+          width: 8px;
+        }
+        
+        .Tree--tree::-webkit-scrollbar-track {
+          background: #f1f1f1;
+          border-radius: 4px;
+        }
+        
+        .Tree--tree::-webkit-scrollbar-thumb {
+          background: #888;
+          border-radius: 4px;
+        }
+        
+        .Tree--tree::-webkit-scrollbar-thumb:hover {
+          background: #555;
+        }
+      </style>
       <semantic-tree-advanced 
         id="evangelisti-tree-advanced"
         show-tree-lines="true"
@@ -28,7 +53,7 @@
         {
           "label": "Hide anonymized information",
           "description": "Hide files marked as having omitted information (folders are kept to show non-omitted children)",
-          "condition": "PREFIX bodi: <http://w3id.org/bodi#> PREFIX rico: <https://www.ica.org/standards/RiC/ontology#> SELECT ?node WHERE { ?node bodi:omittedInformation \"yes\" . FILTER NOT EXISTS { ?node rico:includesOrIncluded ?child } }",
+          "condition": "PREFIX bodi: <http://w3id.org/bodi#> PREFIX rico: <https://www.ica.org/standards/RiC/ontology#> SELECT ?node WHERE { ?node bodi:redactedInformation \"yes\" . FILTER NOT EXISTS { ?node rico:includesOrIncluded ?child } }",
           "defaultChecked": false
         }
         ]'
@@ -139,7 +164,7 @@
           <div>
             {{#if (eq expandSiblings.value "true")}}
               <!-- Expand siblings button -->
-              <div class="siblingExpandButton" style="background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; padding: 4px 8px; margin: 2px 0; cursor: pointer; font-size: 0.85em; color: #6c757d;">
+              <div class="siblingExpandButton">
                 <i class="fa fa-plus-circle" style="margin-right: 5px;"></i>
                 Expand {{hiddenCount.value}} siblings...
               </div>
@@ -211,7 +236,7 @@
         <mp-event-target-template-render id='node-details-advanced' template='{{> detailsTemplate}}'>
         <template id='detailsTemplate'>
           {{#if iri}}
-            <!-- Fetch metadata for the selected node - QUERY CORRETTA SENZA PRODOTTO CARTESIANO -->
+            <!-- Fetch metadata for the selected node -->
             <semantic-query 
               query='
                 PREFIX rico: <https://www.ica.org/standards/RiC/ontology#>
@@ -351,9 +376,9 @@
                       {{node.value}}
                     </div>
                     
-                    <!-- Technical Description (if available) - First, in black -->
+                    <!-- Technical Description (if available) -->
                     {{#if techDescValue}}
-                      <div style="background-color: #f0f8ff; border-left: 4px solid #3498db; padding: 10px; margin: 10px 0 15px 0; color: #000; font-size: 13px;">
+                      <div class="technical-description">
                         <strong>Technical Description:</strong> {{techDescValue.value}}
                       </div>
                     {{/if}}
@@ -378,7 +403,7 @@
                         <div class="metadata-field">
                           <span class="metadata-label">Description:</span>
                           <span class="metadata-value">
-                            The content of the hard drive from Evangelisti’s desktop computer documents more than three decades of activity, tracing the evolution of his intellectual and literary production, digital organization, and creative experimentation. The collection comprises 65,448 items (approximately 674 GB) related to creative, academic, and personal spheres, including narrative drafts, research materials, high-definition scans, personal media, system backups, software, and email correspondence.
+                            The content of the hard drive from Evangelisti's desktop computer documents more than three decades of activity, tracing the evolution of his intellectual and literary production, digital organization, and creative experimentation. The collection comprises 65,448 items (approximately 674 GB) related to creative, academic, and personal spheres, including narrative drafts, research materials, high-definition scans, personal media, system backups, software, and email correspondence.
                           </span>
                         </div>
                       {{else if (eq ../iri "http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS2")}}
