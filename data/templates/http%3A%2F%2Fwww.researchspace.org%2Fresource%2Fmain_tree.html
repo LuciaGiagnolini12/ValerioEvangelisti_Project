@@ -61,19 +61,32 @@
           "label": "Hide anonymized information",
           "description": "Hide files marked as having omitted information (folders are kept to show non-omitted children)",
           "condition": "PREFIX bodi: <http://w3id.org/bodi#> PREFIX rico: <https://www.ica.org/standards/RiC/ontology#> SELECT ?node WHERE { ?node bodi:redactedInformation \"yes\" . FILTER NOT EXISTS { ?node rico:includesOrIncluded ?child } }",
-          "defaultChecked": false
+          "defaultChecked": true
         }
         ]'
         related-node-criteria='[
-          {
-            "label": "Same Hash",
-            "icon": "fa fa-copy",
-            "query": "PREFIX rico: <https://www.ica.org/standards/RiC/ontology#> PREFIX bodi: <http://w3id.org/bodi#> SELECT DISTINCT ?node WHERE { <$__nodeIri__> rico:hasOrHadInstantiation ?inst1 . ?inst1 bodi:hasSameHashCodeAs ?inst2 . ?node rico:hasOrHadInstantiation ?inst2 . FILTER(?node != <$__nodeIri__>) }",
-            "description": "Find all records with the same file hash (duplicate files)"
-          }
-        ]'
+  {
+    "label": "Same Hash",
+    "icon": "fa fa-copy",
+    "query": "PREFIX rico: <https://www.ica.org/standards/RiC/ontology#> PREFIX bodi: <http://w3id.org/bodi#> SELECT DISTINCT ?node WHERE { <$__nodeIri__> rico:hasOrHadInstantiation ?inst1 . ?inst1 bodi:hasSameHashCodeAs ?inst2 . ?node rico:hasOrHadInstantiation ?inst2 . FILTER(?node != <$__nodeIri__>) }",
+    "description": "Find all records with the same file hash (duplicate files)"
+  },
+  {
+    "label": "Same Work",
+    "icon": "fa fa-book",
+    "query": "PREFIX rico: <https://www.ica.org/standards/RiC/ontology#> PREFIX lrmoo: <http://iflastandards.info/ns/lrm/lrmoo/> SELECT DISTINCT ?node WHERE { <$__nodeIri__> rico:isRelatedTo ?work . ?work a lrmoo:F1_Work . ?node rico:isRelatedTo ?work . FILTER(?node != <$__nodeIri__>) }",
+    "description": "Find all records related to the same intellectual work"
+  },
+  {
+    "label": "Same Creation Date",
+    "icon": "fa fa-calendar",
+    "query": "PREFIX rico: <https://www.ica.org/standards/RiC/ontology#> PREFIX bodi: <http://w3id.org/bodi#> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> SELECT DISTINCT ?node WHERE { <$__nodeIri__> rico:hasOrHadInstantiation ?inst1 . ?inst1 bodi:hasTechnicalMetadata ?techMetadata1 . ?techMetadata1 bodi:hasTechnicalMetadataType ?techMetadataType1 . ?techMetadataType1 rdfs:label \"dcterms:created\" . ?techMetadata1 rdf:value ?dateValue . ?node rico:hasOrHadInstantiation ?inst2 . ?inst2 bodi:hasTechnicalMetadata ?techMetadata2 . ?techMetadata2 bodi:hasTechnicalMetadataType ?techMetadataType2 . ?techMetadataType2 rdfs:label \"dcterms:created\" . ?techMetadata2 rdf:value ?dateValue . FILTER(?node != <$__nodeIri__>) }",
+    "description": "Find all records created on the same date"
+  }
+]'
+
         query="
-          SELECT DISTINCT ?parent ?node ?label ?title ?structuralTitle ?hasChildren (COUNT(DISTINCT ?child) as ?childCount) ?isRoot ?fileType WHERE {
+        SELECT DISTINCT ?parent ?node ?label ?title ?structuralTitle ?hasChildren (COUNT(DISTINCT ?child) as ?childCount) ?isRoot ?fileType ?isRecordSet WHERE {
             # Load RS1 and its three parts dynamically using dcterms:hasPart
             VALUES ?parent { <http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1> }
             ?parent <http://purl.org/dc/terms/hasPart> ?node .
@@ -88,6 +101,12 @@
               ?dn <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?anyChild 
             } AS ?hasChildren)
             
+            BIND(EXISTS {
+              BIND(IRI(REPLACE(STR(?node), &quot;/structure&quot;, &quot;&quot;)) AS ?dn)
+              ?dn a <https://www.ica.org/standards/RiC/ontology#RecordSet>
+            } AS ?isRecordSet)
+
+
             # Mark RS1 as root
             BIND(IF(?parent = <http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1>, &quot;true&quot;, &quot;false&quot;) AS ?isRoot)
             
@@ -118,10 +137,10 @@
               ?techMeta <http://w3id.org/bodi#hasTechnicalMetadataType> <http://ficlit.unibo.it/ArchivioEvangelisti/system_tmtype_0001> .
               ?techMeta <http://www.w3.org/1999/02/22-rdf-syntax-ns#value> ?fileType .
             }
-          } GROUP BY ?parent ?node ?label ?title ?structuralTitle ?hasChildren ?isRoot ?fileType
+          } GROUP BY ?parent ?node ?label ?title ?structuralTitle ?hasChildren ?isRoot ?fileType ?isRecordSet
         "
         expand-query="
-          SELECT DISTINCT ?parent ?node ?label ?title ?hasChildren (COUNT(DISTINCT ?child) as ?childCount) ?fileType WHERE {
+        SELECT DISTINCT ?parent ?node ?label ?title ?hasChildren (COUNT(DISTINCT ?child) as ?childCount) ?fileType ?isRecordSet WHERE {
             # Convert /structure/ IRI to data IRI by removing &quot;/structure&quot;
             BIND(IRI(REPLACE(STR(<{{clickedNode}}>), &quot;/structure&quot;, &quot;&quot;)) AS ?dataNode)
             
@@ -132,6 +151,8 @@
             # Check for grandchildren
             OPTIONAL { ?node <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?child . }
             BIND(EXISTS { ?node <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?anyChild . } AS ?hasChildren)
+
+            BIND(EXISTS { ?node a <https://www.ica.org/standards/RiC/ontology#RecordSet> } AS ?isRecordSet)
             
             # Fetch labels from default graph
             OPTIONAL { ?parent rdfs:label ?label }
@@ -144,7 +165,7 @@
               ?techMeta <http://w3id.org/bodi#hasTechnicalMetadataType> <http://ficlit.unibo.it/ArchivioEvangelisti/system_tmtype_0001> .
               ?techMeta <http://www.w3.org/1999/02/22-rdf-syntax-ns#value> ?fileType .
             }
-          } GROUP BY ?parent ?node ?label ?title ?hasChildren ?fileType
+          } GROUP BY ?parent ?node ?label ?title ?hasChildren ?fileType ?isRecordSet
         "
         path-to-root-query="
           SELECT DISTINCT ?ancestor WHERE {
@@ -187,6 +208,10 @@
                     {{else if structuralTitle.value}}
                       <!-- Structural node - use archive icon -->
                       <i class="fa fa-archive" style="margin-right: 8px; color:#E86A33;"></i>
+                      <span style="font-size: 0.8em; color: #777; margin-right: 5px;">({{childCount.value}})</span>
+                    {{else if (eq isRecordSet.value "true")}}
+                      <!-- rico:RecordSet - use folder icon -->
+                      <i class="fa fa-folder" style="margin-right: 8px; color: #d4c7b2;"></i>
                       <span style="font-size: 0.8em; color: #777; margin-right: 5px;">({{childCount.value}})</span>
                     {{else if (eq fileType.value "directory")}}
                       <!-- Node explicitly marked as directory -->
@@ -264,6 +289,8 @@
                        (SAMPLE(?techMetadataTypeLabel) as ?techMetadataTypeLabel)
                        (SAMPLE(?metadataSet) as ?metadataSet)
                        (SAMPLE(?metadataSetLabel) as ?metadataSetLabel)
+                       (SAMPLE(?work) as ?work)  
+                      (SAMPLE(?workLabel) as ?workLabel)
                        (SAMPLE(?activity) as ?activity) 
                        (SAMPLE(?activityLabel) as ?activityLabel) 
                        (SAMPLE(?softwareStackLabel) as ?softwareStackLabel) 
@@ -306,6 +333,12 @@
                     OPTIONAL {
                       ?inst bodi:hasHashCode ?hashCode .
                       ?hashCode rdf:value ?hashCodeValue .
+                    }
+
+                    OPTIONAL {
+                      ?node rico:isRelatedTo ?work .
+                      ?work a lrmoo:F1_Work .
+                      OPTIONAL { ?work rdfs:label ?workLabel }
                     }
                     
                     OPTIONAL {
@@ -392,565 +425,745 @@
                     
                     <!-- Technical Description (if available) -->
                     {{#if techDescValue}}
-                      <div class="technical-description">
-                        <strong>Technical Description:</strong> {{techDescValue.value}}
+                    <div class="metadata-field" style="margin-top: 10px; padding: 12px 15px; background-color: #fef9f5; border-left: 3px solid #E86A33; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                      <div style="display: flex; align-items: center; margin-bottom: 6px;">
+                        <i class="fa fa-info-circle" style="color: #E86A33; margin-right: 8px; font-size: 1.1em;"></i>
+                        <span class="metadata-label" style="font-weight: 600; color: #E86A33; font-size: 0.95em;">Technical Description</span>
                       </div>
-                    {{/if}}
-
-                    {{#if hashCodeValue}}                    <div class="metadata-field" style="margin-top: 10px; padding: 10px;">
-                        <span class="metadata-label">Hash Code:</span>
-                        <span class="metadata-value" style="font-family: monospace; font-size: 0.9em; word-break: break-all; color: #777;">
-                          {{hashCodeValue.value}}
-                        </span>
+                      <span class="metadata-value" style="display: block; color: #555; line-height: 1.5; font-size: 0.9em;">
+                        {{techDescValue.value}}
+                      </span>
+                    </div>
+                  {{/if}}
+                  
+                  {{#if hashCodeValue}}
+                    <div class="metadata-field" style="margin-top: 10px; padding: 12px 15px; background-color: #f8f9fa; border-left: 3px solid #6c757d; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                      <div style="display: flex; align-items: center; margin-bottom: 6px;">
+                        <i class="fa fa-fingerprint" style="color: #6c757d; margin-right: 8px; font-size: 1.1em;"></i>
+                        <span class="metadata-label" style="font-weight: 600; color: #6c757d; font-size: 0.95em;">Hash Code</span>
                       </div>
-                    {{/if}}
-  
-                
+                      <span class="metadata-value" style="display: block; font-family: 'Courier New', monospace; font-size: 0.85em; word-break: break-all; color: #495057; background-color: #fff; padding: 8px; border-radius: 3px; border: 1px solid #dee2e6;">
+                        {{hashCodeValue.value}}
+                      </span>
+                    </div>
+                  {{/if}}
+                  
+                  {{#if work}}
+                  <div class="metadata-field" style="margin-top: 10px; padding: 12px 15px; background-color: #fef9f5; border-left: 3px solid #E86A33; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                    <div style="display: flex; align-items: center; margin-bottom: 6px;">
+                      <i class="fa fa-book" style="color: #E86A33; margin-right: 8px; font-size: 1.1em;"></i>
+                      <span class="metadata-label" style="font-weight: 600; color: #E86A33; font-size: 0.95em;">Related Work</span>
+                    </div>
+                    <span class="metadata-value" style="display: block; color: #555; line-height: 1.5; font-size: 0.9em;">
+                      {{#if workLabel}}{{workLabel.value}}{{else}}{{work.value}}{{/if}}
+                    </span>
+                  </div>
+                  {{/if}}
                     <!-- Check if this is a special node -->
                     {{#if (eq node.value "http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1")}}
                       
                       <!-- Special sections for RS1 root node -->
-                      <div class="metadata-section" style="background-color: rgba(232, 106, 51, 0.1); border-left: 4px solid #E86A33;">
-                        <h4 style="color: #2c3e50; border-bottom: 2px solid #E86A33;">
-                          <i class="fa fa-archive" style="margin-right: 8px;"></i>
-                          Collection Description
-                        </h4>
-                        <div class="metadata-field" style="margin-bottom: 0 !important; padding: 0 !important; border-bottom: none !important;">
-                          <span class="metadata-value">This section represents the born-digital partition of the Valerio Evangelisti hybrid archive, documenting over three decades of the author's digital activity. As a pioneer in computer use since the 1980s, Evangelisti consistently experimented with new technologies, integrating them into his creative process and writing practice. The materials currently visible represent the results of a first archival survey and include: 93 floppy disks (out of a total of 389), the complete contents of the desktop computer's hard drive, and the external hard drive. These materials present remarkable typological variety: from narrative drafts and editorial work to research materials, personal media collections, system backups, and email correspondence. The collection documents both the creative and documentary aspects of Evangelisti's work, as well as its technical and managerial dimensions. Further materials from the remaining floppy disks and the laptop computer will be integrated in subsequent phases of the archival processing.</span>
-                        </div>
+                    <!-- Special sections for RS1 root node -->
+                  <div class="metadata-section" style="background-color: #fef9f5; border-radius: 4px; box-shadow: 0 3px 8px rgba(0,0,0,0.15); padding: 15px; margin-top: 15px;">
+                    <h4 style="color: #E86A33; border-bottom: 2px solid #E86A33; padding-bottom: 8px; margin-bottom: 12px;">
+                      <i class="fa fa-archive" style="margin-right: 8px;"></i>
+                      Collection Description
+                    </h4>
+                    <div class="metadata-field" style="margin-bottom: 0 !important; padding: 0 !important; border-bottom: none !important;">
+                      <span class="metadata-value" style="text-align: justify; display: block;">This section represents the born-digital partition of the Valerio Evangelisti hybrid archive, documenting over three decades of the author's digital activity. As a pioneer in computer use since the 1980s, Evangelisti consistently experimented with new technologies, integrating them into his creative process and writing practice. The materials currently visible represent the results of a first archival survey and include: 93 floppy disks (out of a total of 389), the complete contents of the desktop computer's hard drive, and the external hard drive. These materials present remarkable typological variety: from narrative drafts and editorial work to research materials, personal media collections, system backups, and email correspondence. The collection documents both the creative and documentary aspects of Evangelisti's work, as well as its technical and managerial dimensions. Further materials from the remaining floppy disks and the laptop computer will be integrated in subsequent phases of the archival processing.</span>
+                    </div>
+                    
+                    <!-- Date Range Field -->
+                    <div class="metadata-field" style="margin-top: 15px; padding: 12px 15px; background-color: #fff; border-radius: 4px; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
+                      <div style="display: flex; align-items: center; margin-bottom: 6px;">
+                        <i class="fa fa-calendar" style="color: #E86A33; margin-right: 8px; font-size: 1.1em;"></i>
+                        <span class="metadata-label" style="font-weight: 600; color: #E86A33; font-size: 0.95em;">Date Range</span>
                       </div>
+                      <span class="metadata-value" style="display: block; color: #555; line-height: 1.5; font-size: 0.9em;">
+                        1991-2024
+                      </span>
+                    </div>
+                    
+                    <!-- Holding Institution Field -->
+                    <div class="metadata-field" style="margin-top: 10px; padding: 12px 15px; background-color: #fff; border-radius: 4px; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
+                      <div style="display: flex; align-items: center; margin-bottom: 6px;">
+                        <i class="fa fa-university" style="color: #E86A33; margin-right: 8px; font-size: 1.1em;"></i>
+                        <span class="metadata-label" style="font-weight: 600; color: #E86A33; font-size: 0.95em;">Holding Institution</span>
+                      </div>
+                      <span class="metadata-value" style="display: block; color: #555; line-height: 1.5; font-size: 0.9em;">
+                        Associazione Valerio Evangelisti - Il Sol dell'Avvenire
+                      </span>
+                    </div>
+                  </div>
 
-                      <div class="metadata-section" style="background-color: rgba(232, 106, 51, 0.1); border-left: 4px solid #E86A33;">
-                        <h4 style="color: #2c3e50; border-bottom: 2px solid #E86A33;">
-                          <i class="fa fa-user" style="margin-right: 8px;"></i>
-                          About Valerio Evangelisti
-                        </h4>
-                        <div class="metadata-field" style="margin-bottom: 0 !important; padding: 0 !important; border-bottom: none !important;">
-                          <span class="metadata-value">
-                            <p style="margin-bottom: 12px;">
-                              Valerio Evangelisti (Bologna, June 20, 1952 - Bologna, April 18, 2022) was a writer, historian, and political activist whose multifaceted career embodied the intellectual and cultural transformations of late twentieth-century Italy. After graduating in Political Science with a historical-political focus from the University of Bologna in 1976, he balanced dual vocations: serving as a senior civil servant at the Ministry of Finance from 1981 while conducting rigorous academic research on social history, labor movements, and revolutionary politics. His scholarly contributions appeared in prestigious journals including "Il Mulino," "Rivista di storia contemporanea," and "Quaderni Emiliani," and he authored five historical volumes exploring topics from Italian revolutionary socialism to Jacobin movements in Bologna.
-                            </p>
-                            
-                            <p style="margin-bottom: 12px;">
-                              Evangelisti's literary breakthrough came in 1993 when he won the Premio Urania with "Nicolas Eymerich, Inquisitor," inaugurating a twelve-novel cycle that would establish him as one of Italy's most original voices in speculative fiction. His oeuvre spans multiple ambitious narrative cycles: the "Metal Cycle" (paying homage to heavy metal music and the legendary French magazine Métal Hurlant), the "American Cycle" chronicling US labor struggles, the "Mexican Cycle" devoted to the Mexican Revolution, and the "Pirates Trilogy" set in the late seventeenth-century Caribbean. His final major work, "Il Sole dell'Avvenire" trilogy (2013-2016), examined the epochal transition from rural to industrial agriculture. Translated into numerous languages and recipient of international awards including the Grand Prix de l'Imaginaire (1998) and Prix Italia (2000), Evangelisti's works bridged genre fiction and serious political engagement.
-                            </p>
-                            
-                            <p style="margin-bottom: 12px;">
-                              Beyond his literary production, Evangelisti played a crucial role in Italian cultural journalism, serving as director of "Progetto Memoria" for ten years and subsequently founding and directing "Carmilla," which evolved from a print magazine (1995) to a pioneering online platform (2003) and became a seminal reference point for the New Italian Epic movement. A committed left-wing activist throughout his life, he ran as a candidate in European and local elections and organized solidarity campaigns for political prisoners.
-                            </p>
-                            
-                            <p style="margin-bottom: 0;">
-                              His relationship with technology was pioneering and critically aware: purchasing his first computer in 1979 and connecting to the early Internet when it was still restricted to universities, he made digital tools integral to his creative process while maintaining a lucid analysis of their social and political implications. This unique position—as both enthusiastic adopter and critical observer of technological change—makes his digital archive particularly significant for understanding how intellectual work transformed during the digital revolution.
-                            </p>
-                          </span>
-                      </div>
-                      </div>
+                  <div class="metadata-section" style="background-color: #fef9f5; border-radius: 4px; box-shadow: 0 3px 8px rgba(0,0,0,0.15); padding: 15px; margin-top: 15px;">
+                    <h4 style="color: #E86A33; border-bottom: 2px solid #E86A33; padding-bottom: 8px; margin-bottom: 12px;">
+                      <i class="fa fa-user" style="margin-right: 8px;"></i>
+                      About Valerio Evangelisti
+                    </h4>
+                    <div class="metadata-field" style="margin-bottom: 0 !important; padding: 0 !important; border-bottom: none !important;">
+                      <span class="metadata-value" style="text-align: justify; display: block;">
+                        <p style="margin-bottom: 12px; text-align: justify;">
+                          Valerio Evangelisti (Bologna, June 20, 1952 - Bologna, April 18, 2022) was a writer, historian, and political activist whose multifaceted career embodied the intellectual and cultural transformations of late twentieth-century Italy. After graduating in Political Science with a historical-political focus from the University of Bologna in 1976, he balanced dual vocations: serving as a senior civil servant at the Ministry of Finance from 1981 while conducting rigorous academic research on social history, labor movements, and revolutionary politics. His scholarly contributions appeared in prestigious journals including "Il Mulino," "Rivista di storia contemporanea," and "Quaderni Emiliani," and he authored five historical volumes exploring topics from Italian revolutionary socialism to Jacobin movements in Bologna.
+                        </p>
+                        
+                        <p style="margin-bottom: 12px; text-align: justify;">
+                          Evangelisti's literary breakthrough came in 1993 when he won the Premio Urania with "Nicolas Eymerich, Inquisitor," inaugurating a twelve-novel cycle that would establish him as one of Italy's most original voices in speculative fiction. His oeuvre spans multiple ambitious narrative cycles: the "Metal Cycle" (paying homage to heavy metal music and the legendary French magazine Métal Hurlant), the "American Cycle" chronicling US labor struggles, the "Mexican Cycle" devoted to the Mexican Revolution, and the "Pirates Trilogy" set in the late seventeenth-century Caribbean. His final major work, "Il Sole dell'Avvenire" trilogy (2013-2016), examined the epochal transition from rural to industrial agriculture. Translated into numerous languages and recipient of international awards including the Grand Prix de l'Imaginaire (1998) and Prix Italia (2000), Evangelisti's works bridged genre fiction and serious political engagement.
+                        </p>
+                        
+                        <p style="margin-bottom: 12px; text-align: justify;">
+                          Beyond his literary production, Evangelisti played a crucial role in Italian cultural journalism, serving as director of "Progetto Memoria" for ten years and subsequently founding and directing "Carmilla," which evolved from a print magazine (1995) to a pioneering online platform (2003) and became a seminal reference point for the New Italian Epic movement. A committed left-wing activist throughout his life, he ran as a candidate in European and local elections and organized solidarity campaigns for political prisoners.
+                        </p>
+                        
+                        <p style="margin-bottom: 0; text-align: justify;">
+                          His relationship with technology was pioneering and critically aware: purchasing his first computer in 1979 and connecting to the early Internet when it was still restricted to universities, he made digital tools integral to his creative process while maintaining a lucid analysis of their social and political implications. This unique position—as both enthusiastic adopter and critical observer of technological change—makes his digital archive particularly significant for understanding how intellectual work transformed during the digital revolution.
+                        </p>
+                      </span>
+                    </div>
+                  </div>
 
-                      <div class="metadata-section" style="background-color: rgba(232, 106, 51, 0.1); border-left: 4px solid #E86A33;">
-                        <h4 style="color: #2c3e50; border-bottom: 2px solid #E86A33;">
-                          <i class="fa fa-history" style="margin-right: 8px;"></i>
-                          Archival History
-                        </h4>
-                        <div class="metadata-field" style="margin-bottom: 0 !important; padding: 0 !important; border-bottom: none !important;">
-                          <span class="metadata-value">The digital partition was acquired by the Associazione Valerio Evangelisti - Il Sol dell'Avvenire. The corpus includes a Samsung Portable SSD T7 1TB containing a copy of the main workstation's hard drive, a Western Digital external storage device, a Dell laptop, and 389 3.5" floppy disks. The Association did not recover the original desktop computer but obtained a copy of its contents transferred to the Samsung hard drive. The external memory and floppy disks were found in compartments of Evangelisti's bookshelf, with the latter stored in various-sized cases without evident organization. Only floppy disks containing work materials and intellectual production were migrated, while those related to software installations, programs, and video games remain preserved only in original format. All material underwent conservative migration commissioned by the Association, with complete transfer to two Samsung external hard drives subsequently delivered to the ADLab laboratory at the Department of Classical and Italian Philology (FICLIT) of the University of Bologna for archival survey and description operations. At the explicit request of the family and the Association, materials of a strictly personal and private nature were removed from the backup copies prior to the start of description operations.</span>
-                        </div>
-                      </div>
-                      
+                  <div class="metadata-section" style="background-color: #fef9f5; border-radius: 4px; box-shadow: 0 3px 8px rgba(0,0,0,0.15); padding: 15px; margin-top: 15px;">
+                    <h4 style="color: #E86A33; border-bottom: 2px solid #E86A33; padding-bottom: 8px; margin-bottom: 12px;">
+                      <i class="fa fa-history" style="margin-right: 8px;"></i>
+                      Archival History
+                    </h4>
+                    <div class="metadata-field" style="margin-bottom: 0 !important; padding: 0 !important; border-bottom: none !important;">
+                      <span class="metadata-value" style="text-align: justify; display: block;">The digital partition was acquired by the Associazione Valerio Evangelisti - Il Sol dell'Avvenire. The corpus includes a Samsung Portable SSD T7 1TB containing a copy of the main workstation's hard drive, a Western Digital external storage device, a Dell laptop, and 389 3.5" floppy disks. The Association did not recover the original desktop computer but obtained a copy of its contents transferred to the Samsung hard drive. The external memory and floppy disks were found in compartments of Evangelisti's bookshelf, with the latter stored in various-sized cases without evident organization. Only floppy disks containing work materials and intellectual production were migrated, while those related to software installations, programs, and video games remain preserved only in original format. All material underwent conservative migration commissioned by the Association, with complete transfer to two Samsung external hard drives subsequently delivered to the ADLab laboratory at the Department of Classical and Italian Philology (FICLIT) of the University of Bologna for archival survey and description operations. At the explicit request of the family and the Association, materials of a strictly personal and private nature were removed from the backup copies prior to the start of description operations.</span>
+                    </div>
+                  </div>
+                                          
                       {{else if (or (eq node.value "http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS1") 
                       (or (eq node.value "http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS2") 
                           (eq node.value "http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS3")))}}
               
               <!-- Custom Information for RS1_RS1, RS1_RS2, RS1_RS3 -->
-              <div class="metadata-section" style="background-color: rgba(232, 106, 51, 0.1); border-left: 4px solid #E86A33;">
-                <h4 style="color: #2c3e50; border-bottom: 2px solid #E86A33;">
-                  <i class="fa fa-star" style="margin-right: 8px;"></i>
-                  Directory Information
-                </h4>
-      
-                {{#if (eq node.value "http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS1")}}
-                <div class="metadata-field" style="margin-bottom: 0 !important; padding: 0 !important; border-bottom: none !important;">
-                  <span class="metadata-label">Directory Type:</span>
-                  <span class="metadata-value">Materials originally stored on the hard drive of Evangelisti's desktop computer</span>
-                </div>
-                <div class="metadata-field" style="margin-bottom: 0 !important; padding: 0 !important; border-bottom: none !important;">
-                  <span class="metadata-label">Description:</span>
-                  <span class="metadata-value">The content of the hard drive from Evangelisti's desktop computer documents more than three decades of activity, tracing the evolution of his intellectual and literary production, digital organization, and creative experimentation. The collection comprises 65,448 items (approximately 674 GB) related to creative, academic, and personal spheres, including narrative drafts, research materials, high-definition scans, personal media, system backups, software, and email correspondence.</span>
-                </div>
-              {{else if (eq node.value "http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS2")}}
-                <div class="metadata-field" style="margin-bottom: 0 !important; padding: 0 !important; border-bottom: none !important;">
-                  <span class="metadata-label">Collection Type:</span>
-                  <span class="metadata-value">Materials originally stored on the external hard drive used by Evangelisti</span>
-                </div>
-                <div class="metadata-field" style="margin-bottom: 0 !important; padding: 0 !important; border-bottom: none !important;">
-                  <span class="metadata-label">Description:</span>
-                  <span class="metadata-value">Materials contained in the external hard drive: a curated collection of key documents, digital collections, and research resources, representing significant creative and intellectual work. The archive comprises 19,817 items totaling 1.53 TB and was likely used as a backup of essential data from the primary desktop.</span>
-                </div>
-              {{else if (eq node.value "http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS3")}}
-                <div class="metadata-field" style="margin-bottom: 0 !important; padding: 0 !important; border-bottom: none !important;">
-                  <span class="metadata-label">Collection Type:</span>
-                  <span class="metadata-value">Materials originally stored on floppy disks</span>
-                </div>
-                <div class="metadata-field" style="margin-bottom: 0 !important; padding: 0 !important; border-bottom: none !important;">
-                  <span class="metadata-label">Description:</span>
-                  <span class="metadata-value">This collection of floppy disks (93 floppy disks, 4.85 GB) constitutes the earliest digital segment of Evangelisti's archive. It includes drafts of early novels, initial issues of Carmilla, BBS messages, personal notes, and software applications. The collection offers unique insight into his early digital practices, combining textual production, software use, and engagement with underground computing and gaming culture.</span>
-                </div>
-              {{/if}}
-                <!-- Additional Properties Table -->
-<div style="margin-top: 15px;">
-  <strong>Additional Properties</strong>
-  <table class="metadata-table">
-    <thead>
-      <tr>
-        <th>Property</th>
-        <th>Value</th>
-        <th style="width: 30px;"></th>
-      </tr>
-    </thead>
-    <tbody>
-      {{#if (eq node.value "http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS1")}}
-        <tr>
-          <td>Items Count</td>
-          <td>65.448 items</td>
-          <td style="text-align: center;"></td>
-        </tr>
-        <tr>
-          <td>Contents Date Range</td>
-          <td>1995-2024</td>
-          <td style="text-align: center;"></td>
-        </tr>
-        <tr>
-          <td>Total Size</td>
-          <td>674,36 GB</td>
-          <td style="text-align: center;"></td>
-        </tr>
-        <tr>
-          <td>Current Medium</td>
-          <td>Server Dell PowerEdge R7525</td>
-          <td style="text-align: center;">
-            <mp-overlay-dialog title="Current Medium Derivation Info" type="modal" bs-size="medium">
-              <mp-overlay-dialog-trigger>
-                <i class="fa fa-info-circle" style="color: #17a2b8; cursor: pointer; font-size: 14px;"></i>
-              </mp-overlay-dialog-trigger>
-              <mp-overlay-dialog-content>
-                <div style="padding: 20px; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); border-radius: 8px;">
-                  <h5 style="color: #2c3e50; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #3498db;">
-                    <i class="fa fa-calendar" style="color: #3498db; margin-right: 8px;"></i>
-                    Derivation Information
-                  </h5>
-                  <div style="background: white; padding: 15px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                    <div style="margin-bottom: 12px; display: flex; align-items: start;">
-                      <i class="fa fa-calendar-check-o" style="color: #3498db; margin-right: 10px; margin-top: 3px;"></i>
-                      <div>
-                        <strong style="color: #555; display: block; margin-bottom: 2px;">Transfer Date</strong>
-                        <span style="color: #333;">2025-08-06</span>
-                      </div>
+                  <div class="metadata-section" style="background-color: #fef9f5; border-radius: 4px; box-shadow: 0 3px 8px rgba(0,0,0,0.15); padding: 15px; margin-top: 15px;">
+                    <h4 style="color: #E86A33; border-bottom: 2px solid #E86A33; padding-bottom: 8px; margin-bottom: 12px;">
+                      <i class="fa fa-star" style="margin-right: 8px;"></i>
+                      Directory Information
+                    </h4>
+
+                    {{#if (eq node.value "http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS1")}}
+                    <div class="metadata-field" style="margin-bottom: 12px; padding: 0 !important; border-bottom: none !important;">
+                      <span class="metadata-label" style="font-weight: 600; color: #E86A33;">Directory Type:</span>
+                      <span class="metadata-value" style="display: block; margin-top: 6px; text-align: justify;">Materials originally stored on the hard drive of Evangelisti's desktop computer</span>
                     </div>
-                    <div style="margin-bottom: 12px; display: flex; align-items: start;">
-                      <i class="fa fa-arrow-right" style="color: #27ae60; margin-right: 10px; margin-top: 3px;"></i>
-                      <div>
-                        <strong style="color: #555; display: block; margin-bottom: 2px;">From</strong>
-                        <span style="color: #333;">Samsung Portable SSD T7</span>
-                      </div>
+                    <div class="metadata-field" style="margin-bottom: 0 !important; padding: 0 !important; border-bottom: none !important;">
+                      <span class="metadata-label" style="font-weight: 600; color: #E86A33;">Description:</span>
+                      <span class="metadata-value" style="display: block; margin-top: 6px; text-align: justify;">The content of the hard drive from Evangelisti's desktop computer documents more than three decades of activity, tracing the evolution of his intellectual and literary production, digital organization, and creative experimentation. The collection comprises 65,448 items (approximately 674 GB) related to creative, academic, and personal spheres, including narrative drafts, research materials, high-definition scans, personal media, system backups, software, and email correspondence.</span>
                     </div>
-                    <div style="margin-bottom: 12px; display: flex; align-items: start;">
-                      <i class="fa fa-user" style="color: #f39c12; margin-right: 10px; margin-top: 3px;"></i>
-                      <div>
-                        <strong style="color: #555; display: block; margin-bottom: 2px;">Performed By</strong>
-                        <span style="color: #333;">Associazione Valerio Evangelisti - Il Sol dell'Avvenire</span>
-                      </div>
+                    {{else if (eq node.value "http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS2")}}
+                    <div class="metadata-field" style="margin-bottom: 12px; padding: 0 !important; border-bottom: none !important;">
+                      <span class="metadata-label" style="font-weight: 600; color: #E86A33;">Collection Type:</span>
+                      <span class="metadata-value" style="display: block; margin-top: 6px; text-align: justify;">Materials originally stored on the external hard drive used by Evangelisti</span>
                     </div>
-                    <div style="display: flex; align-items: start;">
-                      <i class="fa fa-file-text-o" style="color: #9b59b6; margin-right: 10px; margin-top: 3px;"></i>
-                      <div>
-                        <strong style="color: #555; display: block; margin-bottom: 2px;">Notes</strong>
-                        <span style="color: #333;">Migrated to Server Dell PowerEdge R7525 to perform structure and metadata extraction</span>
-                      </div>
+                    <div class="metadata-field" style="margin-bottom: 0 !important; padding: 0 !important; border-bottom: none !important;">
+                      <span class="metadata-label" style="font-weight: 600; color: #E86A33;">Description:</span>
+                      <span class="metadata-value" style="display: block; margin-top: 6px; text-align: justify;">Materials contained in the external hard drive: a curated collection of key documents, digital collections, and research resources, representing significant creative and intellectual work. The archive comprises 19,817 items totaling 1.53 TB and was likely used as a backup of essential data from the primary desktop.</span>
+                    </div>
+                    {{else if (eq node.value "http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS3")}}
+                    <div class="metadata-field" style="margin-bottom: 12px; padding: 0 !important; border-bottom: none !important;">
+                      <span class="metadata-label" style="font-weight: 600; color: #E86A33;">Collection Type:</span>
+                      <span class="metadata-value" style="display: block; margin-top: 6px; text-align: justify;">Materials originally stored on floppy disks</span>
+                    </div>
+                    <div class="metadata-field" style="margin-bottom: 0 !important; padding: 0 !important; border-bottom: none !important;">
+                      <span class="metadata-label" style="font-weight: 600; color: #E86A33;">Description:</span>
+                      <span class="metadata-value" style="display: block; margin-top: 6px; text-align: justify;">This collection of floppy disks (93 floppy disks, 4.85 GB) constitutes the earliest digital segment of Evangelisti's archive. It includes drafts of early novels, initial issues of Carmilla, BBS messages, personal notes, and software applications. The collection offers unique insight into his early digital practices, combining textual production, software use, and engagement with underground computing and gaming culture.</span>
+                    </div>
+                    {{/if}}
+                    
+                    <!-- Additional Properties Table -->
+                    <div style="margin-top: 15px;">
+                      <strong>Additional Properties</strong>
+                      <table class="metadata-table">
+                        <thead>
+                          <tr>
+                            <th>Property</th>
+                            <th>Value</th>
+                            <th style="width: 30px;"></th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {{#if (eq node.value "http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS1")}}
+                            <tr>
+                              <td>Items Count</td>
+                              <td>65.448 items</td>
+                              <td style="text-align: center;"></td>
+                            </tr>
+                            <tr>
+                              <td>Contents Date Range</td>
+                              <td>
+                                {{#if (eq node.value "http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS1")}}
+                                  1995-2024
+                                {{else if (eq node.value "http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS2")}}
+                                  1992-2017
+                                {{else if (eq node.value "http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS3")}}
+                                  1991-2004
+                                {{/if}}
+                              </td>
+                              <td style="text-align: center;">
+                                <mp-overlay-dialog title="Date Range Source Information" type="modal" bs-size="medium">
+                                  <mp-overlay-dialog-trigger>
+                                    <i class="fa fa-info-circle" style="color: #17a2b8; cursor: pointer; font-size: 14px;"></i>
+                                  </mp-overlay-dialog-trigger>
+                                  <mp-overlay-dialog-content>
+                                    <div style="padding: 20px; background: linear-gradient(135deg, #fef9f5 0%, #f5e5d3 100%); border-radius: 8px;">
+                                      <h5 style="color: #2c3e50; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #E86A33;">
+                                        <i class="fa fa-database" style="color: #E86A33; margin-right: 8px;"></i>
+                                        Data Source Information
+                                      </h5>
+                                      <div style="background: white; padding: 15px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                        <div style="margin-bottom: 12px; display: flex; align-items: start;">
+                                          <i class="fa fa-tag" style="color: #E86A33; margin-right: 10px; margin-top: 3px;"></i>
+                                          <div>
+                                            <strong style="color: #555; display: block; margin-bottom: 2px;">Metadata Field</strong>
+                                            <span style="color: #333;">dcterms:created</span>
+                                          </div>
+                                        </div>
+                                        <div style="margin-bottom: 12px; display: flex; align-items: start;">
+                                          <i class="fa fa-cogs" style="color: #9b59b6; margin-right: 10px; margin-top: 3px;"></i>
+                                          <div>
+                                            <strong style="color: #555; display: block; margin-bottom: 2px;">Origin</strong>
+                                            <span style="color: #333;">SPARQL query on dataset</span>
+                                          </div>
+                                        </div>
+                                        <div style="display: flex; align-items: start;">
+                                          <i class="fa fa-info-circle" style="color: #3498db; margin-right: 10px; margin-top: 3px;"></i>
+                                          <div>
+                                            <strong style="color: #555; display: block; margin-bottom: 2px;">Description</strong>
+                                            <span style="color: #333; line-height: 1.6;">The date range represents the creation dates of the digital content contained within the resources of this collection. These dates were obtained through a SPARQL query that retrieves the dcterms:created metadata values from all resources in the collection. The dcterms:created metadata was previously extracted from the files during the technical metadata extraction process performed by Apache Tika. For further details, see file-level resources</span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </mp-overlay-dialog-content>
+                                </mp-overlay-dialog>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>Total Size</td>
+                              <td>674,36 GB</td>
+                              <td style="text-align: center;"></td>
+                            </tr>
+                            <tr>
+                              <td>Current Medium</td>
+                              <td>Server Dell PowerEdge R7525</td>
+                              <td style="text-align: center;">
+                                <mp-overlay-dialog title="Current Medium Derivation Info" type="modal" bs-size="medium">
+                                  <mp-overlay-dialog-trigger>
+                                    <i class="fa fa-info-circle" style="color: #17a2b8; cursor: pointer; font-size: 14px;"></i>
+                                  </mp-overlay-dialog-trigger>
+                                  <mp-overlay-dialog-content>
+                                    <div style="padding: 20px; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); border-radius: 8px;">
+                                      <h5 style="color: #2c3e50; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #3498db;">
+                                        <i class="fa fa-calendar" style="color: #3498db; margin-right: 8px;"></i>
+                                        Derivation Information
+                                      </h5>
+                                      <div style="background: white; padding: 15px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                        <div style="margin-bottom: 12px; display: flex; align-items: start;">
+                                          <i class="fa fa-calendar-check-o" style="color: #3498db; margin-right: 10px; margin-top: 3px;"></i>
+                                          <div>
+                                            <strong style="color: #555; display: block; margin-bottom: 2px;">Transfer Date</strong>
+                                            <span style="color: #333;">2025-08-06</span>
+                                          </div>
+                                        </div>
+                                        <div style="margin-bottom: 12px; display: flex; align-items: start;">
+                                          <i class="fa fa-arrow-right" style="color: #27ae60; margin-right: 10px; margin-top: 3px;"></i>
+                                          <div>
+                                            <strong style="color: #555; display: block; margin-bottom: 2px;">From</strong>
+                                            <span style="color: #333;">Samsung Portable SSD T7</span>
+                                          </div>
+                                        </div>
+                                        <div style="margin-bottom: 12px; display: flex; align-items: start;">
+                                          <i class="fa fa-user" style="color: #f39c12; margin-right: 10px; margin-top: 3px;"></i>
+                                          <div>
+                                            <strong style="color: #555; display: block; margin-bottom: 2px;">Performed By</strong>
+                                            <span style="color: #333;">Associazione Valerio Evangelisti - Il Sol dell'Avvenire</span>
+                                          </div>
+                                        </div>
+                                        <div style="display: flex; align-items: start;">
+                                          <i class="fa fa-file-text-o" style="color: #9b59b6; margin-right: 10px; margin-top: 3px;"></i>
+                                          <div>
+                                            <strong style="color: #555; display: block; margin-bottom: 2px;">Notes</strong>
+                                            <span style="color: #333;">Migrated to Server Dell PowerEdge R7525 to perform structure and metadata extraction</span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </mp-overlay-dialog-content>
+                                </mp-overlay-dialog>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>Previous Medium</td>
+                              <td>Samsung Portable SSD T7 1 TB USB tipo-C 3.2 Gen 2</td>
+                              <td style="text-align: center;">
+                                <mp-overlay-dialog title="Previous Medium Derivation Info" type="modal" bs-size="medium">
+                                  <mp-overlay-dialog-trigger>
+                                    <i class="fa fa-info-circle" style="color: #17a2b8; cursor: pointer; font-size: 14px;"></i>
+                                  </mp-overlay-dialog-trigger>
+                                  <mp-overlay-dialog-content>
+                                    <div style="padding: 20px; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); border-radius: 8px;">
+                                      <h5 style="color: #2c3e50; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #3498db;">
+                                        <i class="fa fa-calendar" style="color: #3498db; margin-right: 8px;"></i>
+                                        Derivation Information
+                                      </h5>
+                                      <div style="background: white; padding: 15px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                        <div style="margin-bottom: 12px; display: flex; align-items: start;">
+                                          <i class="fa fa-calendar-check-o" style="color: #3498db; margin-right: 10px; margin-top: 3px;"></i>
+                                          <div>
+                                            <strong style="color: #555; display: block; margin-bottom: 2px;">Transfer Date</strong>
+                                            <span style="color: #333;">August 2024</span>
+                                          </div>
+                                        </div>
+                                        <div style="margin-bottom: 12px; display: flex; align-items: start;">
+                                          <i class="fa fa-arrow-right" style="color: #27ae60; margin-right: 10px; margin-top: 3px;"></i>
+                                          <div>
+                                            <strong style="color: #555; display: block; margin-bottom: 2px;">From</strong>
+                                            <span style="color: #333;">Unknown Microsoft Windows PC</span>
+                                          </div>
+                                        </div>
+                                        <div style="margin-bottom: 12px; display: flex; align-items: start;">
+                                          <i class="fa fa-user" style="color: #f39c12; margin-right: 10px; margin-top: 3px;"></i>
+                                          <div>
+                                            <strong style="color: #555; display: block; margin-bottom: 2px;">Performed By</strong>
+                                            <span style="color: #333;">Valerio Evangelisti's heirs</span>
+                                          </div>
+                                        </div>
+                                        <div style="display: flex; align-items: start;">
+                                          <i class="fa fa-file-text-o" style="color: #9b59b6; margin-right: 10px; margin-top: 3px;"></i>
+                                          <div>
+                                            <strong style="color: #555; display: block; margin-bottom: 2px;">Notes</strong>
+                                            <span style="color: #333;">First transfer from the original medium to portable storage device</span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </mp-overlay-dialog-content>
+                                </mp-overlay-dialog>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>Original Medium</td>
+                              <td>Unknown Microsoft Windows PC</td>
+                              <td style="text-align: center;">
+                                <mp-overlay-dialog title="Original Medium Info" type="modal" bs-size="medium">
+                                  <mp-overlay-dialog-trigger>
+                                    <i class="fa fa-info-circle" style="color: #17a2b8; cursor: pointer; font-size: 14px;"></i>
+                                  </mp-overlay-dialog-trigger>
+                                  <mp-overlay-dialog-content>
+                                    <div style="padding: 20px; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); border-radius: 8px;">
+                                      <h5 style="color: #2c3e50; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #3498db;">
+                                        <i class="fa fa-desktop" style="color: #3498db; margin-right: 8px;"></i>
+                                        Original Medium Information
+                                      </h5>
+                                      <div style="background: white; padding: 15px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                        <div style="margin-bottom: 12px; display: flex; align-items: start;">
+                                          <i class="fa fa-desktop" style="color: #9b59b6; margin-right: 10px; margin-top: 3px;"></i>
+                                          <div>
+                                            <strong style="color: #555; display: block; margin-bottom: 2px;">System</strong>
+                                            <span style="color: #333;">Microsoft Windows (version unknown)</span>
+                                          </div>
+                                        </div>
+                                        <div style="display: flex; align-items: start;">
+                                          <i class="fa fa-file-text-o" style="color: #e74c3c; margin-right: 10px; margin-top: 3px;"></i>
+                                          <div>
+                                            <strong style="color: #555; display: block; margin-bottom: 2px;">Notes</strong>
+                                            <span style="color: #333;">Original creation device. Exact specifications unknown. Files created and modified over multiple years on author's personal computer.</span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </mp-overlay-dialog-content>
+                                </mp-overlay-dialog>
+                              </td>
+                            </tr>
+                          {{else if (eq node.value "http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS2")}}
+                            <tr>
+                              <td>Items Count</td>
+                              <td>19.817 items</td>
+                              <td style="text-align: center;"></td>
+                            </tr>
+                            <tr>
+                              <td>Contents Date Range</td>
+                              <td>
+                                {{#if (eq node.value "http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS1")}}
+                                  1995-2024
+                                {{else if (eq node.value "http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS2")}}
+                                  1992-2017
+                                {{else if (eq node.value "http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS3")}}
+                                  1991-2004
+                                {{/if}}
+                              </td>
+                              <td style="text-align: center;">
+                                <mp-overlay-dialog title="Date Range Source Information" type="modal" bs-size="medium">
+                                  <mp-overlay-dialog-trigger>
+                                    <i class="fa fa-info-circle" style="color: #17a2b8; cursor: pointer; font-size: 14px;"></i>
+                                  </mp-overlay-dialog-trigger>
+                                  <mp-overlay-dialog-content>
+                                    <div style="padding: 20px; background: linear-gradient(135deg, #fef9f5 0%, #f5e5d3 100%); border-radius: 8px;">
+                                      <h5 style="color: #2c3e50; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #E86A33;">
+                                        <i class="fa fa-database" style="color: #E86A33; margin-right: 8px;"></i>
+                                        Data Source Information
+                                      </h5>
+                                      <div style="background: white; padding: 15px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                        <div style="margin-bottom: 12px; display: flex; align-items: start;">
+                                          <i class="fa fa-tag" style="color: #E86A33; margin-right: 10px; margin-top: 3px;"></i>
+                                          <div>
+                                            <strong style="color: #555; display: block; margin-bottom: 2px;">Metadata Field</strong>
+                                            <span style="color: #333;">dcterms:created</span>
+                                          </div>
+                                        </div>
+                                        <div style="margin-bottom: 12px; display: flex; align-items: start;">
+                                          <i class="fa fa-cogs" style="color: #9b59b6; margin-right: 10px; margin-top: 3px;"></i>
+                                          <div>
+                                            <strong style="color: #555; display: block; margin-bottom: 2px;">Origin</strong>
+                                            <span style="color: #333;">SPARQL query on dataset</span>
+                                          </div>
+                                        </div>
+                                        <div style="display: flex; align-items: start;">
+                                          <i class="fa fa-info-circle" style="color: #3498db; margin-right: 10px; margin-top: 3px;"></i>
+                                          <div>
+                                            <strong style="color: #555; display: block; margin-bottom: 2px;">Description</strong>
+                                            <span style="color: #333; line-height: 1.6;">The date range represents the creation dates of the digital content contained within the resources of this collection. These dates were obtained through a SPARQL query that retrieves the dcterms:created metadata values from all resources in the collection. The dcterms:created metadata was previously extracted from the files during the technical metadata extraction process performed by Apache Tika. For further details, see file-level resources</span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </mp-overlay-dialog-content>
+                                </mp-overlay-dialog>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>Total Size</td>
+                              <td>1,53 TB</td>
+                              <td style="text-align: center;"></td>
+                            </tr>
+                            <tr>
+                              <td>Current Medium</td>
+                              <td>Server Dell PowerEdge R7525</td>
+                              <td style="text-align: center;">
+                                <mp-overlay-dialog title="Current Medium Derivation Info" type="modal" bs-size="medium">
+                                  <mp-overlay-dialog-trigger>
+                                    <i class="fa fa-info-circle" style="color: #17a2b8; cursor: pointer; font-size: 14px;"></i>
+                                  </mp-overlay-dialog-trigger>
+                                  <mp-overlay-dialog-content>
+                                    <div style="padding: 20px; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); border-radius: 8px;">
+                                      <h5 style="color: #2c3e50; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #3498db;">
+                                        <i class="fa fa-calendar" style="color: #3498db; margin-right: 8px;"></i>
+                                        Derivation Information
+                                      </h5>
+                                      <div style="background: white; padding: 15px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                        <div style="margin-bottom: 12px; display: flex; align-items: start;">
+                                          <i class="fa fa-calendar-check-o" style="color: #3498db; margin-right: 10px; margin-top: 3px;"></i>
+                                          <div>
+                                            <strong style="color: #555; display: block; margin-bottom: 2px;">Transfer Date</strong>
+                                            <span style="color: #333;">2025-08-06</span>
+                                          </div>
+                                        </div>
+                                        <div style="margin-bottom: 12px; display: flex; align-items: start;">
+                                          <i class="fa fa-arrow-right" style="color: #27ae60; margin-right: 10px; margin-top: 3px;"></i>
+                                          <div>
+                                            <strong style="color: #555; display: block; margin-bottom: 2px;">From</strong>
+                                            <span style="color: #333;">Samsung Portable SSD T7</span>
+                                          </div>
+                                        </div>
+                                        <div style="margin-bottom: 12px; display: flex; align-items: start;">
+                                          <i class="fa fa-user" style="color: #f39c12; margin-right: 10px; margin-top: 3px;"></i>
+                                          <div>
+                                            <strong style="color: #555; display: block; margin-bottom: 2px;">Performed By</strong>
+                                            <span style="color: #333;">Associazione Valerio Evangelisti - Il Sol dell'Avvenire</span>
+                                          </div>
+                                        </div>
+                                        <div style="display: flex; align-items: start;">
+                                          <i class="fa fa-file-text-o" style="color: #9b59b6; margin-right: 10px; margin-top: 3px;"></i>
+                                          <div>
+                                            <strong style="color: #555; display: block; margin-bottom: 2px;">Notes</strong>
+                                            <span style="color: #333;">Migrated to Server Dell PowerEdge R7525 to perform structure and metadata extraction</span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </mp-overlay-dialog-content>
+                                </mp-overlay-dialog>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>Previous Medium</td>
+                              <td>Samsung Portable SSD T7 1 TB USB tipo-C 3.2 Gen 2</td>
+                              <td style="text-align: center;">
+                                <mp-overlay-dialog title="Previous Medium Derivation Info" type="modal" bs-size="medium">
+                                  <mp-overlay-dialog-trigger>
+                                    <i class="fa fa-info-circle" style="color: #17a2b8; cursor: pointer; font-size: 14px;"></i>
+                                  </mp-overlay-dialog-trigger>
+                                  <mp-overlay-dialog-content>
+                                    <div style="padding: 20px; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); border-radius: 8px;">
+                                      <h5 style="color: #2c3e50; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #3498db;">
+                                        <i class="fa fa-calendar" style="color: #3498db; margin-right: 8px;"></i>
+                                        Derivation Information
+                                      </h5>
+                                      <div style="background: white; padding: 15px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                        <div style="margin-bottom: 12px; display: flex; align-items: start;">
+                                          <i class="fa fa-calendar-check-o" style="color: #3498db; margin-right: 10px; margin-top: 3px;"></i>
+                                          <div>
+                                            <strong style="color: #555; display: block; margin-bottom: 2px;">Transfer Date</strong>
+                                            <span style="color: #333;">August 2024</span>
+                                          </div>
+                                        </div>
+                                        <div style="margin-bottom: 12px; display: flex; align-items: start;">
+                                          <i class="fa fa-arrow-right" style="color: #27ae60; margin-right: 10px; margin-top: 3px;"></i>
+                                          <div>
+                                            <strong style="color: #555; display: block; margin-bottom: 2px;">From</strong>
+                                            <span style="color: #333;">Western Digital WDBACW0020HBK-01 My Book 2TB USB 3.0 Series External Hard Drive</span>
+                                          </div>
+                                        </div>
+                                        <div style="margin-bottom: 12px; display: flex; align-items: start;">
+                                          <i class="fa fa-user" style="color: #f39c12; margin-right: 10px; margin-top: 3px;"></i>
+                                          <div>
+                                            <strong style="color: #555; display: block; margin-bottom: 2px;">Performed By</strong>
+                                            <span style="color: #333;">Associazione Valerio Evangelisti - Il Sol dell'Avvenire</span>
+                                          </div>
+                                        </div>
+                                        <div style="display: flex; align-items: start;">
+                                          <i class="fa fa-file-text-o" style="color: #9b59b6; margin-right: 10px; margin-top: 3px;"></i>
+                                          <div>
+                                            <strong style="color: #555; display: block; margin-bottom: 2px;">Notes</strong>
+                                            <span style="color: #333;">First transfer from the original medium to portable storage device</span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </mp-overlay-dialog-content>
+                                </mp-overlay-dialog>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>Original Medium</td>
+                              <td>Western Digital WDBACW0020HBK-01 My Book 2TB USB 3.0 Series External Hard Drive</td>
+                              <td style="text-align: center;">
+                                <mp-overlay-dialog title="Original Medium Info" type="modal" bs-size="medium">
+                                  <mp-overlay-dialog-trigger>
+                                    <i class="fa fa-info-circle" style="color: #17a2b8; cursor: pointer; font-size: 14px;"></i>
+                                  </mp-overlay-dialog-trigger>
+                                  <mp-overlay-dialog-content>
+                                    <div style="padding: 20px; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); border-radius: 8px;">
+                                      <h5 style="color: #2c3e50; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #3498db;">
+                                        <i class="fa fa-desktop" style="color: #3498db; margin-right: 8px;"></i>
+                                        Original Medium Information
+                                      </h5>
+                                      <div style="background: white; padding: 15px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                        <div style="margin-bottom: 12px; display: flex; align-items: start;">
+                                          <i class="fa fa-desktop" style="color: #9b59b6; margin-right: 10px; margin-top: 3px;"></i>
+                                          <div>
+                                            <strong style="color: #555; display: block; margin-bottom: 2px;">System</strong>
+                                            <span style="color: #333;">Western Digital WDBACW0020HBK-01 My Book 2TB USB 3.0 Series External Hard Drive</span>
+                                          </div>
+                                        </div>
+                                        <div style="display: flex; align-items: start;">
+                                          <i class="fa fa-file-text-o" style="color: #e74c3c; margin-right: 10px; margin-top: 3px;"></i>
+                                          <div>
+                                            <strong style="color: #555; display: block; margin-bottom: 2px;">Notes</strong>
+                                            <span style="color: #333;">Original backup device.</span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </mp-overlay-dialog-content>
+                                </mp-overlay-dialog>
+                              </td>
+                            </tr>
+                          {{else if (eq node.value "http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS3")}}
+                            <tr>
+                              <td>Items Count</td>
+                              <td>93 floppy disks containing 891 items</td>
+                              <td style="text-align: center;"></td>
+                            </tr>
+                            <tr>
+                              <td>Contents Date Range</td>
+                              <td>
+                                {{#if (eq node.value "http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS1")}}
+                                  1995-2024
+                                {{else if (eq node.value "http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS2")}}
+                                  1992-2017
+                                {{else if (eq node.value "http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS3")}}
+                                  1991-2004
+                                {{/if}}
+                              </td>
+                              <td style="text-align: center;">
+                                <mp-overlay-dialog title="Date Range Source Information" type="modal" bs-size="medium">
+                                  <mp-overlay-dialog-trigger>
+                                    <i class="fa fa-info-circle" style="color: #17a2b8; cursor: pointer; font-size: 14px;"></i>
+                                  </mp-overlay-dialog-trigger>
+                                  <mp-overlay-dialog-content>
+                                    <div style="padding: 20px; background: linear-gradient(135deg, #fef9f5 0%, #f5e5d3 100%); border-radius: 8px;">
+                                      <h5 style="color: #2c3e50; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #E86A33;">
+                                        <i class="fa fa-database" style="color: #E86A33; margin-right: 8px;"></i>
+                                        Data Source Information
+                                      </h5>
+                                      <div style="background: white; padding: 15px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                        <div style="margin-bottom: 12px; display: flex; align-items: start;">
+                                          <i class="fa fa-tag" style="color: #E86A33; margin-right: 10px; margin-top: 3px;"></i>
+                                          <div>
+                                            <strong style="color: #555; display: block; margin-bottom: 2px;">Metadata Field</strong>
+                                            <span style="color: #333;">dcterms:created</span>
+                                          </div>
+                                        </div>
+                                        <div style="margin-bottom: 12px; display: flex; align-items: start;">
+                                          <i class="fa fa-cogs" style="color: #9b59b6; margin-right: 10px; margin-top: 3px;"></i>
+                                          <div>
+                                            <strong style="color: #555; display: block; margin-bottom: 2px;">Origin</strong>
+                                            <span style="color: #333;">SPARQL query on dataset</span>
+                                          </div>
+                                        </div>
+                                        <div style="display: flex; align-items: start;">
+                                          <i class="fa fa-info-circle" style="color: #3498db; margin-right: 10px; margin-top: 3px;"></i>
+                                          <div>
+                                            <strong style="color: #555; display: block; margin-bottom: 2px;">Description</strong>
+                                            <span style="color: #333; line-height: 1.6;">The date range represents the creation dates of the digital content contained within the resources of this collection. These dates were obtained through a SPARQL query that retrieves the dcterms:created metadata values from all resources in the collection. The dcterms:created metadata was previously extracted from the files during the technical metadata extraction process performed by Apache Tika. For further details, see file-level resources</span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </mp-overlay-dialog-content>
+                                </mp-overlay-dialog>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>Total Size</td>
+                              <td>4,85 GB</td>
+                              <td style="text-align: center;"></td>
+                            </tr>
+                            <tr>
+                              <td>Current Medium</td>
+                              <td>Server Dell PowerEdge R7525</td>
+                              <td style="text-align: center;">
+                                <mp-overlay-dialog title="Current Medium Derivation Info" type="modal" bs-size="medium">
+                                  <mp-overlay-dialog-trigger>
+                                    <i class="fa fa-info-circle" style="color: #17a2b8; cursor: pointer; font-size: 14px;"></i>
+                                  </mp-overlay-dialog-trigger>
+                                  <mp-overlay-dialog-content>
+                                    <div style="padding: 20px; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); border-radius: 8px;">
+                                      <h5 style="color: #2c3e50; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #3498db;">
+                                        <i class="fa fa-calendar" style="color: #3498db; margin-right: 8px;"></i>
+                                        Derivation Information
+                                      </h5>
+                                      <div style="background: white; padding: 15px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                        <div style="margin-bottom: 12px; display: flex; align-items: start;">
+                                          <i class="fa fa-calendar-check-o" style="color: #3498db; margin-right: 10px; margin-top: 3px;"></i>
+                                          <div>
+                                            <strong style="color: #555; display: block; margin-bottom: 2px;">Transfer Date</strong>
+                                            <span style="color: #333;">2025-08-06</span>
+                                          </div>
+                                        </div>
+                                        <div style="margin-bottom: 12px; display: flex; align-items: start;">
+                                          <i class="fa fa-arrow-right" style="color: #27ae60; margin-right: 10px; margin-top: 3px;"></i>
+                                          <div>
+                                            <strong style="color: #555; display: block; margin-bottom: 2px;">From</strong>
+                                            <span style="color: #333;">Samsung Portable SSD T7 (macro folder with all floppy disk migrations)</span>
+                                          </div>
+                                        </div>
+                                        <div style="margin-bottom: 12px; display: flex; align-items: start;">
+                                          <i class="fa fa-user" style="color: #f39c12; margin-right: 10px; margin-top: 3px;"></i>
+                                          <div>
+                                            <strong style="color: #555; display: block; margin-bottom: 2px;">Performed By</strong>
+                                            <span style="color: #333;">Associazione Valerio Evangelisti - Il Sol dell'Avvenire</span>
+                                          </div>
+                                        </div>
+                                        <div style="display: flex; align-items: start;">
+                                          <i class="fa fa-file-text-o" style="color: #9b59b6; margin-right: 10px; margin-top: 3px;"></i>
+                                          <div>
+                                            <strong style="color: #555; display: block; margin-bottom: 2px;">Notes</strong>
+                                            <span style="color: #333;">Migrated to Server Dell PowerEdge R7525 to perform structure and metadata extraction</span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </mp-overlay-dialog-content>
+                                </mp-overlay-dialog>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>Previous Medium</td>
+                              <td>Samsung Portable SSD T7 1 TB USB tipo-C 3.2 Gen 2</td>
+                              <td style="text-align: center;">
+                                <mp-overlay-dialog title="Previous Medium Derivation Info" type="modal" bs-size="medium">
+                                  <mp-overlay-dialog-trigger>
+                                    <i class="fa fa-info-circle" style="color: #17a2b8; cursor: pointer; font-size: 14px;"></i>
+                                  </mp-overlay-dialog-trigger>
+                                  <mp-overlay-dialog-content>
+                                    <div style="padding: 20px; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); border-radius: 8px;">
+                                      <h5 style="color: #2c3e50; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #3498db;">
+                                        <i class="fa fa-folder" style="color: #3498db; margin-right: 8px;"></i>
+                                        Derivation Information
+                                      </h5>
+                                      <div style="background: white; padding: 15px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                        <div style="margin-bottom: 12px; display: flex; align-items: start;">
+                                          <i class="fa fa-calendar-check-o" style="color: #3498db; margin-right: 10px; margin-top: 3px;"></i>
+                                          <div>
+                                            <strong style="color: #555; display: block; margin-bottom: 2px;">Transfer Date</strong>
+                                            <span style="color: #333;">2024-2025</span>
+                                          </div>
+                                        </div>
+                                        <div style="display: flex; align-items: start;">
+                                          <i class="fa fa-arrow-right" style="color: #27ae60; margin-right: 10px; margin-top: 3px;"></i>
+                                          <div>
+                                            <strong style="color: #555; display: block; margin-bottom: 2px;">From</strong>
+                                            <span style="color: #333;">Individual floppy disks</span>
+                                          </div>
+                                        </div>
+                                        <div style="margin-bottom: 12px; display: flex; align-items: start;">
+                                          <i class="fa fa-user" style="color: #f39c12; margin-right: 10px; margin-top: 3px;"></i>
+                                          <div>
+                                            <strong style="color: #555; display: block; margin-bottom: 2px;">Performed By</strong>
+                                            <span style="color: #333;">Associazione Valerio Evangelisti - Il Sol dell'Avvenire</span>
+                                          </div>
+                                        </div>
+                                        <div style="display: flex; align-items: start;">
+                                          <i class="fa fa-file-text-o" style="color: #9b59b6; margin-right: 10px; margin-top: 3px;"></i>
+                                          <div>
+                                            <strong style="color: #555; display: block; margin-bottom: 2px;">Notes</strong>
+                                            <span style="color: #333;">Macro folder created to organize all floppy disk migrations for further processing.</span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </mp-overlay-dialog-content>
+                                </mp-overlay-dialog>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>Original Medium</td>
+                              <td>Individual floppy disks</td>
+                              <td style="text-align: center;">
+                                <mp-overlay-dialog title="Original Medium Info" type="modal" bs-size="medium">
+                                  <mp-overlay-dialog-trigger>
+                                    <i class="fa fa-info-circle" style="color: #17a2b8; cursor: pointer; font-size: 14px;"></i>
+                                  </mp-overlay-dialog-trigger>
+                                  <mp-overlay-dialog-content>
+                                    <div style="padding: 20px; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); border-radius: 8px;">
+                                      <h5 style="color: #2c3e50; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #3498db;">
+                                        <i class="fa fa-floppy-o" style="color: #3498db; margin-right: 8px;"></i>
+                                        Original Medium Information
+                                      </h5>
+                                      <div style="background: white; padding: 15px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                        <div style="display: flex; align-items: start;">
+                                          <i class="fa fa-file-text-o" style="color: #e74c3c; margin-right: 10px; margin-top: 3px;"></i>
+                                          <div>
+                                            <strong style="color: #555; display: block; margin-bottom: 2px;">Notes</strong>
+                                            <span style="color: #333;">Each floppy disk represents an original creation medium; files were produced over multiple years. No single device exists at this level.</span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </mp-overlay-dialog-content>
+                                </mp-overlay-dialog>
+                              </td>
+                            </tr>
+                          {{/if}}
+                        </tbody>
+                      </table>
                     </div>
                   </div>
-                </div>
-              </mp-overlay-dialog-content>
-            </mp-overlay-dialog>
-          </td>
-        </tr>
-        <tr>
-          <td>Previous Medium</td>
-          <td>Samsung Portable SSD T7 1 TB USB tipo-C 3.2 Gen 2</td>
-          <td style="text-align: center;">
-            <mp-overlay-dialog title="Previous Medium Derivation Info" type="modal" bs-size="medium">
-              <mp-overlay-dialog-trigger>
-                <i class="fa fa-info-circle" style="color: #17a2b8; cursor: pointer; font-size: 14px;"></i>
-              </mp-overlay-dialog-trigger>
-              <mp-overlay-dialog-content>
-                <div style="padding: 20px; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); border-radius: 8px;">
-                  <h5 style="color: #2c3e50; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #3498db;">
-                    <i class="fa fa-calendar" style="color: #3498db; margin-right: 8px;"></i>
-                    Derivation Information
-                  </h5>
-                  <div style="background: white; padding: 15px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                    <div style="margin-bottom: 12px; display: flex; align-items: start;">
-                      <i class="fa fa-calendar-check-o" style="color: #3498db; margin-right: 10px; margin-top: 3px;"></i>
-                      <div>
-                        <strong style="color: #555; display: block; margin-bottom: 2px;">Transfer Date</strong>
-                        <span style="color: #333;">August 2024</span>
-                      </div>
-                    </div>
-                    <div style="margin-bottom: 12px; display: flex; align-items: start;">
-                      <i class="fa fa-arrow-right" style="color: #27ae60; margin-right: 10px; margin-top: 3px;"></i>
-                      <div>
-                        <strong style="color: #555; display: block; margin-bottom: 2px;">From</strong>
-                        <span style="color: #333;">Unknown Microsoft Windows PC</span>
-                      </div>
-                    </div>
-                    <div style="margin-bottom: 12px; display: flex; align-items: start;">
-                      <i class="fa fa-user" style="color: #f39c12; margin-right: 10px; margin-top: 3px;"></i>
-                      <div>
-                        <strong style="color: #555; display: block; margin-bottom: 2px;">Performed By</strong>
-                        <span style="color: #333;">Valerio Evangelisti's heirs</span>
-                      </div>
-                    </div>
-                    <div style="display: flex; align-items: start;">
-                      <i class="fa fa-file-text-o" style="color: #9b59b6; margin-right: 10px; margin-top: 3px;"></i>
-                      <div>
-                        <strong style="color: #555; display: block; margin-bottom: 2px;">Notes</strong>
-                        <span style="color: #333;">First transfer from the original medium to portable storage device</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </mp-overlay-dialog-content>
-            </mp-overlay-dialog>
-          </td>
-        </tr>
-        <tr>
-          <td>Original Medium</td>
-          <td>Unknown Microsoft Windows PC</td>
-          <td style="text-align: center;">
-            <mp-overlay-dialog title="Original Medium Info" type="modal" bs-size="medium">
-              <mp-overlay-dialog-trigger>
-                <i class="fa fa-info-circle" style="color: #17a2b8; cursor: pointer; font-size: 14px;"></i>
-              </mp-overlay-dialog-trigger>
-              <mp-overlay-dialog-content>
-                <div style="padding: 20px; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); border-radius: 8px;">
-                  <h5 style="color: #2c3e50; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #3498db;">
-                    <i class="fa fa-desktop" style="color: #3498db; margin-right: 8px;"></i>
-                    Original Medium Information
-                  </h5>
-                  <div style="background: white; padding: 15px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                    <div style="margin-bottom: 12px; display: flex; align-items: start;">
-                      <i class="fa fa-desktop" style="color: #9b59b6; margin-right: 10px; margin-top: 3px;"></i>
-                      <div>
-                        <strong style="color: #555; display: block; margin-bottom: 2px;">System</strong>
-                        <span style="color: #333;">Microsoft Windows (version unknown)</span>
-                      </div>
-                    </div>
-                    <div style="display: flex; align-items: start;">
-                      <i class="fa fa-file-text-o" style="color: #e74c3c; margin-right: 10px; margin-top: 3px;"></i>
-                      <div>
-                        <strong style="color: #555; display: block; margin-bottom: 2px;">Notes</strong>
-                        <span style="color: #333;">Original creation device. Exact specifications unknown. Files created and modified over multiple years on author's personal computer.</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </mp-overlay-dialog-content>
-            </mp-overlay-dialog>
-          </td>
-        </tr>
-      {{else if (eq node.value "http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS2")}}
-        <tr>
-          <td>Items Count</td>
-          <td>19.817 items</td>
-          <td style="text-align: center;"></td>
-        </tr>
-        <tr>
-          <td>Contents Date Range</td>
-          <td>1992-2017</td>
-          <td style="text-align: center;"></td>
-        </tr>
-        <tr>
-          <td>Total Size</td>
-          <td>1,53 TB</td>
-          <td style="text-align: center;"></td>
-        </tr>
-        <tr>
-          <td>Current Medium</td>
-          <td>Server Dell PowerEdge R7525</td>
-          <td style="text-align: center;">
-            <mp-overlay-dialog title="Current Medium Derivation Info" type="modal" bs-size="medium">
-              <mp-overlay-dialog-trigger>
-                <i class="fa fa-info-circle" style="color: #17a2b8; cursor: pointer; font-size: 14px;"></i>
-              </mp-overlay-dialog-trigger>
-              <mp-overlay-dialog-content>
-                <div style="padding: 20px; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); border-radius: 8px;">
-                  <h5 style="color: #2c3e50; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #3498db;">
-                    <i class="fa fa-calendar" style="color: #3498db; margin-right: 8px;"></i>
-                    Derivation Information
-                  </h5>
-                  <div style="background: white; padding: 15px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                    <div style="margin-bottom: 12px; display: flex; align-items: start;">
-                      <i class="fa fa-calendar-check-o" style="color: #3498db; margin-right: 10px; margin-top: 3px;"></i>
-                      <div>
-                        <strong style="color: #555; display: block; margin-bottom: 2px;">Transfer Date</strong>
-                        <span style="color: #333;">2025-08-06</span>
-                      </div>
-                    </div>
-                    <div style="margin-bottom: 12px; display: flex; align-items: start;">
-                      <i class="fa fa-arrow-right" style="color: #27ae60; margin-right: 10px; margin-top: 3px;"></i>
-                      <div>
-                        <strong style="color: #555; display: block; margin-bottom: 2px;">From</strong>
-                        <span style="color: #333;">Samsung Portable SSD T7</span>
-                      </div>
-                    </div>
-                    <div style="margin-bottom: 12px; display: flex; align-items: start;">
-                      <i class="fa fa-user" style="color: #f39c12; margin-right: 10px; margin-top: 3px;"></i>
-                      <div>
-                        <strong style="color: #555; display: block; margin-bottom: 2px;">Performed By</strong>
-                        <span style="color: #333;">Associazione Valerio Evangelisti - Il Sol dell'Avvenire</span>
-                      </div>
-                    </div>
-                    <div style="display: flex; align-items: start;">
-                      <i class="fa fa-file-text-o" style="color: #9b59b6; margin-right: 10px; margin-top: 3px;"></i>
-                      <div>
-                        <strong style="color: #555; display: block; margin-bottom: 2px;">Notes</strong>
-                        <span style="color: #333;">Migrated to Server Dell PowerEdge R7525 to perform structure and metadata extraction</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </mp-overlay-dialog-content>
-            </mp-overlay-dialog>
-          </td>
-        </tr>
-        <tr>
-          <td>Previous Medium</td>
-          <td>Samsung Portable SSD T7 1 TB USB tipo-C 3.2 Gen 2</td>
-          <td style="text-align: center;">
-            <mp-overlay-dialog title="Previous Medium Derivation Info" type="modal" bs-size="medium">
-              <mp-overlay-dialog-trigger>
-                <i class="fa fa-info-circle" style="color: #17a2b8; cursor: pointer; font-size: 14px;"></i>
-              </mp-overlay-dialog-trigger>
-              <mp-overlay-dialog-content>
-                <div style="padding: 20px; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); border-radius: 8px;">
-                  <h5 style="color: #2c3e50; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #3498db;">
-                    <i class="fa fa-calendar" style="color: #3498db; margin-right: 8px;"></i>
-                    Derivation Information
-                  </h5>
-                  <div style="background: white; padding: 15px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                    <div style="margin-bottom: 12px; display: flex; align-items: start;">
-                      <i class="fa fa-calendar-check-o" style="color: #3498db; margin-right: 10px; margin-top: 3px;"></i>
-                      <div>
-                        <strong style="color: #555; display: block; margin-bottom: 2px;">Transfer Date</strong>
-                        <span style="color: #333;">August 2024</span>
-                      </div>
-                    </div>
-                    <div style="margin-bottom: 12px; display: flex; align-items: start;">
-                      <i class="fa fa-arrow-right" style="color: #27ae60; margin-right: 10px; margin-top: 3px;"></i>
-                      <div>
-                        <strong style="color: #555; display: block; margin-bottom: 2px;">From</strong>
-                        <span style="color: #333;">Western Digital WDBACW0020HBK-01 My Book 2TB USB 3.0 Series External Hard Drive</span>
-                      </div>
-                    </div>
-                    <div style="margin-bottom: 12px; display: flex; align-items: start;">
-                      <i class="fa fa-user" style="color: #f39c12; margin-right: 10px; margin-top: 3px;"></i>
-                      <div>
-                        <strong style="color: #555; display: block; margin-bottom: 2px;">Performed By</strong>
-                        <span style="color: #333;">Associazione Valerio Evangelisti - Il Sol dell'Avvenire</span>
-                      </div>
-                    </div>
-                    <div style="display: flex; align-items: start;">
-                      <i class="fa fa-file-text-o" style="color: #9b59b6; margin-right: 10px; margin-top: 3px;"></i>
-                      <div>
-                        <strong style="color: #555; display: block; margin-bottom: 2px;">Notes</strong>
-                        <span style="color: #333;">First transfer from the original medium to portable storage device</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </mp-overlay-dialog-content>
-            </mp-overlay-dialog>
-          </td>
-        </tr>
-        <tr>
-          <td>Original Medium</td>
-          <td>Western Digital WDBACW0020HBK-01 My Book 2TB USB 3.0 Series External Hard Drive</td>
-          <td style="text-align: center;">
-            <mp-overlay-dialog title="Original Medium Info" type="modal" bs-size="medium">
-              <mp-overlay-dialog-trigger>
-                <i class="fa fa-info-circle" style="color: #17a2b8; cursor: pointer; font-size: 14px;"></i>
-              </mp-overlay-dialog-trigger>
-              <mp-overlay-dialog-content>
-                <div style="padding: 20px; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); border-radius: 8px;">
-                  <h5 style="color: #2c3e50; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #3498db;">
-                    <i class="fa fa-desktop" style="color: #3498db; margin-right: 8px;"></i>
-                    Original Medium Information
-                  </h5>
-                  <div style="background: white; padding: 15px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                    <div style="margin-bottom: 12px; display: flex; align-items: start;">
-                      <i class="fa fa-desktop" style="color: #9b59b6; margin-right: 10px; margin-top: 3px;"></i>
-                      <div>
-                        <strong style="color: #555; display: block; margin-bottom: 2px;">System</strong>
-                        <span style="color: #333;">Western Digital WDBACW0020HBK-01 My Book 2TB USB 3.0 Series External Hard Drive</span>
-                      </div>
-                    </div>
-                    <div style="display: flex; align-items: start;">
-                      <i class="fa fa-file-text-o" style="color: #e74c3c; margin-right: 10px; margin-top: 3px;"></i>
-                      <div>
-                        <strong style="color: #555; display: block; margin-bottom: 2px;">Notes</strong>
-                        <span style="color: #333;">Original backup device.</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </mp-overlay-dialog-content>
-            </mp-overlay-dialog>
-          </td>
-        </tr>
-      {{else if (eq node.value "http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS3")}}
-        <tr>
-          <td>Items Count</td>
-          <td>93</td> floppy disks containing 891 items</td>
-          <td style="text-align: center;"></td>
-        </tr>
-        <tr>
-          <td>Contents Date Range</td>
-          <td>1991-2004</td>
-          <td style="text-align: center;"></td>
-        </tr>
-        <tr>
-          <td>Total Size</td>
-          <td>4,85 GB</td>
-          <td style="text-align: center;"></td>
-        </tr>
-        <tr>
-          <td>Current Medium</td>
-          <td>Server Dell PowerEdge R7525</td>
-          <td style="text-align: center;">
-            <mp-overlay-dialog title="Current Medium Derivation Info" type="modal" bs-size="medium">
-              <mp-overlay-dialog-trigger>
-                <i class="fa fa-info-circle" style="color: #17a2b8; cursor: pointer; font-size: 14px;"></i>
-              </mp-overlay-dialog-trigger>
-              <mp-overlay-dialog-content>
-                <div style="padding: 20px; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); border-radius: 8px;">
-                  <h5 style="color: #2c3e50; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #3498db;">
-                    <i class="fa fa-calendar" style="color: #3498db; margin-right: 8px;"></i>
-                    Derivation Information
-                  </h5>
-                  <div style="background: white; padding: 15px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                    <div style="margin-bottom: 12px; display: flex; align-items: start;">
-                      <i class="fa fa-calendar-check-o" style="color: #3498db; margin-right: 10px; margin-top: 3px;"></i>
-                      <div>
-                        <strong style="color: #555; display: block; margin-bottom: 2px;">Transfer Date</strong>
-                        <span style="color: #333;">2025-08-06</span>
-                      </div>
-                    </div>
-                    <div style="margin-bottom: 12px; display: flex; align-items: start;">
-                      <i class="fa fa-arrow-right" style="color: #27ae60; margin-right: 10px; margin-top: 3px;"></i>
-                      <div>
-                        <strong style="color: #555; display: block; margin-bottom: 2px;">From</strong>
-                        <span style="color: #333;">Samsung Portable SSD T7 (macro folder with all floppy disk migrations)</span>
-                      </div>
-                    </div>
-                    <div style="margin-bottom: 12px; display: flex; align-items: start;">
-                      <i class="fa fa-user" style="color: #f39c12; margin-right: 10px; margin-top: 3px;"></i>
-                      <div>
-                        <strong style="color: #555; display: block; margin-bottom: 2px;">Performed By</strong>
-                        <span style="color: #333;">Associazione Valerio Evangelisti - Il Sol dell'Avvenire</span>
-                      </div>
-                    </div>
-                    <div style="display: flex; align-items: start;">
-                      <i class="fa fa-file-text-o" style="color: #9b59b6; margin-right: 10px; margin-top: 3px;"></i>
-                      <div>
-                        <strong style="color: #555; display: block; margin-bottom: 2px;">Notes</strong>
-                        <span style="color: #333;">Migrated to Server Dell PowerEdge R7525 to perform structure and metadata extraction</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </mp-overlay-dialog-content>
-            </mp-overlay-dialog>
-          </td>
-        </tr>
-        <tr>
-          <td>Previous Medium</td>
-          <td>Samsung Portable SSD T7 1 TB USB tipo-C 3.2 Gen 2</td>
-          <td style="text-align: center;">
-            <mp-overlay-dialog title="Previous Medium Derivation Info" type="modal" bs-size="medium">
-              <mp-overlay-dialog-trigger>
-                <i class="fa fa-info-circle" style="color: #17a2b8; cursor: pointer; font-size: 14px;"></i>
-              </mp-overlay-dialog-trigger>
-              <mp-overlay-dialog-content>
-                <div style="padding: 20px; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); border-radius: 8px;">
-                  <h5 style="color: #2c3e50; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #3498db;">
-                    <i class="fa fa-folder" style="color: #3498db; margin-right: 8px;"></i>
-                    Derivation Information
-                  </h5>
-                  <div style="background: white; padding: 15px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                    <div style="margin-bottom: 12px; display: flex; align-items: start;">
-                      <i class="fa fa-calendar-check-o" style="color: #3498db; margin-right: 10px; margin-top: 3px;"></i>
-                      <div>
-                        <strong style="color: #555; display: block; margin-bottom: 2px;">Transfer Date</strong>
-                        <span style="color: #333;">2024-2025</span>
-                      </div>
-                    </div>
-                    <div style="display: flex; align-items: start;">
-                      <i class="fa fa-arrow-right" style="color: #27ae60; margin-right: 10px; margin-top: 3px;"></i>
-                      <div>
-                        <strong style="color: #555; display: block; margin-bottom: 2px;">From</strong>
-                        <span style="color: #333;">Individual floppy disks</span>
-                      </div>
-                    </div>
-                    <div style="margin-bottom: 12px; display: flex; align-items: start;">
-                      <i class="fa fa-user" style="color: #f39c12; margin-right: 10px; margin-top: 3px;"></i>
-                      <div>
-                        <strong style="color: #555; display: block; margin-bottom: 2px;">Performed By</strong>
-                        <span style="color: #333;">Associazione Valerio Evangelisti - Il Sol dell'Avvenire</span>
-                      </div>
-                    </div>
-                    <div style="display: flex; align-items: start;">
-                      <i class="fa fa-file-text-o" style="color: #9b59b6; margin-right: 10px; margin-top: 3px;"></i>
-                      <div>
-                        <strong style="color: #555; display: block; margin-bottom: 2px;">Notes</strong>
-                        <span style="color: #333;">Macro folder created to organize all floppy disk migrations for further processing.</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </mp-overlay-dialog-content>
-            </mp-overlay-dialog>
-          </td>
-        </tr>
-        <tr>
-          <td>Original Medium</td>
-          <td>Individual floppy disks</td>
-          <td style="text-align: center;">
-            <mp-overlay-dialog title="Original Medium Info" type="modal" bs-size="medium">
-              <mp-overlay-dialog-trigger>
-                <i class="fa fa-info-circle" style="color: #17a2b8; cursor: pointer; font-size: 14px;"></i>
-              </mp-overlay-dialog-trigger>
-              <mp-overlay-dialog-content>
-                <div style="padding: 20px; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); border-radius: 8px;">
-                  <h5 style="color: #2c3e50; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #3498db;">
-                    <i class="fa fa-floppy-o" style="color: #3498db; margin-right: 8px;"></i>
-                    Original Medium Information
-                  </h5>
-                  <div style="background: white; padding: 15px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                    <div style="display: flex; align-items: start;">
-                      <i class="fa fa-file-text-o" style="color: #e74c3c; margin-right: 10px; margin-top: 3px;"></i>
-                      <div>
-                        <strong style="color: #555; display: block; margin-bottom: 2px;">Notes</strong>
-                        <span style="color: #333;">Each floppy disk represents an original creation medium; files were produced over multiple years. No single device exists at this level.</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </mp-overlay-dialog-content>
-            </mp-overlay-dialog>
-          </td>
-        </tr>
-      {{/if}}
-    </tbody>
-  </table>
-</div>
                      
                       
                     {{else}}
