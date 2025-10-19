@@ -259,6 +259,7 @@
                        (SAMPLE(?instType) as ?instType)
                        (SAMPLE(?techDescValue) as ?techDescValue)
                        ?techMetadataLabel ?techMetadataValue 
+                       (SAMPLE(?hashCodeValue) as ?hashCodeValue) 
                        (SAMPLE(?techMetadataType) as ?techMetadataType)
                        (SAMPLE(?techMetadataTypeLabel) as ?techMetadataTypeLabel)
                        (SAMPLE(?metadataSet) as ?metadataSet)
@@ -300,6 +301,11 @@
                     OPTIONAL {
                       ?inst bodi:hasTechnicalDescription ?techDesc .
                       ?techDesc rdf:value ?techDescValue .
+                    }
+
+                    OPTIONAL {
+                      ?inst bodi:hasHashCode ?hashCode .
+                      ?hashCode rdf:value ?hashCodeValue .
                     }
                     
                     OPTIONAL {
@@ -390,6 +396,15 @@
                         <strong>Technical Description:</strong> {{techDescValue.value}}
                       </div>
                     {{/if}}
+
+                    {{#if hashCodeValue}}                    <div class="metadata-field" style="margin-top: 10px; padding: 10px;">
+                        <span class="metadata-label">Hash Code:</span>
+                        <span class="metadata-value" style="font-family: monospace; font-size: 0.9em; word-break: break-all; color: #777;">
+                          {{hashCodeValue.value}}
+                        </span>
+                      </div>
+                    {{/if}}
+  
                 
                     <!-- Check if this is a special node -->
                     {{#if (eq node.value "http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1")}}
