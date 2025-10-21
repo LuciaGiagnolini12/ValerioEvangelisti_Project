@@ -50,10 +50,18 @@
         search-placeholder="Search archive nodes..."
         search-query="
           SELECT DISTINCT ?node WHERE {
-            GRAPH <http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS1> {
-              ?node rdfs:label ?label .
-              FILTER(CONTAINS(LCASE(?label), LCASE(&quot;$__searchText__&quot;)))
-            }
+            # Search in data nodes (without /structure/)
+            ?dataNode rdfs:label ?label .
+            FILTER(CONTAINS(LCASE(?label), LCASE(&quot;$__searchText__&quot;)))
+            
+            # Convert data nodes to structural nodes for the tree
+            BIND(IRI(CONCAT(
+              &quot;http://ficlit.unibo.it/ArchivioEvangelisti/structure/&quot;,
+              REPLACE(REPLACE(
+                SUBSTR(STR(?dataNode), STRLEN(&quot;http://ficlit.unibo.it/ArchivioEvangelisti/&quot;) + 1),
+                &quot;_inst_path&quot;, &quot;&quot;),
+                &quot;_inst&quot;, &quot;&quot;)
+            )) AS ?node)
           }
         "
         filter-options='[
@@ -144,23 +152,29 @@
             # Convert /structure/ IRI to data IRI by removing &quot;/structure&quot;
             BIND(IRI(REPLACE(STR(<{{clickedNode}}>), &quot;/structure&quot;, &quot;&quot;)) AS ?dataNode)
             
-            # Get children using includesOrIncluded
-            ?dataNode <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?node .
+            # Get children using includesOrIncluded (returns data nodes)
+            ?dataNode <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?dataChild .
             BIND(<{{clickedNode}}> as ?parent)
             
+            # Convert child back to structural node format
+            BIND(IRI(REPLACE(STR(?dataChild),
+              &quot;http://ficlit.unibo.it/ArchivioEvangelisti/&quot;,
+              &quot;http://ficlit.unibo.it/ArchivioEvangelisti/structure/&quot;
+            )) AS ?node)
+            
             # Check for grandchildren
-            OPTIONAL { ?node <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?child . }
-            BIND(EXISTS { ?node <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?anyChild . } AS ?hasChildren)
+            OPTIONAL { ?dataChild <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?child . }
+            BIND(EXISTS { ?dataChild <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?anyChild . } AS ?hasChildren)
 
-            BIND(EXISTS { ?node a <https://www.ica.org/standards/RiC/ontology#RecordSet> } AS ?isRecordSet)
+            BIND(EXISTS { ?dataChild a <https://www.ica.org/standards/RiC/ontology#RecordSet> } AS ?isRecordSet)
             
             # Fetch labels from default graph
             OPTIONAL { ?parent rdfs:label ?label }
-            OPTIONAL { ?node rdfs:label ?title }
+            OPTIONAL { ?dataChild rdfs:label ?title }
             
             # Get file type from technical metadata
             OPTIONAL {
-              ?node <https://www.ica.org/standards/RiC/ontology#hasOrHadInstantiation> ?inst .
+              ?dataChild <https://www.ica.org/standards/RiC/ontology#hasOrHadInstantiation> ?inst .
               ?inst <http://w3id.org/bodi#hasTechnicalMetadata> ?techMeta .
               ?techMeta <http://w3id.org/bodi#hasTechnicalMetadataType> <http://ficlit.unibo.it/ArchivioEvangelisti/system_tmtype_0001> .
               ?techMeta <http://www.w3.org/1999/02/22-rdf-syntax-ns#value> ?fileType .
@@ -169,9 +183,17 @@
         "
         path-to-root-query="
           SELECT DISTINCT ?ancestor WHERE {
-            GRAPH <http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS1> {
-              <$__node__> (<https://www.ica.org/standards/RiC/ontology#isOrWasPartOf>)* ?ancestor .
-            }
+            # Convert the structural node to a data node by removing /structure/
+            BIND(IRI(REPLACE(STR(<$__node__>), &quot;/structure/&quot;, &quot;/&quot;)) AS ?dataNode)
+            
+            # Find ancestors by following includesOrIncluded backwards (child to parent)
+            ?dataNode (^<https://www.ica.org/standards/RiC/ontology#includesOrIncluded>)* ?dataAncestor .
+            
+            # Convert ancestors back to structural nodes by adding /structure/
+            BIND(IRI(REPLACE(STR(?dataAncestor), 
+              &quot;http://ficlit.unibo.it/ArchivioEvangelisti/&quot;,
+              &quot;http://ficlit.unibo.it/ArchivioEvangelisti/structure/&quot;
+            )) AS ?ancestor)
           }
         "
       roots='["http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1"]'
