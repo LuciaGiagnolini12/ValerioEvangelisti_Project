@@ -298,27 +298,24 @@
                 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
                 
                 SELECT ?node ?nodeLabel ?nodeType 
-                       ?title ?titleLabel
-                       ?creationDate ?creationDateLabel ?creationDateNormalized
-                       ?modificationDate ?modificationDateLabel ?modificationDateNormalized
-                       (SAMPLE(?inst) as ?instantiation) 
-                       (SAMPLE(?instLabel) as ?instLabel) 
-                       (SAMPLE(?instType) as ?instType)
-                       (SAMPLE(?techDescValue) as ?techDescValue)
-                       ?techMetadataLabel ?techMetadataValue 
-                       (SAMPLE(?hashCodeValue) as ?hashCodeValue) 
-                       (SAMPLE(?techMetadataType) as ?techMetadataType)
-                       (SAMPLE(?techMetadataTypeLabel) as ?techMetadataTypeLabel)
-                       (SAMPLE(?metadataSet) as ?metadataSet)
-                       (SAMPLE(?metadataSetLabel) as ?metadataSetLabel)
-                       (SAMPLE(?work) as ?work)  
-                      (SAMPLE(?workLabel) as ?workLabel)
-                       (SAMPLE(?activity) as ?activity) 
-                       (SAMPLE(?activityLabel) as ?activityLabel) 
-                       (SAMPLE(?softwareStackLabel) as ?softwareStackLabel) 
-                       (SAMPLE(?dateValue) as ?dateValue) 
-                       (SAMPLE(?parsingTime) as ?parsingTime) 
-                       (SAMPLE(?activitySupervisor) as ?activitySupervisor)
+                ?title ?titleLabel
+                ?creationDate ?creationDateLabel ?creationDateNormalized
+                ?modificationDate ?modificationDateLabel ?modificationDateNormalized
+                (SAMPLE(?inst) as ?instantiation) 
+                (SAMPLE(?instLabel) as ?instLabel) 
+                (SAMPLE(?instType) as ?instType)
+                (SAMPLE(?techDescValue) as ?techDescValue)
+                (SAMPLE(?techDescActivity) as ?techDescActivity)
+                (SAMPLE(?techDescActivityLabel) as ?techDescActivityLabel)
+                (SAMPLE(?techDescSoftwareStackLabel) as ?techDescSoftwareStackLabel)
+                (SAMPLE(?techDescDateValue) as ?techDescDateValue)
+                (SAMPLE(?techDescParsingTime) as ?techDescParsingTime)
+                (SAMPLE(?techDescActivitySupervisor) as ?techDescActivitySupervisor)
+                (SAMPLE(?techDescHumanValidation) as ?techDescHumanValidation)
+                ?techMetadataLabel ?techMetadataValue 
+                (SAMPLE(?hashCodeValue) as ?hashCodeValue)
+                (SAMPLE(?work) as ?work)
+                (SAMPLE(?workLabel) as ?workLabel)
                 WHERE {
                   BIND(<{{#if iri}}{{iri}}{{else}}http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1{{/if}}> as ?node)
                   
@@ -350,6 +347,32 @@
                     OPTIONAL {
                       ?inst bodi:hasTechnicalDescription ?techDesc .
                       ?techDesc rdf:value ?techDescValue .
+                      
+                      OPTIONAL {
+                        ?techDesc bodi:generatedBy ?techDescActivity .
+                        OPTIONAL { ?techDescActivity rdfs:label ?techDescActivityLabel }
+                        OPTIONAL {
+                          ?techDescActivity rico:isOrWasPerformedBy ?techDescSoftware .
+                          ?techDescSoftware rdf:type bodi:Software .
+                          ?techDescSoftware rdfs:label ?techDescSoftwareStackLabel .
+                        }
+                        OPTIONAL {
+                          ?techDescActivity rico:occurredAtDate ?techDescDate .
+                          ?techDescDate rico:expressedDate ?techDescDateValue .
+                        }
+                        OPTIONAL {
+                          ?techDescActivity rico:hasExtent ?techDescExtent .
+                          ?techDescExtent rdf:value ?techDescParsingTime .
+                        }
+                        OPTIONAL {
+                          ?techDescActivity bodi:hasOrHadSupervisor ?techDescPerson .
+                          ?techDescPerson rdfs:label ?techDescActivitySupervisor .
+                        }
+                      }
+                      
+                      OPTIONAL {
+                        ?techDesc bodi:hasHumanValidation ?techDescHumanValidation .
+                      }
                     }
 
                     OPTIONAL {
@@ -446,23 +469,118 @@
                     </div>
                     
                     <!-- Technical Description (if available) -->
-                    {{#if techDescValue}}
-                    <div class="metadata-field" style="margin-top: 10px; padding: 12px 15px; background-color: #fef9f5; border-left: 3px solid #E86A33; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
-                      <div style="display: flex; align-items: center; margin-bottom: 6px;">
+
+                  {{#if techDescValue}}
+                  <div class="metadata-field" style="margin-top: 10px; padding: 12px 15px; background-color: #fef9f5; border-left: 3px solid #E86A33; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+                      <div style="display: flex; align-items: center;">
                         <i class="fa fa-info-circle" style="color: #E86A33; margin-right: 8px; font-size: 1.1em;"></i>
                         <span class="metadata-label" style="font-weight: 600; color: #E86A33; font-size: 0.95em;">Technical Description</span>
                       </div>
-                      <span class="metadata-value" style="display: block; color: #555; line-height: 1.5; font-size: 0.9em;">
-                        {{techDescValue.value}}
-                      </span>
+                      {{#if techDescActivity}}
+                      <mp-overlay-dialog title="Technical Description Provenance" type="modal" bs-size="medium">
+                        <mp-overlay-dialog-trigger>
+                          <i class="fa fa-info-circle" style="color: #17a2b8; cursor: pointer; font-size: 14px;"></i>
+                        </mp-overlay-dialog-trigger>
+                        <mp-overlay-dialog-content>
+                          <div style="padding: 20px; background: linear-gradient(135deg, #fef9f5 0%, #f5e5d3 100%); border-radius: 8px;">
+                            <h5 style="color: #2c3e50; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #E86A33;">
+                              <i class="fa fa-info-circle" style="color: #E86A33; margin-right: 8px;"></i>
+                              Provenance Information
+                            </h5>
+                            <div style="background: white; padding: 15px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                              <div style="margin-bottom: 12px; display: flex; align-items: start;">
+                                <i class="fa fa-cogs" style="color: #e74c3c; margin-right: 10px; margin-top: 3px;"></i>
+                                <div>
+                                  <strong style="color: #555; display: block; margin-bottom: 2px;">Activity</strong>
+                                  <span style="color: #333;">{{#if techDescActivityLabel}}{{techDescActivityLabel.value}}{{else}}Technical description generation{{/if}}</span>
+                                </div>
+                              </div>
+                              <div style="margin-bottom: 12px; display: flex; align-items: start;">
+                                <i class="fa fa-server" style="color: #9b59b6; margin-right: 10px; margin-top: 3px;"></i>
+                                <div>
+                                  <strong style="color: #555; display: block; margin-bottom: 2px;">Software Stack</strong>
+                                  <span style="color: #333;">{{#if techDescSoftwareStackLabel}}{{techDescSoftwareStackLabel.value}}{{else}}Apache Tika 2.9.1{{/if}}</span>
+                                </div>
+                              </div>
+                              <div style="margin-bottom: 12px; display: flex; align-items: start;">
+                                <i class="fa fa-calendar" style="color: #3498db; margin-right: 10px; margin-top: 3px;"></i>
+                                <div>
+                                  <strong style="color: #555; display: block; margin-bottom: 2px;">Date</strong>
+                                  <span style="color: #333;">{{#if techDescDateValue}}{{techDescDateValue.value}}{{else}}2025-01-08{{/if}}</span>
+                                </div>
+                              </div>
+                              <div style="margin-bottom: 12px; display: flex; align-items: start;">
+                                <i class="fa fa-clock-o" style="color: #27ae60; margin-right: 10px; margin-top: 3px;"></i>
+                                <div>
+                                  <strong style="color: #555; display: block; margin-bottom: 2px;">Processing Time</strong>
+                                  <span style="color: #333;">{{#if techDescParsingTime}}{{techDescParsingTime.value}}{{else}}0.125 seconds{{/if}}</span>
+                                </div>
+                              </div>
+                              {{#if techDescHumanValidation}}
+                              <div style="display: flex; align-items: start;">
+                                <i class="fa fa-check-circle" style="color: #3498db; margin-right: 10px; margin-top: 3px;"></i>
+                                <div>
+                                  <strong style="color: #555; display: block; margin-bottom: 2px;">Human Validation</strong>
+                                  <span style="color: #333;">{{techDescHumanValidation.value}}</span>
+                                </div>
+                              </div>
+                              {{/if}}
+                            </div>
+                          </div>
+                        </mp-overlay-dialog-content>
+                      </mp-overlay-dialog>
+                      {{/if}}
                     </div>
+                    <span class="metadata-value" style="display: block; color: #555; line-height: 1.5; font-size: 0.9em;">
+                      {{techDescValue.value}}
+                    </span>
+                  </div>
                   {{/if}}
                   
                   {{#if hashCodeValue}}
                     <div class="metadata-field" style="margin-top: 10px; padding: 12px 15px; background-color: #f8f9fa; border-left: 3px solid #6c757d; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
-                      <div style="display: flex; align-items: center; margin-bottom: 6px;">
-                        <i class="fa fa-fingerprint" style="color: #6c757d; margin-right: 8px; font-size: 1.1em;"></i>
-                        <span class="metadata-label" style="font-weight: 600; color: #6c757d; font-size: 0.95em;">Hash Code</span>
+                      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+                        <div style="display: flex; align-items: center;">
+                          <i class="fa fa-fingerprint" style="color: #6c757d; margin-right: 8px; font-size: 1.1em;"></i>
+                          <span class="metadata-label" style="font-weight: 600; color: #6c757d; font-size: 0.95em;">Hash Code</span>
+                        </div>
+                        <mp-overlay-dialog title="Hash Code Provenance" type="modal" bs-size="medium">
+                          <mp-overlay-dialog-trigger>
+                            <i class="fa fa-info-circle" style="color: #17a2b8; cursor: pointer; font-size: 14px;"></i>
+                          </mp-overlay-dialog-trigger>
+                          <mp-overlay-dialog-content>
+                            <div style="padding: 20px; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); border-radius: 8px;">
+                              <h5 style="color: #2c3e50; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #6c757d;">
+                                <i class="fa fa-info-circle" style="color: #6c757d; margin-right: 8px;"></i>
+                                Provenance Information
+                              </h5>
+                              <div style="background: white; padding: 15px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                <div style="margin-bottom: 12px; display: flex; align-items: start;">
+                                  <i class="fa fa-calendar" style="color: #3498db; margin-right: 10px; margin-top: 3px;"></i>
+                                  <div>
+                                    <strong style="color: #555; display: block; margin-bottom: 2px;">Date</strong>
+                                    <span style="color: #333;">2025-08-05</span>
+                                  </div>
+                                </div>
+                                <div style="margin-bottom: 12px; display: flex; align-items: start;">
+                                  <i class="fa fa-cogs" style="color: #9b59b6; margin-right: 10px; margin-top: 3px;"></i>
+                                  <div>
+                                    <strong style="color: #555; display: block; margin-bottom: 2px;">Performed By</strong>
+                                    <span style="color: #333;">Secure Hash Algorithm 256-bit (SHA-256)</span>
+                                  </div>
+                                </div>
+                                <div style="display: flex; align-items: start;">
+                                  <i class="fa fa-user" style="color: #f39c12; margin-right: 10px; margin-top: 3px;"></i>
+                                  <div>
+                                    <strong style="color: #555; display: block; margin-bottom: 2px;">Supervised By</strong>
+                                    <span style="color: #333;">Lucia Giagnolini</span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </mp-overlay-dialog-content>
+                        </mp-overlay-dialog>
                       </div>
                       <span class="metadata-value" style="display: block; font-family: 'Courier New', monospace; font-size: 0.85em; word-break: break-all; color: #495057; background-color: #fff; padding: 8px; border-radius: 3px; border: 1px solid #dee2e6;">
                         {{hashCodeValue.value}}
@@ -481,6 +599,7 @@
                     </span>
                   </div>
                   {{/if}}
+
                     <!-- Check if this is a special node -->
                     {{#if (eq node.value "http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1")}}
                       
