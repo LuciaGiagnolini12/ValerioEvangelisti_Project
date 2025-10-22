@@ -50,24 +50,28 @@
         search-placeholder="Search archive nodes..."
         search-query="
           SELECT DISTINCT ?node WHERE {
-            # Search in data nodes
+            # Constrain to archive nodes only (Records or RecordSets)
+            { ?dataNode a <https://www.ica.org/standards/RiC/ontology#Record> }
+            UNION
+            { ?dataNode a <https://www.ica.org/standards/RiC/ontology#RecordSet> }
+            
+            # Filter out metadata nodes first (cheapest filter)
+            FILTER(!REGEX(STR(?dataNode), &quot;_(inst|title|id|path)$&quot;))
+            
+            # Get label and filter by search text
             ?dataNode rdfs:label ?label .
             FILTER(CONTAINS(LCASE(?label), LCASE(&quot;$__searchText__&quot;)))
             
-            # Filter out metadata nodes (_inst, _title, _id, etc.)
-            FILTER(!REGEX(STR(?dataNode), &quot;_(inst|title|id|path)$&quot;))
-            
-            # Only convert to structural IRI if it's one of the special nodes
-            BIND(IF(STR(?dataNode) IN (
-                   &quot;http://ficlit.unibo.it/ArchivioEvangelisti/RS1&quot;,
-                   &quot;http://ficlit.unibo.it/ArchivioEvangelisti/RS1_RS1&quot;,
-                   &quot;http://ficlit.unibo.it/ArchivioEvangelisti/RS1_RS2&quot;,
-                   &quot;http://ficlit.unibo.it/ArchivioEvangelisti/RS1_RS3&quot;
-                 ),
-                 IRI(REPLACE(STR(?dataNode), 
-                     &quot;http://ficlit.unibo.it/ArchivioEvangelisti/&quot;, 
-                     &quot;http://ficlit.unibo.it/ArchivioEvangelisti/structure/&quot;)),
-                 ?dataNode
+            # Convert to structural IRI only for special nodes
+            BIND(IF(
+                   ?dataNode = <http://ficlit.unibo.it/ArchivioEvangelisti/RS1> ||
+                   ?dataNode = <http://ficlit.unibo.it/ArchivioEvangelisti/RS1_RS1> ||
+                   ?dataNode = <http://ficlit.unibo.it/ArchivioEvangelisti/RS1_RS2> ||
+                   ?dataNode = <http://ficlit.unibo.it/ArchivioEvangelisti/RS1_RS3>,
+                   IRI(REPLACE(STR(?dataNode), 
+                       &quot;http://ficlit.unibo.it/ArchivioEvangelisti/&quot;, 
+                       &quot;http://ficlit.unibo.it/ArchivioEvangelisti/structure/&quot;)),
+                   ?dataNode
             ) AS ?node)
           }
         "
