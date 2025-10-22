@@ -50,18 +50,25 @@
         search-placeholder="Search archive nodes..."
         search-query="
           SELECT DISTINCT ?node WHERE {
-            # Search in data nodes (without /structure/)
+            # Search in data nodes
             ?dataNode rdfs:label ?label .
             FILTER(CONTAINS(LCASE(?label), LCASE(&quot;$__searchText__&quot;)))
             
-            # Convert data nodes to structural nodes for the tree
-            BIND(IRI(CONCAT(
-              &quot;http://ficlit.unibo.it/ArchivioEvangelisti/structure/&quot;,
-              REPLACE(REPLACE(
-                SUBSTR(STR(?dataNode), STRLEN(&quot;http://ficlit.unibo.it/ArchivioEvangelisti/&quot;) + 1),
-                &quot;_inst_path&quot;, &quot;&quot;),
-                &quot;_inst&quot;, &quot;&quot;)
-            )) AS ?node)
+            # Filter out metadata nodes (_inst, _title, _id, etc.)
+            FILTER(!REGEX(STR(?dataNode), &quot;_(inst|title|id|path)$&quot;))
+            
+            # Only convert to structural IRI if it's one of the special nodes
+            BIND(IF(STR(?dataNode) IN (
+                   &quot;http://ficlit.unibo.it/ArchivioEvangelisti/RS1&quot;,
+                   &quot;http://ficlit.unibo.it/ArchivioEvangelisti/RS1_RS1&quot;,
+                   &quot;http://ficlit.unibo.it/ArchivioEvangelisti/RS1_RS2&quot;,
+                   &quot;http://ficlit.unibo.it/ArchivioEvangelisti/RS1_RS3&quot;
+                 ),
+                 IRI(REPLACE(STR(?dataNode), 
+                     &quot;http://ficlit.unibo.it/ArchivioEvangelisti/&quot;, 
+                     &quot;http://ficlit.unibo.it/ArchivioEvangelisti/structure/&quot;)),
+                 ?dataNode
+            ) AS ?node)
           }
         "
         filter-options='[
@@ -149,32 +156,26 @@
         "
         expand-query="
         SELECT DISTINCT ?parent ?node ?label ?title ?hasChildren (COUNT(DISTINCT ?child) as ?childCount) ?fileType ?isRecordSet WHERE {
-            # Convert /structure/ IRI to data IRI by removing &quot;/structure&quot;
-            BIND(IRI(REPLACE(STR(<{{clickedNode}}>), &quot;/structure&quot;, &quot;&quot;)) AS ?dataNode)
-            
-            # Get children using includesOrIncluded (returns data nodes)
-            ?dataNode <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?dataChild .
+            # Remove /structure/ from the clicked node to get its data counterpart
+            BIND(IRI(REPLACE(STR(<{{clickedNode}}>), &quot;/structure/&quot;, &quot;/&quot;)) AS ?dataNode)
             BIND(<{{clickedNode}}> as ?parent)
             
-            # Convert child back to structural node format
-            BIND(IRI(REPLACE(STR(?dataChild),
-              &quot;http://ficlit.unibo.it/ArchivioEvangelisti/&quot;,
-              &quot;http://ficlit.unibo.it/ArchivioEvangelisti/structure/&quot;
-            )) AS ?node)
+            # Query children from the data node - returns data IRIs directly
+            ?dataNode <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?node .
             
-            # Check for grandchildren
-            OPTIONAL { ?dataChild <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?child . }
-            BIND(EXISTS { ?dataChild <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?anyChild . } AS ?hasChildren)
+            # Check for grandchildren (also data IRIs)
+            OPTIONAL { ?node <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?child . }
+            BIND(EXISTS { ?node <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?anyChild . } AS ?hasChildren)
 
-            BIND(EXISTS { ?dataChild a <https://www.ica.org/standards/RiC/ontology#RecordSet> } AS ?isRecordSet)
+            BIND(EXISTS { ?node a <https://www.ica.org/standards/RiC/ontology#RecordSet> } AS ?isRecordSet)
             
-            # Fetch labels from default graph
+            # Fetch labels
             OPTIONAL { ?parent rdfs:label ?label }
-            OPTIONAL { ?dataChild rdfs:label ?title }
+            OPTIONAL { ?node rdfs:label ?title }
             
             # Get file type from technical metadata
             OPTIONAL {
-              ?dataChild <https://www.ica.org/standards/RiC/ontology#hasOrHadInstantiation> ?inst .
+              ?node <https://www.ica.org/standards/RiC/ontology#hasOrHadInstantiation> ?inst .
               ?inst <http://w3id.org/bodi#hasTechnicalMetadata> ?techMeta .
               ?techMeta <http://w3id.org/bodi#hasTechnicalMetadataType> <http://ficlit.unibo.it/ArchivioEvangelisti/system_tmtype_0001> .
               ?techMeta <http://www.w3.org/1999/02/22-rdf-syntax-ns#value> ?fileType .
@@ -183,17 +184,20 @@
         "
         path-to-root-query="
           SELECT DISTINCT ?ancestor WHERE {
-            # Convert the structural node to a data node by removing /structure/
-            BIND(IRI(REPLACE(STR(<$__node__>), &quot;/structure/&quot;, &quot;/&quot;)) AS ?dataNode)
+            # Find ancestors in data space using the node IRI directly
+            <$__node__> (^<https://www.ica.org/standards/RiC/ontology#includesOrIncluded>)* ?dataAncestor .
             
-            # Find ancestors by following includesOrIncluded backwards (child to parent)
-            ?dataNode (^<https://www.ica.org/standards/RiC/ontology#includesOrIncluded>)* ?dataAncestor .
-            
-            # Convert ancestors back to structural nodes by adding /structure/
-            BIND(IRI(REPLACE(STR(?dataAncestor), 
-              &quot;http://ficlit.unibo.it/ArchivioEvangelisti/&quot;,
-              &quot;http://ficlit.unibo.it/ArchivioEvangelisti/structure/&quot;
-            )) AS ?ancestor)
+            # Convert back to structural IRI only for the special structural nodes
+            BIND(IF(
+              ?dataAncestor = <http://ficlit.unibo.it/ArchivioEvangelisti/RS1> ||
+              ?dataAncestor = <http://ficlit.unibo.it/ArchivioEvangelisti/RS1_RS1> ||
+              ?dataAncestor = <http://ficlit.unibo.it/ArchivioEvangelisti/RS1_RS2> ||
+              ?dataAncestor = <http://ficlit.unibo.it/ArchivioEvangelisti/RS1_RS3>,
+              IRI(REPLACE(STR(?dataAncestor), 
+                  &quot;http://ficlit.unibo.it/ArchivioEvangelisti/&quot;, 
+                  &quot;http://ficlit.unibo.it/ArchivioEvangelisti/structure/&quot;)),
+              ?dataAncestor
+            ) AS ?ancestor)
           }
         "
       roots='["http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1"]'
