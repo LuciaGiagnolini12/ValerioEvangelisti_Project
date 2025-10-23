@@ -584,6 +584,73 @@ semantic-tree-advanced div[style*="display: flex"] > button[style*="rgb(0, 123, 
   box-shadow: 0 2px 6px rgba(232, 106, 51, 0.3) !important;
 }
 
-
+/* Tree scrollbar styling */
+.Tree--tree {
+  max-height: calc(100vh - 200px) !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+}
+.Tree--tree::-webkit-scrollbar {
+  width: 8px;
+}
+.Tree--tree::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+.Tree--tree::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+.Tree--tree::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+/* Remove spacing for RS1 special nodes */
+.metadata-section[style*="background-color: #f5eddc"] .metadata-field {
+  margin-bottom: 0 !important;
+  padding: 0 !important;
+  border-bottom: none !important;
+}
+/* Selected node styling - light orange border and shadow */
+.selectedTreeNode {
+  background-color: transparent !important;
+  border: 1px solid #E86A33 !important;
+  border-radius: 4px !important;
+  padding-left: 5px !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
+}
+/* Highlighted node styling - darker orange background from search */
+.highlightedTreeNode {
+  background-color: rgba(232, 106, 51, 0.1) !important;
+  border-radius: 4px !important;
+  padding-left: 5px !important;
+  border: 1px solid #E86A33 !important;
+}
+/* When both highlighted AND selected - darker orange bg with light border and shadow */
+.highlightedTreeNode.selectedTreeNode {
+  border: 3px solid #E86A33 !important;
+  border-radius: 4px !important;
+  padding-left: 5px !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
+}
+/* Make tree arrows bigger and easier to click */
+.tree-view_arrow {
+  font-size: 16px !important;
+  padding: 2px !important;
+  cursor: pointer !important;
+  display: inline-block !important;
+}
+.tree-view_arrow:before {
+  font-size: 16px !important;
+  font-weight: bold !important;
+}
+/* Hide empty metadata sections */
+.metadata-section-wrapper:not(:has(tbody tr)) {
+  display: none !important;
+}
+/* Hide Related Work if empty or contains only whitespace */
+.related-work-wrapper:has(.metadata-value:empty),
+.related-work-wrapper:not(:has(.metadata-value)) {
+  display: none !important;
+}
 
 </style>

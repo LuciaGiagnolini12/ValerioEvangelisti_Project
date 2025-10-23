@@ -11,85 +11,6 @@
       <p>Explore the born-digital archive and navigate through its hierarchical structure.</p>
 
       <div class="tree-container">
-      <style>
-        .Tree--tree {
-          max-height: calc(100vh - 200px) !important;
-          overflow-y: auto !important;
-          overflow-x: hidden !important;
-        }
-        
-        .Tree--tree::-webkit-scrollbar {
-          width: 8px;
-        }
-        
-        .Tree--tree::-webkit-scrollbar-track {
-          background: #f1f1f1;
-          border-radius: 4px;
-        }
-        
-        .Tree--tree::-webkit-scrollbar-thumb {
-          background: #888;
-          border-radius: 4px;
-        }
-        
-        .Tree--tree::-webkit-scrollbar-thumb:hover {
-          background: #555;
-        }
-        
-        /* Remove spacing for RS1 special nodes */
-        .metadata-section[style*="background-color: #f5eddc"] .metadata-field {
-          margin-bottom: 0 !important;
-          padding: 0 !important;
-          border-bottom: none !important;
-        }
-        
-        /* Selected node styling - purple background for non-highlighted nodes */
-        .selectedTreeNode {
-          background-color: #e8d5f7 !important;
-          border-left: 3px solid #9b59b6 !important;
-          padding-left: 5px !important;
-        }
-        
-        /* Highlighted node styling - yellow background from search */
-        .highlightedTreeNode {
-          background-color: #fff3cd !important;
-          border-left: 3px solid #ffc107 !important;
-          padding-left: 5px !important;
-        }
-        
-        /* When both highlighted AND selected - yellow bg with purple outline */
-        .highlightedTreeNode.selectedTreeNode {
-          background-color: #fff3cd !important;
-          border-left: 3px solid #ffc107 !important;
-          box-shadow: 0 0 0 2px #9b59b6 !important;
-          outline: 2px solid #9b59b6 !important;
-          outline-offset: -2px !important;
-        }
-        
-        /* Make tree arrows bigger and easier to click */
-        .tree-view_arrow {
-          font-size: 16px !important;
-          padding: 2px !important;
-          cursor: pointer !important;
-          display: inline-block !important;
-        }
-        
-        .tree-view_arrow:before {
-          font-size: 16px !important;
-          font-weight: bold !important;
-        }
-        
-        /* Hide empty metadata sections */
-        .metadata-section-wrapper:not(:has(tbody tr)) {
-          display: none !important;
-        }
-        
-        /* Hide Related Work if empty or contains only whitespace */
-        .related-work-wrapper:has(.metadata-value:empty),
-        .related-work-wrapper:not(:has(.metadata-value)) {
-          display: none !important;
-        }
-      </style>
       <semantic-tree-advanced 
         id="evangelisti-tree-advanced"
         show-tree-lines="true"
@@ -125,7 +46,7 @@
         filter-options='[
         {
           "label": "Hide anonymized information",
-          "description": "Hide files marked as having omitted information (folders are kept to show non-omitted children)",
+          "description": "Hide files marked as having anonymized information (folders are kept to show non-redacted children)",
           "condition": "PREFIX bodi: <http://w3id.org/bodi#> PREFIX rico: <https://www.ica.org/standards/RiC/ontology#> SELECT ?node WHERE { ?node bodi:redactedInformation \"yes\" . FILTER NOT EXISTS { ?node rico:includesOrIncluded ?child } }",
           "defaultChecked": true
         }
