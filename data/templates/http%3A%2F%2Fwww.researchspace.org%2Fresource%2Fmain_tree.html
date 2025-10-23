@@ -78,6 +78,17 @@
           font-size: 16px !important;
           font-weight: bold !important;
         }
+        
+        /* Hide empty metadata sections */
+        .metadata-section-wrapper:not(:has(tbody tr)) {
+          display: none !important;
+        }
+        
+        /* Hide Related Work if empty or contains only whitespace */
+        .related-work-wrapper:has(.metadata-value:empty),
+        .related-work-wrapper:not(:has(.metadata-value)) {
+          display: none !important;
+        }
       </style>
       <semantic-tree-advanced 
         id="evangelisti-tree-advanced"
@@ -356,6 +367,13 @@
                 (SAMPLE(?techDescActivitySupervisor) as ?techDescActivitySupervisor)
                 (SAMPLE(?techDescHumanValidation) as ?techDescHumanValidation)
                 ?techMetadataLabel ?techMetadataValue 
+                ?techMetadataType ?techMetadataTypeLabel
+                ?metadataSet ?metadataSetLabel
+                ?activity ?activityLabel 
+                ?softwareStackLabel 
+                ?dateValue 
+                ?parsingTime 
+                ?activitySupervisor
                 (SAMPLE(?hashCodeValue) as ?hashCodeValue)
                 (GROUP_CONCAT(DISTINCT ?work; separator=", ") as ?work)
                 (REPLACE(
@@ -486,6 +504,13 @@
                          ?creationDate ?creationDateLabel ?creationDateNormalized
                          ?modificationDate ?modificationDateLabel ?modificationDateNormalized
                          ?techMetadataLabel ?techMetadataValue
+                         ?techMetadataType ?techMetadataTypeLabel
+                         ?metadataSet ?metadataSetLabel
+                         ?activity ?activityLabel
+                         ?softwareStackLabel
+                         ?dateValue
+                         ?parsingTime
+                         ?activitySupervisor
                 ORDER BY ?metadataSetLabel ?techMetadataTypeLabel ?techMetadataLabel
               '
               template='{{> metadataDisplay}}'
@@ -645,6 +670,7 @@
                     </div>
                   {{/if}}
                   
+                  <div class="related-work-wrapper">
                   {{#if work}}
                   <div class="metadata-field" style="margin-top: 10px; padding: 12px 15px; background-color: #fef9f5; border-left: 3px solid #E86A33; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
                     <div style="display: flex; align-items: center; margin-bottom: 6px;">
@@ -656,6 +682,7 @@
                     </span>
                   </div>
                   {{/if}}
+                  </div>
 
                     <!-- Check if this is a special node -->
                     {{#if (eq node.value "http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1")}}
@@ -1419,6 +1446,7 @@
                       <div class="metadata-section">
                         <h4>Instantiation Metadata</h4>
                         
+                        {{#unless (eq nodeType.value "https://www.ica.org/standards/RiC/ontology#RecordSet")}}
                         <div class="metadata-field">
                           <span class="metadata-label">File type:</span>
                           <span class="metadata-value">
@@ -1429,10 +1457,11 @@
                             {{/if}}
                           </span>
                         </div>
-                        
+                        {{/unless}}                        
                         {{#if ../bindings}}
                           
                           <!-- Content Metadata -->
+                          <div class="metadata-section-wrapper">
                           <div style="margin-top: 15px;">
                             <strong>Content Metadata</strong>
                             <table class="metadata-table">
@@ -1507,8 +1536,10 @@
                               </tbody>
                             </table>
                           </div>
+                          </div>
                           
                           <!-- File System Metadata -->
+                          <div class="metadata-section-wrapper">
                           <div style="margin-top: 15px;">
                             <strong>File System Metadata</strong>
                             <table class="metadata-table">
@@ -1545,13 +1576,6 @@
                                                   </div>
                                                 </div>
                                                 <div style="margin-bottom: 12px; display: flex; align-items: start;">
-                                                  <i class="fa fa-server" style="color: #9b59b6; margin-right: 10px; margin-top: 3px;"></i>
-                                                  <div>
-                                                    <strong style="color: #555; display: block; margin-bottom: 2px;">Software Stack</strong>
-                                                    <span style="color: #333;">{{#if softwareStackLabel}}{{softwareStackLabel.value}}{{else}}FileSystemAnalyzer v2.1{{/if}}</span>
-                                                  </div>
-                                                </div>
-                                                <div style="margin-bottom: 12px; display: flex; align-items: start;">
                                                   <i class="fa fa-calendar" style="color: #3498db; margin-right: 10px; margin-top: 3px;"></i>
                                                   <div>
                                                     <strong style="color: #555; display: block; margin-bottom: 2px;">Date</strong>
@@ -1583,8 +1607,10 @@
                               </tbody>
                             </table>
                           </div>
+                          </div>
                           
                           <!-- Other Technical Metadata -->
+                          <div class="metadata-section-wrapper">
                           <div style="margin-top: 15px;">
                             <strong>Other Technical Metadata</strong>
                             <table class="metadata-table">
@@ -1623,13 +1649,6 @@
                                                   </div>
                                                 </div>
                                                 <div style="margin-bottom: 12px; display: flex; align-items: start;">
-                                                  <i class="fa fa-server" style="color: #9b59b6; margin-right: 10px; margin-top: 3px;"></i>
-                                                  <div>
-                                                    <strong style="color: #555; display: block; margin-bottom: 2px;">Software Stack</strong>
-                                                    <span style="color: #333;">{{#if softwareStackLabel}}{{softwareStackLabel.value}}{{else}}ResearchSpace Analyzer{{/if}}</span>
-                                                  </div>
-                                                </div>
-                                                <div style="margin-bottom: 12px; display: flex; align-items: start;">
                                                   <i class="fa fa-calendar" style="color: #3498db; margin-right: 10px; margin-top: 3px;"></i>
                                                   <div>
                                                     <strong style="color: #555; display: block; margin-bottom: 2px;">Date</strong>
@@ -1660,6 +1679,7 @@
                                 {{/each}}
                               </tbody>
                             </table>
+                          </div>
                           </div>
                         {{/if}}
                       </div>
