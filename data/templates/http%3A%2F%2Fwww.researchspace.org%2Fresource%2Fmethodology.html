@@ -1,0 +1,765 @@
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+        :root {
+            --color-beige: #f5eddc;
+            --color-dark-beige: #e8dcc8;
+            --color-black: #1a1a1a;
+            --color-orange: #E86A33;
+            --color-light-orange: #FF8C5A;
+            --color-white: #FFFFFF;
+            --color-text-light: #4a5568;
+            --color-text-dark: #2d3748;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            color: var(--color-black);
+            line-height: 1.6;
+            overflow-x: hidden;
+            background: var(--color-beige);
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(26, 26, 26, 0.97);
+            padding: 20px 0;
+            z-index: 9999;
+            transition: background 0.3s;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 50px;
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--color-beige);
+            text-decoration: none;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 40px;
+            list-style: none;
+        }
+
+        .nav-menu a {
+            color: var(--color-beige);
+            text-decoration: none;
+            font-size: 13px;
+            transition: color 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 400;
+        }
+
+        .nav-menu a:hover {
+            color: var(--color-orange);
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 60vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(26, 26, 26, 0.85) 0%, rgba(42, 42, 42, 0.85) 100%), url('../images/bytes.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            position: relative;
+            text-align: center;
+            color: var(--color-beige);
+            z-index: 2;
+            padding: 0 20px;
+        }
+
+        .hero-title {
+            font-size: 72px;
+            font-weight: 300;
+            margin-bottom: 20px;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            color: var(--color-dark-beige);
+        }
+
+        .hero-subtitle {
+            font-size: 20px;
+            font-weight: 300;
+            max-width: 900px;
+            margin: 0 auto;
+            line-height: 1.6;
+            color: var(--color-dark-beige);
+        }
+
+        /* Introduction Section */
+        .intro-section {
+            padding: 100px 50px;
+            background: var(--color-white);
+        }
+
+        .intro-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .intro-text {
+            font-size: 18px;
+            line-height: 1.9;
+            color: var(--color-text-light);
+            text-align: center;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .intro-text strong {
+            color: var(--color-orange);
+            font-weight: 600;
+        }
+
+        /* Methodology Section */
+        .methodology-section {
+            padding: 0;
+            background: var(--color-white);
+            margin-bottom: 60px;
+        }
+
+        .methodology-section:last-of-type {
+            margin-bottom: 0;
+        }
+
+        .methodology-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 0;
+            border-top: 1px solid rgba(26, 26, 26, 0.08);
+        }
+
+        .methodology-title-box {
+            border-right: 1px solid rgba(26, 26, 26, 0.08);
+            padding: 120px 60px 80px 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            background: var(--color-beige);
+            position: sticky;
+            top: 60px;
+            height: 100vh;
+            align-self: flex-start;
+        }
+
+        .methodology-number {
+            font-size: 80px;
+            font-weight: 700;
+            color: var(--color-orange);
+            line-height: 1;
+            margin-bottom: 20px;
+        }
+
+        .methodology-title {
+            font-size: 36px;
+            color: var(--color-black);
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            line-height: 1.2;
+            font-weight: 300;
+        }
+
+        .methodology-text-col {
+            padding: 80px 80px;
+            font-size: 15px;
+            line-height: 1.9;
+            color: var(--color-text-light);
+            background: var(--color-white);
+        }
+
+        .methodology-text-col h3 {
+            font-size: 20px;
+            color: var(--color-black);
+            margin-bottom: 20px;
+            margin-top: 35px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .methodology-text-col h3:first-child {
+            margin-top: 0;
+        }
+
+        .methodology-text-col h4 {
+            font-size: 16px;
+            color: var(--color-orange);
+            margin-bottom: 12px;
+            margin-top: 25px;
+            font-weight: 600;
+        }
+
+        .methodology-text-col p {
+            margin-bottom: 15px;
+        }
+
+        .methodology-text-col ul {
+            margin: 15px 0 15px 25px;
+            padding: 0;
+        }
+
+        .methodology-text-col li {
+            margin-bottom: 10px;
+            line-height: 1.8;
+        }
+
+        .methodology-text-col strong {
+            color: var(--color-orange);
+            font-weight: 600;
+        }
+
+        .methodology-text-col code {
+            background: var(--color-beige);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            color: var(--color-black);
+        }
+
+        .methodology-text-col .requirements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .methodology-text-col .requirement-card {
+            background: var(--color-beige);
+            padding: 30px;
+            border-radius: 8px;
+            border-left: 4px solid var(--color-orange);
+            transition: all 0.3s ease;
+        }
+
+        .methodology-text-col .requirement-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .methodology-text-col .requirement-number {
+            font-size: 42px;
+            font-weight: 700;
+            color: var(--color-orange);
+            line-height: 1;
+            margin-bottom: 12px;
+        }
+
+        .methodology-text-col .requirement-title {
+            font-size: 16px;
+            color: var(--color-black);
+            margin-bottom: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .methodology-text-col .requirement-description {
+            font-size: 13px;
+            line-height: 1.7;
+            color: var(--color-text-light);
+        }
+
+        /* Section Header */
+        .section-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 48px;
+            color: var(--color-black);
+            text-transform: uppercase;
+            letter-spacing: 6px;
+            margin-bottom: 20px;
+            font-weight: 300;
+        }
+
+        .section-subtitle {
+            font-size: 18px;
+            color: var(--color-text-light);
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+
+        /* Highlight Box */
+        .highlight-box {
+            background: linear-gradient(135deg, #fff5e6 0%, #ffe8cc 100%);
+            padding: 30px;
+            border-radius: 8px;
+            border-left: 4px solid var(--color-orange);
+            margin: 30px 0;
+        }
+
+        .highlight-box p {
+            margin-bottom: 0;
+            color: var(--color-text-dark);
+            font-weight: 500;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--color-black);
+            color: var(--color-beige);
+            padding: 60px 50px 30px;
+        }
+
+        .footer-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 60px;
+            margin-bottom: 40px;
+        }
+
+        .footer-description {
+            font-size: 14px;
+            line-height: 1.8;
+            color: var(--color-dark-beige);
+        }
+
+        .partner-logo {
+            max-width: 200px;
+            filter: brightness(0) invert(1);
+            opacity: 0.8;
+        }
+
+        .footer-info {
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .footer-info strong {
+            color: var(--color-beige);
+            font-weight: 600;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(245, 237, 220, 0.1);
+            font-size: 12px;
+            color: var(--color-dark-beige);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .methodology-container {
+                grid-template-columns: 1fr;
+            }
+
+            .methodology-title-box {
+                border-right: none;
+                border-bottom: 1px solid rgba(26, 26, 26, 0.08);
+                position: relative;
+                height: auto;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 48px;
+                letter-spacing: 4px;
+            }
+
+            .hero-subtitle {
+                font-size: 16px;
+            }
+
+            .section-title {
+                font-size: 36px;
+                letter-spacing: 4px;
+            }
+
+            .methodology-number {
+                font-size: 60px;
+            }
+
+            .methodology-title {
+                font-size: 28px;
+                letter-spacing: 3px;
+            }
+
+            .methodology-text-col {
+                padding: 60px 40px;
+            }
+
+            .footer-container {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+        }
+    </style>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">Methodology</h1>
+            <p class="hero-subtitle">A four-phase approach to modeling, managing, and publishing born-digital archival materials through semantic web technologies</p>
+        </div>
+    </section>
+
+    <!-- Introduction Section -->
+    <section class="intro-section">
+        <div class="intro-container">
+            <div class="intro-text">
+                <p>The Valerio Evangelisti Archive project implements a comprehensive methodological framework structured across four principal phases. Each phase addresses specific challenges in the representation, modeling, management, and dissemination of <strong>born-digital authorial materials</strong>, responding to the complexity inherent in contemporary digital documentation through the adoption of <strong>Linked Open Data</strong> technologies and <strong>semantic web standards</strong>.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Phase 1 -->
+    <section class="methodology-section">
+        <div class="methodology-container">
+            <div class="methodology-title-box">
+                <div class="methodology-number">01</div>
+                <h2 class="methodology-title">Data Analysis<br>& Requirements</h2>
+            </div>
+            <div class="methodology-text-col">
+                <p>The preliminary research phase involved phenomenological analysis of born-digital authorial materials and identification of specific challenges in their representation. Through the convergence of state-of-the-art review, material analysis, and methodological reflection, five fundamental requirements were identified for modeling, considering their identity, structure, provenance, and contexts.</p>
+
+                <h3>The Evangelisti Dataset</h3>
+                <p>The requirements emerged from direct engagement with the born-digital partition of the Valerio Evangelisti Archive, which documents the author's digital activity from the early 1990s through 2022. As a pioneer in computer adoption since the 1980s, Evangelisti consistently experimented with new technologies, integrating them into his creative and documentary practices.</p>
+
+                <p>The collection analyzed comprises:</p>
+                <ul>
+                    <li><strong>Desktop computer hard drive</strong>: complete contents documenting primary production environment</li>
+                    <li><strong>External hard drive</strong>: backup and supplementary materials</li>
+                    <li><strong>93 floppy disks</strong>: early digital materials (out of 389 total in the collection)</li>
+                </ul>
+
+                <p>This material diversity—ranging from word processing documents and research notes to email archives, multimedia files, and system backups—exemplifies the representational challenges that contemporary born-digital archives must address. The stratification of formats, software environments, and organizational logics present in the Evangelisti materials directly informed the articulation of the modeling requirements.</p>
+
+                <h3 style="margin-top: 50px; margin-bottom: 30px; text-align: center;">Five Modeling Requirements</h3>
+                <p style="text-align: center; margin-bottom: 40px; color: var(--color-text-light);">From the analysis of the Evangelisti Archive's complexity, five fundamental requirements emerged for representing born-digital authorial materials:</p>
+
+                <div class="requirements-grid" style="margin-bottom: 40px;">
+                    <div class="requirement-card">
+                        <div class="requirement-number">01</div>
+                        <h3 class="requirement-title">File Representation</h3>
+                        <p class="requirement-description">The model must enable explicit representation of a file's nature, distinguishing between physical, logical, and content dimensions, supporting typological diversity without privileging or excluding specific formats.</p>
+                    </div>
+                    <div class="requirement-card">
+                        <div class="requirement-number">02</div>
+                        <h3 class="requirement-title">Material Integrity</h3>
+                        <p class="requirement-description">The model must support the representation of hash codes and the algorithms used to calculate them (MD5, SHA-1, SHA-256, SHA-512), as identifying elements of the document and its integrity over time.</p>
+                    </div>
+                    <div class="requirement-card">
+                        <div class="requirement-number">03</div>
+                        <h3 class="requirement-title">Native Metadata</h3>
+                        <p class="requirement-description">The model must ensure systematic integration of native metadata, documenting their value and provenance, without a priori constraints on the types or granularity of information collected.</p>
+                    </div>
+                    <div class="requirement-card">
+                        <div class="requirement-number">04</div>
+                        <h3 class="requirement-title">Provenance</h3>
+                        <p class="requirement-description">The model must support representation of technical, procedural, and interpretive provenance, documenting the history and transformations of digital documents and their related metadata.</p>
+                    </div>
+                    <div class="requirement-card">
+                        <div class="requirement-number">05</div>
+                        <h3 class="requirement-title">Contexts</h3>
+                        <p class="requirement-description">The model must enable the representation of multiple contexts, allowing documents to be connected to the manifold relationships, vertical and horizontal, that enrich their meaning, ensuring articulated and contextualized understanding.</p>
+                    </div>
+                </div>
+
+                <div class="highlight-box">
+                    <p><i class="fas fa-lightbulb" style="color: var(--color-orange); margin-right: 10px;"></i>
+                    These five requirements collectively aim to generate semantic graphs enabling movement toward an "augmented inventory": an informational ecosystem that expands the traditional boundaries of the archive to amplify interpretive contexts and access possibilities.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Phase 2 -->
+    <section class="methodology-section">
+        <div class="methodology-container">
+            <div class="methodology-title-box">
+                <div class="methodology-number">02</div>
+                <h2 class="methodology-title">Ontological<br>Model: BoDi</h2>
+            </div>
+            <div class="methodology-text-col">
+                <p>In response to the identified requirements, <strong>BoDi (Born-Digital Ontology)</strong> was developed as a specialized extension of RiC-O dedicated to representing born-digital authorial materials.</p>
+
+                <h3>Choice of RiC-O as Base Framework</h3>
+                <p>RiC-O was selected as the reference framework for its capacity to represent complex, multidirectional networks of relationships among archival entities, agents, and contexts, reflecting the stratified and interconnected nature of contemporary documentation. RiC-O is progressively establishing itself as a new international reference standard, developed by the ICA through an extensive and participatory process. EGAD documentation recognizes that "RiC is designed with the expectation that it may be extended using cross-domain ontologies specifically addressing technical data needed for the management of instantiations."</p>
+
+                <h3>Model Architecture</h3>
+                <p>BoDi selectively integrates classes and properties from established ontologies:</p>
+                <ul>
+                    <li><strong>RiC-O</strong>: utilized in its entirety as reference framework</li>
+                    <li><strong>PREMIS</strong>: for preservation metadata and integrity</li>
+                    <li><strong>PROV-O</strong>: for procedural provenance</li>
+                    <li><strong>LRMoo</strong>: for integration with the bibliographic domain</li>
+                </ul>
+                <p>These are complemented by classes and properties developed ad hoc to address specific needs of born-digital authorial materials not covered by existing models.</p>
+
+                <div style="margin: 40px 0; text-align: center;">
+                    <img src="../images/bodi-class-view.png" alt="BoDi Ontology Class Diagram" style="max-width: 100%; height: auto; border: 1px solid #e0e0e0; border-radius: 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                    <p style="margin-top: 15px; font-size: 14px; color: var(--color-text-light); font-style: italic;">Figure 1: BoDi ontology class hierarchy showing extensions to RiC-O (blue), integration with PREMIS (green), PROV-O (purple), and LRMoo (red)</p>
+                </div>
+
+                <h3>Modeling Requirement 1: File Stratification</h3>
+                <h4>Content Level</h4>
+                <p>Modeled through <code>rico:RecordResource</code> and its specializations (<code>rico:Record</code>, <code>rico:RecordSet</code>, <code>rico:RecordPart</code>).</p>
+                
+                <h4>Logical Level</h4>
+                <p>Represented by <code>rico:Instantiation</code>, which identifies the file as a logical entity distinct from content, correlated via <code>rico:isOrWasInstantiationOf</code> and <code>rico:hasOrHasInstantiation</code>.</p>
+                <p>BoDi enriches <code>rico:Instantiation</code> with specific properties:</p>
+                <ul>
+                    <li><code>bodi:hierarchyDepth</code>: measures file depth in folder hierarchy</li>
+                    <li><code>prov:atLocation</code>: documents the file path through <code>prov:Location</code></li>
+                    <li><code>bodi:hasFormatNote</code> / <code>bodi:isTechnicalDescriptionOf</code>: link technical descriptions with types distinguishing human and AI-generated productions</li>
+                </ul>
+
+                <h4>Physical Level</h4>
+                <p>Expressed by the <code>bodi:FileClusterPosition</code> class, which describes the physical allocation of bits on the medium, correlated to the logical level via <code>rico:hasFileClusterPosition</code> and <code>rico:isFileClusterPositionOf</code>.</p>
+
+                <div class="highlight-box">
+                    <p><strong>Example from the Evangelisti Archive:</strong> The manuscript file "Tortuga.docx" exemplifies this tripartite stratification. At the <em>content level</em>, it represents the intellectual work—a novel by Evangelisti—modeled as a <code>rico:Record</code> with its title and authorship. At the <em>logical level</em>, the instantiation captures its existence as a DOCX file located at depth 2 within the folder hierarchy ("/Desktop/Romanzi/Tortuga.docx"). At the <em>physical level</em>, the file's bit sequences are documented through their storage location on Evangelisti's external hard drive. This multi-layered representation enables queries spanning from "all works by Evangelisti" to "all files stored on specific hardware" without conflating these distinct dimensions.</p>
+                </div>
+
+                <h3>Modeling Requirement 2: Integrity and Hash</h3>
+                <p>Integrity is modeled through integration of the <code>premis:Fixity</code> class, correlated to <code>rico:Instantiation</code> via <code>bodi:hasHashCode</code> and <code>bodi:isHashCodeOf</code>. The symmetric property <code>bodi:hasSameHashCodeAs</code> enables explicit documentation of relationships between instantiations sharing the same hash value, supporting automatic duplicate identification and migration operation verification.</p>
+
+                <div class="highlight-box">
+                    <p><strong>Example from the Evangelisti Archive:</strong> The file "Tortuga.docx" has a SHA-256 hash value of "a3d5c8f2e9b1a7c4d6e8f0a2b4c6d8e0f2a4b6c8d0e2f4a6b8c0d2e4f6a8b0c2", calculated through a documented <code>rico:Activity</code> performed on January 15, 2025, using the SHA-256 algorithm. This same hash value was also found in a backup copy of the file, enabling the system to automatically identify them as duplicates through the <code>bodi:hasSameHashCodeAs</code> property. The complete provenance chain—including the algorithm used, the date of calculation, and the software stack employed—is preserved within the knowledge graph, ensuring long-term verifiability of file integrity even as preservation environments evolve.</p>
+                </div>
+
+                <h3>Modeling Requirement 3: Native Metadata</h3>
+                <p>BoDi proposes a flexible and agnostic approach through:</p>
+                <ul>
+                    <li><code>bodi:TechnicalMetadata</code>: linked to <code>rico:Instantiation</code> via <code>bodi:hasTechnicalMetadata</code>, represents metadata value through <code>rdf:value</code></li>
+                    <li><code>bodi:TechnicalMetadataType</code>: represents metadata type (e.g., FileSize, Software, cp:revision)</li>
+                    <li><code>bodi:TechnicalMetadataTypeSet</code>: enables grouping of different types according to functional criteria</li>
+                </ul>
+                <p>The modeling preserves values and types in the exact form retrieved by the extraction tool, without normalization. Extraction is modeled as <code>rico:Activity</code>, permitting coexistence of metadata from different extractions as separate instances.</p>
+
+                <div class="highlight-box">
+                    <p><strong>Example from the Evangelisti Archive:</strong> From "Tortuga.docx", Apache Tika extracted numerous native metadata including the revision count (17 revisions, labeled "cp:revision") and file size (286 KB, labeled "FileSize"). Each metadata value exists as a distinct <code>bodi:TechnicalMetadata</code> instance linked to its <code>bodi:TechnicalMetadataType</code>. The extraction process itself is documented as a <code>rico:Activity</code> performed on January 15, 2025, supervised by archivist Lucia Giagnolini, using a <code>bodi:SoftwareStack</code> comprising Apache Tika 2.9.1, Python 3.11.5, and the Apache POI parser for Microsoft Office documents. This granular documentation enables comparative analysis: if the same file were later extracted using ExifTool, the resulting metadata would coexist as separate instances, each traceable to its specific extraction context, permitting quality assessment across different tools.</p>
+                </div>
+
+                <h3>Modeling Requirement 4: Provenance</h3>
+                <p>BoDi articulates provenance through three dimensions:</p>
+                
+                <h4>Custodial History</h4>
+                <p>Realized through PREMIS classes <code>premis:StorageMedium</code> and <code>premis:StorageLocation</code>. Chain of custody is documented through <code>rico:DerivationRelation</code>.</p>
+
+                <div class="highlight-box">
+                    <p><strong>Example from the Evangelisti Archive:</strong> The external hard drive materials underwent three documented migrations, each represented as distinct instantiations linked through derivation relationships. The original instantiation resided on a Western Digital My Book 2TB USB 3.0 drive at the Associazione Valerio Evangelisti headquarters. A first migration transferred the materials to a Samsung Portable SSD T7 1TB stored in Cabinet 1 at ADLab (University of Bologna, Via Zamboni 32). A subsequent migration moved them to a Network Attached Storage (Ext4) in ADLab's Server Room. Each storage location and medium is explicitly documented, with <code>rico:DerivationRelation</code> instances tracking the source-to-target lineage. This comprehensive documentation enables researchers to verify the materials' custodial history and assess any potential implications of hardware changes on file integrity.</p>
+                </div>
+
+                <h4>Agency</h4>
+                <p>BoDi extends the provenance principle by including algorithmic agency alongside human agency:</p>
+                <ul>
+                    <li><strong>Human agency</strong>: through RiC-O properties and <code>bodi:generatedBy</code> for computational process outputs</li>
+                    <li><strong>Algorithmic agency</strong>: through <code>rico:Mechanism</code> subclasses: <code>bodi:Software</code>, <code>bodi:Algorithm</code>, <code>bodi:SoftwareComponent</code>; and <code>bodi:SoftwareStack</code> for composite aggregations</li>
+                    <li><strong>Hybrid agency</strong>: through <code>bodi:isOrWasSupervisorOf</code> to document human governance over digital processes, and <code>bodi:hasRevisioned</code>/<code>bodi:revisedBy</code> for validated AI-generated content</li>
+                </ul>
+                <p>The properties <code>bodi:confidenceScore</code> and <code>bodi:hasHumanValidation</code> document quality and reliability of AI-generated outputs.</p>
+
+                <h4>Processes</h4>
+                <p>Every significant operation is modeled as <code>rico:Activity</code>. The <code>bodi:Exception</code> class represents error conditions or anomalous situations. The <code>bodi:omittedInformation</code> property documents anonymization interventions for privacy reasons.</p>
+
+                <div class="highlight-box">
+                    <p><strong>Example from the Evangelisti Archive:</strong> The metadata extraction process for "Tortuga.docx" exemplifies the representation of hybrid agency. The <code>rico:Activity</code> of extraction involved a <code>bodi:SoftwareStack</code> (Apache Tika, Python, and specialized parsers) performing the computational work, while archivist Lucia Giagnolini exercised governance through the <code>bodi:isOrWasSupervisorOf</code> relationship. When AI-generated technical descriptions were produced for files, the <code>bodi:hasRevisioned</code> property documents which descriptions underwent human validation, with <code>bodi:confidenceScore</code> values enabling prioritization of review efforts. Privacy-sensitive materials are marked with <code>bodi:omittedInformation</code>, transparently documenting curatorial decisions to redact information while preserving the structural integrity of the archive for quantitative analysis.</p>
+                </div>
+
+                <h3>Modeling Requirement 5: Contexts</h3>
+                <h4>Vertical Dimension</h4>
+                <p>BoDi fully adopts the RiC-O framework, representing hierarchy through <code>rico:Record</code> and <code>rico:RecordSet</code>, linked by <code>rico:includesOrIncluded</code> and <code>rico:isOrWasIncludedIn</code>. RiC-O's agnosticism regarding canonical descriptive levels enables representation of digital organizations without forcing, with possibility of selective typing via <code>rico:RecordSetType</code>.</p>
+
+                <h4>Horizontal Dimension</h4>
+                <p>Realized through integration with LRMoo. The <code>lrmoo:F1_Work</code> class represents the literary work as a conceptual entity, distinguished from its material manifestations, linked to <code>rico:RecordResource</code> via <code>rico:isOrWasSubjectOf</code> or <code>rico:isRelatedTo</code>. <code>lrmoo:F2_Expression</code> enables modeling of specific realizations of the work (editions, translations, revisions).</p>
+
+                <div class="highlight-box">
+                    <p><strong>Example from the Evangelisti Archive:</strong> The "Tortuga.docx" file demonstrates both contextual dimensions. <em>Vertically</em>, it is nested within the folder hierarchy: the file (instantiation) is contained within the "Romanzi" folder (a <code>rico:RecordSet</code>), which in turn is part of the Desktop directory structure. At the content level, the record representing Tortuga is included within the broader recordset of Evangelisti's novels. <em>Horizontally</em>, the file connects to the literary work "Tortuga" (modeled as <code>lrmoo:F1_Work</code>), enabling discovery of all archival materials related to this novel regardless of their hierarchical location—manuscripts, correspondence with publishers, reviews, translations. A researcher interested in Tortuga can thus navigate from the published work to find drafts, notes, and revisions scattered across different folders, reconstructing the creative genealogy of the text through semantic relationships rather than relying solely on file system organization.</p>
+                </div>
+
+                <h3>Data Population and Workflow Automation</h3>
+                <p>The BoDi model was populated with data from the born-digital materials of the Evangelisti Archive through a <strong>structured Python pipeline</strong> that enabled automation of the data generation process. This computational workflow systematically processed the archival materials, extracting technical metadata, calculating hash codes, documenting provenance information, and generating RDF triples conforming to the BoDi ontological specifications.</p>
+
+                <p>The automated pipeline ensures:</p>
+                <ul>
+                    <li><strong>Consistency</strong> in metadata extraction and representation across the entire collection</li>
+                    <li><strong>Scalability</strong> for processing large volumes of heterogeneous digital materials</li>
+                    <li><strong>Reproducibility</strong> of the data generation process for quality control and verification</li>
+                    <li><strong>Documentation</strong> of all computational processes as <code>rico:Activity</code> instances within the knowledge graph</li>
+                </ul>
+
+                <p>The pipeline architecture modularly integrates various software tools and libraries, with each component's role and configuration explicitly documented within the resulting RDF graph, thereby implementing the provenance principles articulated in Requirement 4.</p>
+
+                <div class="highlight-box">
+                    <p><i class="fas fa-project-diagram" style="color: var(--color-orange); margin-right: 10px;"></i>
+                    The BoDi model enables research paths according to multiple logics: hierarchical, thematic, chronological, typological, relational, procedural, and contextual/transversal through combinations of multiple criteria.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Phase 3 -->
+    <section class="methodology-section">
+        <div class="methodology-container">
+            <div class="methodology-title-box">
+                <div class="methodology-number">03</div>
+                <h2 class="methodology-title">Data Management:<br>Blazegraph</h2>
+            </div>
+            <div class="methodology-text-col">
+                <p>For managing and querying data represented in BoDi, <strong>Blazegraph</strong> was adopted as the reference triplestore. The selection of this technological environment responded to the necessity of identifying a platform capable of enabling publication, exploration, and querying of descriptive data in RDF format, while ensuring separation between data structure and presentation modality.</p>
+
+                <h3>Key Capabilities</h3>
+                <ul>
+                    <li><strong>Efficient storage</strong> of large-scale RDF graphs</li>
+                    <li><strong>Querying through complex SPARQL queries</strong></li>
+                    <li><strong>Native integration</strong> with visualization platforms based on Semantic Web technologies</li>
+                    <li><strong>Scalability</strong> necessary for managing articulated knowledge graphs such as the Evangelisti Archive</li>
+                </ul>
+
+                
+
+                <h3>SPARQL Endpoint</h3>
+                <p>The SPARQL endpoint enables researchers and advanced users to execute personalized queries on the data, retrieving information according to specific criteria and combinations of parameters not predefined in the graphical interface. This architecture ensures separation between the storage/querying level and the presentation level, permitting multiple access modalities to the same informational base.</p>
+
+                <div class="highlight-box">
+                    <p><i class="fas fa-database" style="color: var(--color-orange); margin-right: 10px;"></i>
+                    Standard management of data through the SPARQL endpoint and their visualization through a dedicated interface represented essential technical requirements for selecting the adoption environment.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Phase 4 -->
+    <section class="methodology-section">
+        <div class="methodology-container">
+            <div class="methodology-title-box">
+                <div class="methodology-number">04</div>
+                <h2 class="methodology-title">Data Presentation:<br>ResearchSpace</h2>
+            </div>
+            <div class="methodology-text-col">
+                <p>For publication, exploration, and data access, <strong>ResearchSpace</strong> was selected as the platform—an open-source environment for managing and publishing knowledge graphs dedicated to cultural heritage.</p>
+
+                <h3>Platform Characteristics</h3>
+                <p>ResearchSpace, developed at the British Museum with support from the Andrew W. Mellon Foundation and currently maintained by Kartography CIC, is defined by its developers as a platform designed to "help establish a community of researchers, where their underlying activities are framed by data sharing, active engagement in formal arguments, and semantic publishing."</p>
+
+                <p>The architecture is based on Semantic Web technologies, utilizing RDF for data representation and SPARQL as query language. The system is structured in integrable and configurable modules (templates), each offering specialized functionalities adaptable to individual project needs.</p>
+
+                <h4>Available Modules</h4>
+                <ul>
+                    <li><strong>Semantic Search and Forms</strong>: contextual and faceted searches</li>
+                    <li><strong>Knowledge Patterns</strong>: reusable ontological schemas for adding and modifying complex relationships</li>
+                    <li><strong>Knowledge Maps</strong>: network visualization of connections between actors, places, events, objects, and concepts</li>
+                    <li><strong>Image Viewer</strong>: comparison and annotation of high-resolution images</li>
+                    <li><strong>Semantic Narratives</strong>: combination of text and dynamic visualizations</li>
+                    <li><strong>Timelines and geographic maps</strong>: for temporal and spatial data visualization</li>
+                </ul>
+
+                <h3>Implementation for the Evangelisti Archive</h3>
+                <p>The project represented the <strong>first implementation of ResearchSpace based on an archival ontology</strong> (BoDi/RiC-O), verifying its compatibility with frameworks different from CIDOC CRM, for which the system was originally designed.</p>
+
+                <h4>Semantic Tree Advanced</h4>
+                <p>To address the specific needs of the Evangelisti Archive, an extended version of the Semantic Tree module was developed, introducing:</p>
+
+                <ul>
+                    <li><strong>Progressive loading</strong>: Instead of retrieving the entire graph in a single query, only the root and first level are initially displayed. Node expansion activates asynchronous loading of descendants, optimizing processing times and enabling management of large-scale datasets.</li>
+                    
+                    <li><strong>Integrated search</strong>: Operates directly on the tree structure, filtering and reorganizing the hierarchy to highlight pertinent nodes within their archival context, without generating separate result lists.</li>
+                    
+                    <li><strong>Reversible and combinable filters</strong>: Enable temporary hiding of nodes not satisfying certain conditions (e.g., materials anonymized for privacy), while maintaining possibility of quantitative analysis via SPARQL.</li>
+                    
+                    <li><strong>Recursive sorting</strong>: Enables reorganization of visualization according to user-defined criteria (title, date, IRI, number of descendant elements), applied across all hierarchy levels.</li>
+                    
+                    <li><strong>Related nodes system</strong>: Mouse-over on each node reveals a menu proposing configurable correlation criteria (same creation date, same software, same hash, functional/thematic correlations). Related nodes are automatically highlighted in the view, enabling recognition of transversal connections crossing archival organization.</li>
+                </ul>
+
+                <h3>Archive Visualization</h3>
+                <p>The interface adopts the file system as a metaphor for representing archival materials. The hierarchical structure identifies at the highest level a general grouping of born-digital materials subdivided by media: main computer, external hard drive, and floppy disks. Each grouping replicates the organization of folders and subfolders.</p>
+
+                <h4>Detail Sheets Display</h4>
+                <ul>
+                    <li><strong>For main groupings</strong>: general overview, content description, number of elements, total dimensions, chronological extremes, archival history of materials</li>
+                    <li><strong>For folders and files</strong>: preview description generated via LLM, integrity information (hash and calculation provenance), extracted technical metadata, references to Evangelisti's works</li>
+                </ul>
+
+                <p>All details regarding extraction modalities, software utilized, and operation supervision are accessible through dedicated information boxes.</p>
+
+                <h3>Future Developments</h3>
+                <p>Planned developments include:</p>
+                <ul>
+                    <li>Advanced search module with combination of multiple criteria</li>
+                    <li>Result visualization in list format alternative to tree view</li>
+                    <li>Simultaneous management of multiple detail windows for comparison operations</li>
+                    <li>Completion of dataset curation</li>
+                    <li>Inclusion of analog materials from the collection</li>
+                </ul>
+
+                <div class="highlight-box">
+                    <p><i class="fas fa-eye" style="color: var(--color-orange); margin-right: 10px;"></i>
+                    ResearchSpace, even in its initial experimental phase, has proven particularly suitable for presenting and valorizing this information, offering a standard base for data management through a SPARQL endpoint based on Blazegraph and the possibility of customizing interfaces according to specific project needs.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Conclusion Section -->
+    <section class="intro-section">
+        <div class="intro-container">
+            <div class="intro-text">
+                <p>This quadripartite methodology enables management of born-digital authorial complexity through an integrated approach that begins with phenomenological study of materials, proceeds through ontological formalization, relies on consolidated technological standards for data management, and concludes with user interfaces that translate semantic complexity into comprehensible access forms—even for non-specialist users—<strong>without losing conceptual coherence and descriptive granularity</strong>.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer" id="contact">
+        <div class="footer-container">
+            <div>
+                <p class="footer-description">
+                    The Valerio Evangelisti Archive is a research project dedicated to the preservation and valorization of the literary heritage of one of Italy's most important science fiction and historical fiction authors.
+                </p>
+            </div>
+            <div>
+                <img class="partner-logo" src="https://via.placeholder.com/200x80/f5eddc/1a1a1a?text=UniBo+Logo" alt="University of Bologna">
+            </div>
+            <div class="footer-info">
+                <p><strong>University of Bologna</strong></p>
+                <p>/DH.ARC - Digital Humanities Advanced Research Center</p>
+                <p>Via Zamboni, 32</p>
+                <p>40126 Bologna, Italy</p>
+                <br>
+                <p>Email: lucia.giagnolini2[at]unibo.it</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2025 Valerio Evangelisti Archive. All rights reserved.</p>
+        </div>
+    </footer>

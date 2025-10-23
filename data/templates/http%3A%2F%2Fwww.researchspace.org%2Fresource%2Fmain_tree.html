@@ -129,8 +129,8 @@
   {
     "label": "Same Work",
     "icon": "fa fa-book",
-    "query": "PREFIX rico: <https://www.ica.org/standards/RiC/ontology#> PREFIX lrmoo: <http://iflastandards.info/ns/lrm/lrmoo/> SELECT DISTINCT ?node WHERE { <$__nodeIri__> rico:isRelatedTo ?work . ?work a lrmoo:F1_Work . ?node rico:isRelatedTo ?work . FILTER(?node != <$__nodeIri__>) }",
-    "description": "Find all records related to the same intellectual work"
+    "query": "PREFIX rico: <https://www.ica.org/standards/RiC/ontology#> PREFIX lrmoo: <http://iflastandards.info/ns/lrm/lrmoo/> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> SELECT DISTINCT ?node WHERE { <$__nodeIri__> rico:isRelatedTo ?work . ?work a lrmoo:F1_Work ; rdfs:label ?workLabel . FILTER(!CONTAINS(LCASE(?workLabel), \"ciclo\") && !CONTAINS(LCASE(?workLabel), \"trilogia\")) . ?node rico:isRelatedTo ?work . FILTER(?node != <$__nodeIri__>) }",
+    "description": "Find all records related to the same intellectual work (excluding cycles and trilogies)"
   },
   {
     "label": "Same Creation Date",
@@ -357,8 +357,14 @@
                 (SAMPLE(?techDescHumanValidation) as ?techDescHumanValidation)
                 ?techMetadataLabel ?techMetadataValue 
                 (SAMPLE(?hashCodeValue) as ?hashCodeValue)
-                (SAMPLE(?work) as ?work)
-                (SAMPLE(?workLabel) as ?workLabel)
+                (GROUP_CONCAT(DISTINCT ?work; separator=", ") as ?work)
+                (REPLACE(
+                  REPLACE(
+                    GROUP_CONCAT(DISTINCT ?formattedWorkLabel; separator=" "),
+                    "aaa_", ""
+                  ),
+                  "zzz_", ""
+                ) as ?workLabel)
                 WHERE {
                   BIND(<{{#if iri}}{{iri}}{{else}}http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1{{/if}}> as ?node)
                   
@@ -426,7 +432,15 @@
                     OPTIONAL {
                       ?node rico:isRelatedTo ?work .
                       ?work a lrmoo:F1_Work .
-                      OPTIONAL { ?work rdfs:label ?workLabel }
+                      OPTIONAL { 
+                        ?work rdfs:label ?rawWorkLabel .
+                        BIND(
+                          IF(STRSTARTS(LCASE(?rawWorkLabel), "ciclo") || STRSTARTS(LCASE(?rawWorkLabel), "trilogia"),
+                            CONCAT("zzz_(", ?rawWorkLabel, ")"),
+                            CONCAT("aaa_", ?rawWorkLabel)
+                          ) as ?formattedWorkLabel
+                        )
+                      }
                     }
                     
                     OPTIONAL {
