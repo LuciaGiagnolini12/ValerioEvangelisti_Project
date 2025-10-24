@@ -17,8 +17,6 @@ body {
   margin-bottom: 0;
 }
 
-
-
 /* Ensure template-content fills available height */
 #template-content {
   height: calc(100vh - var(--navbar-height) + 16px);
@@ -653,4 +651,389 @@ semantic-tree-advanced div[style*="display: flex"] > button[style*="rgb(0, 123, 
   display: none !important;
 }
 
+/* ==================== HERO SECTION ==================== */
+
+.hero {
+    height: 60vh;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, rgba(26, 26, 26, 0.85) 0%, rgba(42, 42, 42, 0.85) 100%), url('../images/bytes.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    overflow: hidden;
+}
+
+.hero-content {
+    position: relative;
+    text-align: center;
+    color: var(--color-beige);
+    z-index: 2;
+    padding: 0 20px;
+}
+
+.hero-title {
+    font-size: 72px;
+    font-weight: 300;
+    margin-bottom: 20px;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    color: var(--color-dark-beige);
+}
+
+.hero-subtitle {
+    font-size: 20px;
+    font-weight: 300;
+    max-width: 900px;
+    margin: 0 auto;
+    line-height: 1.6;
+    color: var(--color-dark-beige);
+}
+
+/* ==================== INTRO SECTION ==================== */
+
+.intro-section {
+    padding: 100px 50px;
+    background: var(--color-white);
+}
+
+.intro-container {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.intro-text {
+    font-size: 18px;
+    line-height: 1.9;
+    color: var(--color-text-light);
+    text-align: center;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.intro-text strong {
+    color: var(--color-orange);
+    font-weight: 600;
+}
+
+/* Section Header */
+.section-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.section-title {
+    font-size: 48px;
+    color: var(--color-black);
+    text-transform: uppercase;
+    letter-spacing: 6px;
+    margin-bottom: 20px;
+    font-weight: 300;
+}
+
+.section-subtitle {
+    font-size: 18px;
+    color: var(--color-text-light);
+    max-width: 800px;
+    margin: 0 auto;
+    line-height: 1.8;
+}
+
+/* Highlight Box */
+.highlight-box {
+    background: linear-gradient(135deg, #fff5e6 0%, #ffe8cc 100%);
+    padding: 30px;
+    border-radius: 8px;
+    border-left: 4px solid var(--color-orange);
+    margin: 30px 0;
+}
+
+.highlight-box p {
+    margin-bottom: 0;
+    color: var(--color-text-dark);
+    font-weight: 500;
+}
+
+/* ==================== METHODOLOGY SECTION ==================== */
+
+.methodology-section {
+    padding: 0;
+    background: var(--color-beige);
+    margin-bottom: 60px;
+}
+
+.methodology-section:last-of-type {
+    margin-bottom: 0;
+}
+
+.methodology-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 0;
+    border-top: 1px solid rgba(26, 26, 26, 0.08);
+}
+
+.methodology-title-box {
+    background: linear-gradient(135deg, rgba(26, 26, 26, 0.85) 0%, rgba(42, 42, 42, 0.85) 100%), 
+                url('../images/bytes.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-right: 1px solid rgba(26, 26, 26, 0.08);
+    padding: 120px 60px 80px 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    position: sticky;
+    top: 60px;
+    height: 100vh;
+    align-self: flex-start;
+}
+
+.methodology-number {
+    font-size: 80px;
+    font-weight: 700;
+    color: var(--color-orange);
+    line-height: 1;
+    margin-bottom: 20px;
+}
+
+.methodology-title {
+    font-size: 36px;
+    color: var(--color-beige);
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    line-height: 1.2;
+    font-weight: 300;
+}
+
+.methodology-text-col {
+    padding: 80px 80px;
+    font-size: 15px;
+    line-height: 1.9;
+    color: var(--color-text-light);
+    background: var(--color-white);
+}
+
+.methodology-text-col h3 {
+    font-size: 20px;
+    color: var(--color-black);
+    margin-bottom: 20px;
+    margin-top: 35px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.methodology-text-col h3:first-child {
+    margin-top: 0;
+}
+
+.methodology-text-col h4 {
+    font-size: 16px;
+    color: var(--color-orange);
+    margin-bottom: 12px;
+    margin-top: 25px;
+    font-weight: 600;
+}
+
+.methodology-text-col p {
+    margin-bottom: 15px;
+}
+
+.methodology-text-col ul {
+    margin: 15px 0 15px 25px;
+    padding: 0;
+}
+
+.methodology-text-col li {
+    margin-bottom: 10px;
+    line-height: 1.8;
+}
+
+.methodology-text-col strong {
+    color: var(--color-orange);
+    font-weight: 600;
+}
+
+.methodology-text-col code {
+    background: var(--color-beige);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    color: var(--color-black);
+}
+
+.methodology-text-col .requirements-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+}
+
+.methodology-text-col .requirement-card {
+    background: var(--color-beige);
+    padding: 30px;
+    border-radius: 8px;
+    border-left: 4px solid var(--color-orange);
+    transition: all 0.3s ease;
+}
+
+.methodology-text-col .requirement-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+.methodology-text-col .requirement-number {
+    font-size: 42px;
+    font-weight: 700;
+    color: var(--color-orange);
+    line-height: 1;
+    margin-bottom: 12px;
+}
+
+.methodology-text-col .requirement-title {
+    font-size: 16px;
+    color: var(--color-black);
+    margin-bottom: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.methodology-text-col .requirement-description {
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--color-text-light);
+}
+
+/* Responsive Design per Methodology */
+@media (max-width: 1200px) {
+    .methodology-container {
+        grid-template-columns: 1fr;
+    }
+
+    .methodology-title-box {
+        border-right: none;
+        border-bottom: 1px solid rgba(26, 26, 26, 0.08);
+        position: relative;
+        height: auto;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 48px;
+        letter-spacing: 4px;
+    }
+
+    .hero-subtitle {
+        font-size: 16px;
+    }
+
+    .section-title {
+        font-size: 36px;
+        letter-spacing: 4px;
+    }
+
+    .methodology-number {
+        font-size: 60px;
+    }
+
+    .methodology-title {
+        font-size: 28px;
+        letter-spacing: 3px;
+    }
+
+    .methodology-text-col {
+        padding: 60px 40px;
+    }
+}
+
+ /* Hero Section */
+ .hero {
+            height: 60vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(26, 26, 26, 0.85) 0%, rgba(42, 42, 42, 0.85) 100%), url('../images/bytes.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            position: relative;
+            text-align: center;
+            color: var(--color-beige);
+            z-index: 2;
+            padding: 0 20px;
+        }
+
+        .hero-title {
+            font-size: 72px;
+            font-weight: 300;
+            margin-bottom: 20px;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            color: var(--color-dark-beige);
+        }
+
+        .hero-subtitle {
+            font-size: 20px;
+            font-weight: 300;
+            max-width: 900px;
+            margin: 0 auto;
+            line-height: 1.6;
+            color: var(--color-dark-beige);
+        }
+
+        .nav-menu a:hover {
+            color: var(--color-orange);
+        }
+
+        /* Intro Section */
+        .intro-section {
+            padding: 100px 50px;
+            background: var(--color-white);
+        }
+
+        .intro-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .intro-text {
+            font-size: 18px;
+            line-height: 1.9;
+            color: var(--color-text-light);
+            text-align: center;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .intro-text strong {
+            color: var(--color-orange);
+            font-weight: 600;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #fff5e6 0%, #ffe8cc 100%);
+            padding: 30px;
+            border-radius: 8px;
+            border-left: 4px solid var(--color-orange);
+            margin: 30px 0;
+        }
+
+        .highlight-box p {
+            margin-bottom: 0;
+            color: var(--color-text-dark);
+            font-weight: 500;
+        }
 </style>
