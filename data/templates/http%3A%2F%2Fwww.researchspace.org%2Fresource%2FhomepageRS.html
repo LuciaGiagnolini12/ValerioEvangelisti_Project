@@ -1,5 +1,5 @@
-
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
         :root {
             --color-beige: #f5eddc;
@@ -116,6 +116,34 @@
             color: var(--color-dark-beige);
         }
 
+        /* Scroll Arrow */
+        .scroll-arrow {
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .scroll-arrow svg {
+            width: 40px;
+            height: 40px;
+            animation: bounceArrow 2s infinite;
+        }
+
+        @keyframes bounceArrow {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-15px);
+            }
+            60% {
+                transform: translateY(-8px);
+            }
+        }
+
         /* Project Section */
         .project-section {
             padding: 0;
@@ -195,18 +223,23 @@
         .stat-box {
             background: var(--color-white);
             padding: 30px;
-            border-radius: 8px;
-            border-left: 3px solid var(--color-orange);
-            transition: all 0.3s ease;
+            border-radius: 10px;
+            transition: all 0.4s ease;
+            box-shadow: 
+                0 2px 12px rgba(0,0,0,0.06),
+                0 0 0 1px rgba(232, 106, 51, 0.1);
         }
 
         .stat-box:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transform: translateY(-4px);
+            box-shadow: 
+                0 8px 30px rgba(0,0,0,0.08),
+                0 0 0 2px rgba(232, 106, 51, 0.3),
+                0 0 40px rgba(232, 106, 51, 0.15);
         }
 
         .stat-number {
-            font-size: 2.5rem;
+            font-size: 2.2rem;
             font-weight: 300;
             color: var(--color-black);
             margin-bottom: 8px;
@@ -215,7 +248,7 @@
 
         .stat-label {
             color: var(--color-text-light);
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             font-weight: 500;
             letter-spacing: 0.5px;
         }
@@ -460,6 +493,11 @@
             <h1 class="hero-title">Valerio Evangelisti <span style="color: var(--color-orange);">Archive</span></h1>
             <p class="hero-subtitle">Explore the born-digital literary legacy of Italy's science fiction master</p>
         </div>
+        <div class="scroll-arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#E86A33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+        </div>
     </section>
 
     <!-- Project Section -->
@@ -474,11 +512,15 @@
                 </div>
             </div>
             <div class="project-text-col">
-                <p>The <strong>Valerio Evangelisti Archive</strong> is a research project dedicated to the preservation and valorization of the literary heritage of one of Italy's most important science fiction and historical fiction authors.</p>
-                <p>Through systematic digitization of manuscripts, correspondence, drafts, and unpublished materials, the project aims to create a complete and accessible digital archive for scholars, researchers, and enthusiasts of Evangelisti's work.</p>
-                <p>The archive includes the author's entire corpus, with particular attention to the celebrated cycle of inquisitor Nicolas Eymerich, enabling in-depth philological studies and analysis of the evolution of his narrative poetics.</p>
-                <p>The project employs advanced digitization technologies and metadata standards to ensure long-term preservation of original materials, many of which are fragile and require special conservation care.</p>
-                <p>Through an <strong>interactive web platform</strong>, designed for both researchers and the wider public, users will be able to navigate through the author's entire production, exploring thematic connections, stylistic evolutions, and the historical-cultural context that influenced his writing.</p>
+                <p>The <strong>Valerio Evangelisti Archive</strong> is a research project dedicated to the preservation, modeling, and valorization of the born-digital literary heritage of one of Italy's most important science fiction and historical fiction authors.</p>
+                
+                <p>The project focuses on the <strong>born-digital partition</strong> of Evangelisti's archive, documenting the author's digital activity from the early 1990s through 2022. As a pioneer in computer adoption since the 1980s, Evangelisti consistently experimented with new technologies, integrating them into his creative and documentary practices.</p>
+                
+                <p>The collection comprises materials from the <strong>desktop computer hard drive</strong> (documenting primary production environment), the <strong>external hard drive</strong> (backup and supplementary materials), and <strong>93 digitized floppy disks</strong> from early creative periods. This material diversity – ranging from word processing documents and research notes to email archives, multimedia files, and system backups – exemplifies the representational challenges that contemporary born-digital archives must address.</p>
+                
+                <p>The project employs <strong>semantic web technologies</strong> and the <strong>Born-Digital Archival Ontology (BoDi)</strong>, developed as an extension of <strong>Records in Contexts Ontology (RiC-O)</strong>, to create a comprehensive knowledge graph representing files in their physical, logical, and content dimensions. Through integration of hash codes for integrity verification, native metadata extraction, and complete provenance documentation, the archive ensures long-term preservation and scholarly accessibility.</p>
+                
+                <p>Through an <strong>interactive ResearchSpace platform</strong>, researchers and enthusiasts can navigate the entire digital production using advanced semantic queries, exploring thematic connections, temporal patterns, and transversal relationships that reveal the evolution of Evangelisti's narrative poetics across three decades of digital creativity.</p>
             </div>
         </div>
     </section>
@@ -486,95 +528,287 @@
     <!-- Stats Section -->
     <section class="stats-section" id="data">
         <div class="stats-container">
-            <div class="stats-row">
-                <div class="stat-box">
-                    <div class="stat-number">6,888</div>
-                    <div class="stat-label">Total Files Created</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-number">1,806</div>
-                    <div class="stat-label">Total Files Modified</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-number">114</div>
-                    <div class="stat-label">Peak May 2006</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-number">74.35%</div>
-                    <div class="stat-label">Evangelisti Corpus</div>
+            <!-- Hero Stat -->
+            <div style="grid-column: 1 / -1; margin-bottom: 80px;">
+                <div style="background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%); padding: 70px 60px; border-radius: 12px; text-align: center; position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
+                    <div style="position: absolute; top: -100px; right: -100px; width: 400px; height: 400px; background: radial-gradient(circle, rgba(232, 106, 51, 0.06) 0%, transparent 70%);"></div>
+                    <div style="position: absolute; bottom: -100px; left: -100px; width: 400px; height: 400px; background: radial-gradient(circle, rgba(232, 106, 51, 0.04) 0%, transparent 70%);"></div>
+                    <div style="font-size: 14px; color: var(--color-dark-beige); letter-spacing: 4px; text-transform: uppercase; margin-bottom: 20px; font-weight: 500;">The Knowledge Graph</div>
+                    <div style="font-size: 84px; font-weight: 300; color: var(--color-orange); margin-bottom: 15px; letter-spacing: -4px; position: relative; z-index: 1; line-height: 1;">61,154,322</div>
+                    <div style="font-size: 16px; color: var(--color-beige); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 18px; font-weight: 400;">RDF Triples</div>
+                    <div style="font-size: 15px; color: var(--color-dark-beige); max-width: 600px; margin: 0 auto; line-height: 1.8; position: relative; z-index: 1;">Documenting three decades of digital creativity through semantic technologies</div>
                 </div>
             </div>
+
+            <!-- Core Statistics - Creative Layout -->
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 60px;">
+                <!-- Hero Stat - Records -->
+                <div style="grid-column: span 2; background: linear-gradient(135deg, var(--color-orange) 0%, var(--color-light-orange) 100%); padding: 50px 45px; border-radius: 16px; position: relative; overflow: hidden; box-shadow: 0 8px 32px rgba(232, 106, 51, 0.25);">
+                    <div style="position: absolute; top: -30px; right: -30px; width: 200px; height: 200px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
+                    <div style="position: absolute; bottom: -50px; left: -50px; width: 250px; height: 250px; background: rgba(255,255,255,0.05); border-radius: 50%;"></div>
+                    <div style="position: relative; z-index: 2;">
+                        <div style="display: flex; align-items: flex-start; justify-content: space-between;">
+                            <div style="flex: 1;">
+                                <div style="font-size: 11px; color: rgba(255,255,255,0.85); text-transform: uppercase; letter-spacing: 2px; font-weight: 600; margin-bottom: 15px;">Archive Collection</div>
+                                <div style="font-size: 64px; font-weight: 200; color: white; line-height: 0.9; margin-bottom: 10px;">78,211</div>
+                                <div style="font-size: 16px; color: rgba(255,255,255,0.9); font-weight: 500; margin-bottom: 25px;">Files</div>
+                                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.2); margin-bottom: 20px;">
+                                    <div>
+                                        <div style="font-size: 26px; font-weight: 300; color: white; line-height: 1;">11,135</div>
+                                        <div style="font-size: 10px; color: rgba(255,255,255,0.8); text-transform: uppercase; letter-spacing: 1px; margin-top: 5px;">Folders</div>
+                                    </div>
+                                    <div>
+                                        <div style="font-size: 26px; font-weight: 300; color: white; line-height: 1;">5.5M+</div>
+                                        <div style="font-size: 10px; color: rgba(255,255,255,0.8); text-transform: uppercase; letter-spacing: 1px; margin-top: 5px;">Metadata</div>
+                                    </div>
+                                    <div>
+                                        <div style="font-size: 26px; font-weight: 300; color: white; line-height: 1;">106K+</div>
+                                        <div style="font-size: 10px; color: rgba(255,255,255,0.8); text-transform: uppercase; letter-spacing: 1px; margin-top: 5px;">Metadata Types</div>
+                                    </div>
+                                </div>
+                                <a href="#main-tree" style="display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; background: rgba(255,255,255,0.2); border-radius: 8px; color: white; text-decoration: none; font-size: 13px; font-weight: 500; letter-spacing: 0.5px; transition: all 0.3s ease; backdrop-filter: blur(10px);" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">
+                                    <i class="fa fa-folder-open-o" style="font-size: 16px;"></i>
+                                    EXPLORE THE ARCHIVE
+                                    <i class="fa fa-arrow-right" style="font-size: 12px;"></i>
+                                </a>
+                            </div>
+                            <div style="width: 80px; height: 80px; background: rgba(255,255,255,0.15); border-radius: 16px; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px);">
+                                <i class="fa fa-database" style="font-size: 36px; color: white;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Archive Depth -->
+                <div style="background: white; padding: 35px 30px; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.06), 0 0 0 1px rgba(232, 106, 51, 0.08); position: relative; transition: all 0.4s ease;" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 8px 30px rgba(0,0,0,0.08), 0 0 0 1px rgba(232, 106, 51, 0.2), 0 0 30px rgba(232, 106, 51, 0.1)';" onmouseout="this.style.transform=''; this.style.boxShadow='0 2px 12px rgba(0,0,0,0.06), 0 0 0 1px rgba(232, 106, 51, 0.08)';">
+                    <div style="width: 45px; height: 45px; background: linear-gradient(135deg, #fff5e6 0%, #ffe8cc 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 18px;">
+                        <i class="fa fa-sitemap" style="font-size: 22px; color: var(--color-orange);"></i>
+                    </div>
+                    <div style="font-size: 48px; font-weight: 200; color: var(--color-black); line-height: 1; margin-bottom: 6px;">18</div>
+                    <div style="font-size: 11px; color: var(--color-text-light); text-transform: uppercase; letter-spacing: 1.2px; font-weight: 600; margin-bottom: 8px;">Depth Levels</div>
+                    <div style="font-size: 11px; color: var(--color-text-light); letter-spacing: 0.3px; line-height: 1.5;">Maximum nested directory depth from the main desktop PC hard drive, revealing Evangelisti's sophisticated multi-layered organizational structure</div>
+                </div>
+
+                <!-- Timeline Compact -->
+                <div style="background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%); padding: 35px 30px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); position: relative; overflow: hidden; transition: all 0.4s ease;" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 8px 30px rgba(0,0,0,0.2)';" onmouseout="this.style.transform=''; this.style.boxShadow='0 4px 20px rgba(0,0,0,0.15)';">
+                    <div style="position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--color-orange) 0%, var(--color-light-orange) 100%);"></div>
+                    <div style="width: 45px; height: 45px; background: linear-gradient(135deg, rgba(232, 106, 51, 0.25) 0%, rgba(232, 106, 51, 0.15) 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 18px; border: 1px solid rgba(232, 106, 51, 0.3);">
+                        <i class="fa fa-clock-o" style="font-size: 22px; color: var(--color-orange);"></i>
+                    </div>
+                    <div style="font-size: 48px; font-weight: 200; color: var(--color-beige); line-height: 1; margin-bottom: 6px;">32</div>
+                    <div style="font-size: 11px; color: rgba(245, 237, 220, 0.8); text-transform: uppercase; letter-spacing: 1.2px; font-weight: 600; margin-bottom: 8px;">Years</div>
+                    <div style="font-size: 11px; color: rgba(245, 237, 220, 0.7); letter-spacing: 0.3px; line-height: 1.5; margin-bottom: 10px;">Entire digital career documented from first floppy disk to final backup</div>
+                    <div style="font-size: 10px; color: rgba(245, 237, 220, 0.5); letter-spacing: 0.5px;">1991 — 2022</div>
+                </div>
+            </div>
+
+            <!-- Storage Distribution -->
+            <div style="grid-column: 1 / -1; margin-bottom: 80px;">
+                <h3 style="font-size: 26px; color: var(--color-black); margin-bottom: 15px; text-align: center; letter-spacing: 3px; font-weight: 300; text-transform: uppercase;">Archive Distribution by Storage</h3>
+                <p style="font-size: 13px; color: var(--color-text-light); text-align: center; margin-bottom: 40px; letter-spacing: 0.5px;">File distribution across physical storage media</p>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px;">
+                    <div style="background: var(--color-white); border-radius: 10px; padding: 40px 35px; transition: all 0.3s ease; box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
+                        <div style="display: flex; align-items: center; gap: 18px; margin-bottom: 25px;">
+                            <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #fff5e6 0%, #ffe8cc 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(232, 106, 51, 0.15);">
+                                <i class="fa fa-hdd-o" style="font-size: 28px; color: var(--color-orange);"></i>
+                            </div>
+                            <div style="flex: 1;">
+                                <div style="font-size: 11px; color: var(--color-text-light); letter-spacing: 1.5px; text-transform: uppercase; font-weight: 600; margin-bottom: 8px;">Primary Hard Drive</div>
+                                <div style="font-size: 40px; font-weight: 300; color: var(--color-black); line-height: 1;">56,171</div>
+                                <div style="font-size: 10px; color: var(--color-text-light); letter-spacing: 0.5px; margin-top: 4px;">files</div>
+                            </div>
+                        </div>
+                        <div style="background: #f5f5f5; height: 6px; border-radius: 3px; overflow: hidden; margin-bottom: 12px;">
+                            <div style="width: 71.8%; height: 100%; background: var(--color-orange); transition: width 0.6s ease;"></div>
+                        </div>
+                        <div style="text-align: right; font-size: 15px; color: var(--color-orange); font-weight: 600; letter-spacing: 0.5px;">71.8%</div>
+                    </div>
+
+                    <div style="background: var(--color-white); border-radius: 10px; padding: 40px 35px; transition: all 0.3s ease; box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
+                        <div style="display: flex; align-items: center; gap: 18px; margin-bottom: 25px;">
+                            <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(74, 85, 104, 0.12);">
+                                <i class="fa fa-database" style="font-size: 28px; color: var(--color-text-light);"></i>
+                            </div>
+                            <div style="flex: 1;">
+                                <div style="font-size: 11px; color: var(--color-text-light); letter-spacing: 1.5px; text-transform: uppercase; font-weight: 600; margin-bottom: 8px;">External Hard Drive</div>
+                                <div style="font-size: 40px; font-weight: 300; color: var(--color-black); line-height: 1;">19,810</div>
+                                <div style="font-size: 10px; color: var(--color-text-light); letter-spacing: 0.5px; margin-top: 4px;">files</div>
+                            </div>
+                        </div>
+                        <div style="background: #f5f5f5; height: 6px; border-radius: 3px; overflow: hidden; margin-bottom: 12px;">
+                            <div style="width: 25.3%; height: 100%; background: var(--color-text-light); transition: width 0.6s ease;"></div>
+                        </div>
+                        <div style="text-align: right; font-size: 15px; color: var(--color-text-light); font-weight: 600; letter-spacing: 0.5px;">25.3%</div>
+                    </div>
+
+                    <div style="background: var(--color-white); border-radius: 10px; padding: 40px 35px; transition: all 0.3s ease; box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
+                        <div style="display: flex; align-items: center; gap: 18px; margin-bottom: 25px;">
+                            <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #e8e8e8 0%, #d8d8d8 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(45, 55, 72, 0.12);">
+                                <i class="fa fa-floppy-o" style="font-size: 28px; color: var(--color-text-dark);"></i>
+                            </div>
+                            <div style="flex: 1;">
+                                <div style="font-size: 11px; color: var(--color-text-light); letter-spacing: 1.5px; text-transform: uppercase; font-weight: 600; margin-bottom: 8px;">Floppy Disk Collection</div>
+                                <div style="font-size: 40px; font-weight: 300; color: var(--color-black); line-height: 1;">2,230</div>
+                                <div style="font-size: 10px; color: var(--color-text-light); letter-spacing: 0.5px; margin-top: 4px;">files</div>
+                            </div>
+                        </div>
+                        <div style="background: #f5f5f5; height: 6px; border-radius: 3px; overflow: hidden; margin-bottom: 12px;">
+                            <div style="width: 2.9%; height: 100%; background: var(--color-text-dark); transition: width 0.6s ease;"></div>
+                        </div>
+                        <div style="text-align: right; font-size: 15px; color: var(--color-text-dark); font-weight: 600; letter-spacing: 0.5px;">2.9%</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Literary Works -->
+            <div style="grid-column: 1 / -1; margin-bottom: 80px;">
+                <h3 style="font-size: 26px; color: var(--color-black); margin-bottom: 50px; text-align: center; letter-spacing: 3px; font-weight: 300; text-transform: uppercase;">Major Literary Cycles</h3>
+                
+                <!-- Main Cycles -->
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 25px; margin-bottom: 25px;">
+                    <div style="background: var(--color-white); padding: 45px 40px; border-radius: 12px; position: relative; overflow: hidden; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 2px 12px rgba(0,0,0,0.06), 0 0 0 1px rgba(232, 106, 51, 0.08); cursor: pointer;" onmouseover="this.style.transform='translateY(-12px)'; this.style.boxShadow='0 16px 48px rgba(0,0,0,0.15), 0 0 0 2px rgba(232, 106, 51, 0.3)';" onmouseout="this.style.transform=''; this.style.boxShadow='0 2px 12px rgba(0,0,0,0.06), 0 0 0 1px rgba(232, 106, 51, 0.08)';">
+                        <div style="position: absolute; top: 15px; right: 25px; font-size: 100px; color: rgba(232, 106, 51, 0.04); font-weight: 300; line-height: 1;">14</div>
+                        <div style="position: relative; z-index: 1;">
+                            <div style="font-size: 22px; font-weight: 600; color: var(--color-black); margin-bottom: 8px; letter-spacing: -0.5px;">Eymerich Cycle</div>
+                            <div style="font-size: 13px; color: var(--color-text-light); margin-bottom: 25px; letter-spacing: 0.3px;">14 novels spanning three decades of digital production</div>
+                            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 25px;">
+                                <div>
+                                    <div style="font-size: 32px; font-weight: 300; color: var(--color-orange); line-height: 1;">1,693</div>
+                                    <div style="font-size: 11px; color: var(--color-text-light); text-transform: uppercase; letter-spacing: 1.2px; margin-top: 5px; font-weight: 500;">Elements</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 32px; font-weight: 300; color: var(--color-orange); line-height: 1;">43.7%</div>
+                                    <div style="font-size: 11px; color: var(--color-text-light); text-transform: uppercase; letter-spacing: 1.2px; margin-top: 5px; font-weight: 500;">Hard Disk</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 32px; font-weight: 300; color: var(--color-orange); line-height: 1;">26.2%</div>
+                                    <div style="font-size: 11px; color: var(--color-text-light); text-transform: uppercase; letter-spacing: 1.2px; margin-top: 5px; font-weight: 500;">Floppy</div>
+                                </div>
+                            </div>
+                            <div style="font-size: 13px; color: var(--color-text-dark); line-height: 1.7; padding-top: 20px; border-top: 1px solid #f0f0f0;">The most extensively documented literary project across all storage media</div>
+                        </div>
+                    </div>
+
+                    <div style="background: var(--color-white); padding: 45px 40px; border-radius: 12px; position: relative; overflow: hidden; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 2px 12px rgba(0,0,0,0.06), 0 0 0 1px rgba(232, 106, 51, 0.08); cursor: pointer;" onmouseover="this.style.transform='translateY(-12px)'; this.style.boxShadow='0 16px 48px rgba(0,0,0,0.15), 0 0 0 2px rgba(232, 106, 51, 0.3)';" onmouseout="this.style.transform=''; this.style.boxShadow='0 2px 12px rgba(0,0,0,0.06), 0 0 0 1px rgba(232, 106, 51, 0.08)';">
+                        <div style="position: absolute; top: 15px; right: 25px; font-size: 100px; color: rgba(45, 55, 72, 0.04); font-weight: 300; line-height: 1;">3</div>
+                        <div style="position: relative; z-index: 1;">
+                            <div style="font-size: 22px; font-weight: 600; color: var(--color-black); margin-bottom: 8px; letter-spacing: -0.5px;">Il Sole dell'Avvenire</div>
+                            <div style="font-size: 13px; color: var(--color-text-light); margin-bottom: 25px; letter-spacing: 0.3px;">3 novels documenting Italian labor movement history</div>
+                            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 25px;">
+                                <div>
+                                    <div style="font-size: 32px; font-weight: 300; color: var(--color-text-dark); line-height: 1;">1,907</div>
+                                    <div style="font-size: 11px; color: var(--color-text-light); text-transform: uppercase; letter-spacing: 1.2px; margin-top: 5px; font-weight: 500;">Elements</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 32px; font-weight: 300; color: var(--color-text-dark); line-height: 1;">28.4%</div>
+                                    <div style="font-size: 11px; color: var(--color-text-light); text-transform: uppercase; letter-spacing: 1.2px; margin-top: 5px; font-weight: 500;">Hard Disk</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 32px; font-weight: 300; color: var(--color-text-dark); line-height: 1;">71.6%</div>
+                                    <div style="font-size: 11px; color: var(--color-text-light); text-transform: uppercase; letter-spacing: 1.2px; margin-top: 5px; font-weight: 500;">External</div>
+                                </div>
+                            </div>
+                            <div style="font-size: 13px; color: var(--color-text-dark); line-height: 1.7; padding-top: 20px; border-top: 1px solid #f0f0f0;">Largest single cycle with extensive backup documentation</div>
+                        </div>
+                    </div>
+                </div>
         </div>
     </section>
 
-
-    <!-- Two Column Section -->
-    <section class="two-column-section" id="methodology">
-        <div class="two-column-container">
-            <!-- Left Column -->
-            <div class="column-box">
-                <h3>Pattern Analysis</h3>
-                <h4>Evolutionary Phases</h4>
-                <ul>
-                    <li><strong>1991-2000:</strong> Initial digitization (234 files)</li>
-                    <li><strong>2001-2004:</strong> Systematic growth (1,421 files)</li>
-                    <li><strong>2005-2006:</strong> Productivity boom (962 files - golden period)</li>
-                    <li><strong>2007-2020:</strong> Consolidation (3,978 files)</li>
-                    <li><strong>2021-2022:</strong> Final phase (293 files)</li>
-                </ul>
-                
-                <h4>Editorial Correlations</h4>
-                <ul>
-                    <li>May 2006: 114 files coincide with publication of "Il collare spezzato"</li>
-                    <li>2005-2006: 962 total files in the biennium of maximum visibility</li>
-                    <li>November 2021: last major peak (103 files) before closure</li>
-                </ul>
-            </div>
+    <!-- Methodology Section -->
+    <section id="methodology" style="background: var(--color-white); padding: 0;">
+        <div style="max-width: 1400px; margin: 0 auto; padding: 80px 50px;">
+            <h2 style="font-size: 36px; font-weight: 300; color: var(--color-black); text-align: center; letter-spacing: 4px; text-transform: uppercase; margin-bottom: 50px;">METHODOLOGY</h2>
             
-            <!-- Right Column -->
-            <div class="column-box">
-                <h3>Methodology</h3>
-                <p>Data was extracted directly from file metadata of the digital archive, analyzing creation and modification dates to identify temporal patterns and editorial correlations.</p>
+            <div style="max-width: 1000px; margin: 0 auto;">
+                <p style="font-size: 17px; color: var(--color-text-dark); line-height: 1.8; margin-bottom: 40px; text-align: center;">The project adopts a <strong>four-phase approach</strong> to modeling, managing, and publishing born-digital archival materials through semantic web technologies. The methodology takes as input the <strong>analysis of file system directories</strong> and produces as output a <strong>comprehensive knowledge base</strong> represented and accessible through multiple modalities: semantic queries via SPARQL endpoint, hierarchical navigation interfaces, network visualizations, and temporal analysis tools.</p>
                 
-                <h4>Dataset Analyzed</h4>
-                <ul>
-                    <li>6,888 files with verified creation dates</li>
-                    <li>1,806 files with traces of subsequent modifications</li>
-                    <li>Period: 1991-2022 (32 years)</li>
-                    <li>Format: automatically extracted temporal metadata</li>
-                </ul>
-                
-                <h4>Validation</h4>
-                <ul>
-                    <li>Cross-reference with editorial chronology</li>
-                    <li>Temporal coherence verification</li>
-                    <li>Duplicate and anomaly control</li>
-                    <li>Correlation with biographical timeline</li>
-                </ul>
+                <div style="margin-top: 40px; padding: 30px 40px; background: linear-gradient(135deg, #fff5e6 0%, #ffe8cc 100%); border-radius: 12px; box-shadow: 0 4px 20px rgba(232, 106, 51, 0.15); text-align: center;">
+                    <a href="methodology.html" style="display: inline-flex; align-items: center; gap: 12px; color: var(--color-orange); text-decoration: none; font-weight: 600; font-size: 16px; letter-spacing: 0.5px; transition: all 0.3s ease;" onmouseover="this.style.gap='18px'" onmouseout="this.style.gap='12px'">
+                        <i class="fa fa-arrow-right" style="font-size: 18px;"></i>
+                        EXPLORE THE COMPLETE FOUR-PHASE METHODOLOGY
+                        <i class="fa fa-arrow-right" style="font-size: 18px;"></i>
+                    </a>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="footer" id="contact">
-        <div class="footer-container">
-            <div>
-                <p class="footer-description">
-                    The Valerio Evangelisti Archive is a research project ...
-                </p>
-            </div>
-            <div>
-                <img class="partner-logo" src="https://via.placeholder.com/200x80/f5eddc/1a1a1a?text=UniBo+Logo" alt="University of Bologna">
-            </div>
-            <div class="footer-info">
-                <p><strong>University of Bologna</strong></p>
-                <p>/DH.ARC - Digital Humanties Advanced Research Center</p>
-                <p>Via Zamboni, 32</p>
-                <p>40126 Bologna, Italy</p>
-                <br>
+    <!-- The Team Section -->
+    <section id="team" style="background: var(--color-beige); padding: 80px 0; width: 100%;">
+        <div style="max-width: 1400px; margin: 0 auto; padding: 0 50px;">
+            <h2 style="font-size: 36px; font-weight: 300; color: var(--color-black); text-align: center; letter-spacing: 4px; text-transform: uppercase; margin-bottom: 20px;">THE TEAM</h2>
+            <p style="font-size: 15px; color: var(--color-text-light); text-align: center; margin-bottom: 60px; letter-spacing: 0.5px;">Research team behind the Valerio Evangelisti Digital Archive</p>
+            
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 25px;">
+                <!-- Lucia Giagnolini -->
+                <div style="background: white; padding: 40px 30px; border-radius: 16px; text-align: center; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 2px 12px rgba(0,0,0,0.06), 0 0 0 1px rgba(232, 106, 51, 0.08); cursor: pointer;" onmouseover="this.style.transform='translateY(-12px)'; this.style.boxShadow='0 16px 48px rgba(0,0,0,0.15), 0 0 0 2px rgba(232, 106, 51, 0.3)'; this.querySelector('.avatar').style.transform='scale(1.1) rotate(5deg)';" onmouseout="this.style.transform=''; this.style.boxShadow='0 2px 12px rgba(0,0,0,0.06), 0 0 0 1px rgba(232, 106, 51, 0.08)'; this.querySelector('.avatar').style.transform='';">
+                    <div class="avatar" style="width: 80px; height: 80px; background: linear-gradient(135deg, var(--color-orange) 0%, var(--color-light-orange) 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 25px; box-shadow: 0 8px 24px rgba(232, 106, 51, 0.3); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+                        <i class="fa fa-user" style="font-size: 36px; color: white;"></i>
+                    </div>
+                    <h3 style="font-size: 20px; font-weight: 600; color: var(--color-black); margin-bottom: 8px; letter-spacing: -0.5px;">Lucia Giagnolini</h3>
+                    <div style="font-size: 12px; color: var(--color-text-light); text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600;">Research Team</div>
+                </div>
+
+                <!-- Remo Grillo -->
+                <div style="background: white; padding: 40px 30px; border-radius: 16px; text-align: center; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 2px 12px rgba(0,0,0,0.06), 0 0 0 1px rgba(232, 106, 51, 0.08); cursor: pointer;" onmouseover="this.style.transform='translateY(-12px)'; this.style.boxShadow='0 16px 48px rgba(0,0,0,0.15), 0 0 0 2px rgba(232, 106, 51, 0.3)'; this.querySelector('.avatar').style.transform='scale(1.1) rotate(5deg)';" onmouseout="this.style.transform=''; this.style.boxShadow='0 2px 12px rgba(0,0,0,0.06), 0 0 0 1px rgba(232, 106, 51, 0.08)'; this.querySelector('.avatar').style.transform='';">
+                    <div class="avatar" style="width: 80px; height: 80px; background: linear-gradient(135deg, var(--color-orange) 0%, var(--color-light-orange) 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 25px; box-shadow: 0 8px 24px rgba(232, 106, 51, 0.3); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+                        <i class="fa fa-user" style="font-size: 36px; color: white;"></i>
+                    </div>
+                    <h3 style="font-size: 20px; font-weight: 600; color: var(--color-black); margin-bottom: 8px; letter-spacing: -0.5px;">Remo Grillo</h3>
+                    <div style="font-size: 12px; color: var(--color-text-light); text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600;">Research Team</div>
+                </div>
+
+                <!-- Paolo Bonora -->
+                <div style="background: white; padding: 40px 30px; border-radius: 16px; text-align: center; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 2px 12px rgba(0,0,0,0.06), 0 0 0 1px rgba(232, 106, 51, 0.08); cursor: pointer;" onmouseover="this.style.transform='translateY(-12px)'; this.style.boxShadow='0 16px 48px rgba(0,0,0,0.15), 0 0 0 2px rgba(232, 106, 51, 0.3)'; this.querySelector('.avatar').style.transform='scale(1.1) rotate(5deg)';" onmouseout="this.style.transform=''; this.style.boxShadow='0 2px 12px rgba(0,0,0,0.06), 0 0 0 1px rgba(232, 106, 51, 0.08)'; this.querySelector('.avatar').style.transform='';">
+                    <div class="avatar" style="width: 80px; height: 80px; background: linear-gradient(135deg, var(--color-orange) 0%, var(--color-light-orange) 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 25px; box-shadow: 0 8px 24px rgba(232, 106, 51, 0.3); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+                        <i class="fa fa-user" style="font-size: 36px; color: white;"></i>
+                    </div>
+                    <h3 style="font-size: 20px; font-weight: 600; color: var(--color-black); margin-bottom: 8px; letter-spacing: -0.5px;">Paolo Bonora</h3>
+                    <div style="font-size: 12px; color: var(--color-text-light); text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600;">Research Team</div>
+                </div>
+
+                <!-- Francesca Tomasi -->
+                <div style="background: white; padding: 40px 30px; border-radius: 16px; text-align: center; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 2px 12px rgba(0,0,0,0.06), 0 0 0 1px rgba(232, 106, 51, 0.08); cursor: pointer;" onmouseover="this.style.transform='translateY(-12px)'; this.style.boxShadow='0 16px 48px rgba(0,0,0,0.15), 0 0 0 2px rgba(232, 106, 51, 0.3)'; this.querySelector('.avatar').style.transform='scale(1.1) rotate(5deg)';" onmouseout="this.style.transform=''; this.style.boxShadow='0 2px 12px rgba(0,0,0,0.06), 0 0 0 1px rgba(232, 106, 51, 0.08)'; this.querySelector('.avatar').style.transform='';">
+                    <div class="avatar" style="width: 80px; height: 80px; background: linear-gradient(135deg, var(--color-orange) 0%, var(--color-light-orange) 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 25px; box-shadow: 0 8px 24px rgba(232, 106, 51, 0.3); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+                        <i class="fa fa-user" style="font-size: 36px; color: white;"></i>
+                    </div>
+                    <h3 style="font-size: 20px; font-weight: 600; color: var(--color-black); margin-bottom: 8px; letter-spacing: -0.5px;">Francesca Tomasi</h3>
+                    <div style="font-size: 12px; color: var(--color-text-light); text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600;">Research Team</div>
+                </div>
             </div>
         </div>
-        <div class="footer-bottom">
-            <p>© 2025 Valerio Evangelisti Archive. All rights reserved.</p>
-        </div>
-    </footer>
+    </section>
+
+    
+
+    <!-- Smooth Scroll Script -->
+    <script>
+        // Smooth scroll for all anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Scroll arrow click handler
+        const scrollArrow = document.querySelector('.scroll-arrow');
+        if (scrollArrow) {
+            scrollArrow.addEventListener('click', function() {
+                const projectSection = document.querySelector('#project');
+                if (projectSection) {
+                    projectSection.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        }
+    </script>
