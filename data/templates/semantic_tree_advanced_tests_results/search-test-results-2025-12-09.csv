@@ -1,0 +1,10 @@
+Search Term,Description,Expected Results,Actual Results,Query Time (ms),Path Load Time (ms),Tree Filter Time (ms),Total Time (ms),Status
+"Eymerich_cap1.doc","Single specific file",1,5,162.25,2.67,0.94,165.86,Interactive
+"Eymerich","Small result set - novel name",5,5,164.15,22.33,7.43,193.92,Interactive
+"capitolo","Small-medium set - chapter files",15,18,169.59,64.62,14.60,248.81,Interactive
+"cap","Medium result set",30,34,244.54,82.02,30.72,357.29,Interactive
+".doc","Medium-large set - DOC files",50,50,153.28,218.91,28.59,400.78,Interactive
+".txt","Large set - TXT files",100,103,164.51,388.70,100.66,653.87,Interactive
+"file","Very large set - generic term",200,201,278.15,939.84,129.05,1347.04,Interactive
+"doc","Extra large set - very common",350,352,236.26,1329.81,278.42,1844.49,Interactive
+"data","Maximum test - stress test",500,502,230.97,1883.94,355.85,2470.75,Interactive

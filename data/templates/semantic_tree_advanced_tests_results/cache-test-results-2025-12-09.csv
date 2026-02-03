@@ -1,0 +1,12 @@
+Test Name,Description,Expansions,Cache Miss Time (ms),Cache Hit Time (ms),Speedup Factor,Cache Size,Memory (KB),Status
+"Minimal Cache (5 expansions) (avg of 5 runs)","Miss: σ=2.8ms, Hit: σ=0.17ms",5,62.94,3.61,17.43,5,20,Success
+"Small Cache (10 expansions) (avg of 5 runs)","Miss: σ=1.1ms, Hit: σ=0.28ms",10,65.32,3.59,18.19,10,40,Success
+"Small-Medium Cache (20 expansions) (avg of 5 runs)","Miss: σ=4.2ms, Hit: σ=0.27ms",20,67.18,3.37,19.96,20,80,Success
+"Medium Cache (35 expansions) (avg of 5 runs)","Miss: σ=4.1ms, Hit: σ=0.26ms",35,62.13,3.58,17.33,35,140,Success
+"Medium-Large Cache (50 expansions) (avg of 5 runs)","Miss: σ=4.2ms, Hit: σ=0.23ms",50,66.25,3.69,17.94,50,200,Success
+"Large Cache (75 expansions) (avg of 5 runs)","Miss: σ=4.7ms, Hit: σ=0.34ms",75,63.80,3.42,18.66,75,300,Success
+"Very Large Cache (100 expansions) (avg of 5 runs)","Miss: σ=5.1ms, Hit: σ=0.25ms",100,64.96,3.56,18.25,100,400,Success
+"Extra Large Cache (150 expansions) (avg of 5 runs)","Miss: σ=1.5ms, Hit: σ=0.26ms",150,69.96,3.44,20.35,150,600,Success
+"Extreme Cache (200 expansions) (avg of 5 runs)","Miss: σ=4.6ms, Hit: σ=0.32ms",200,65.10,3.47,18.77,200,800,Success
+"Maximum Cache (300 expansions) (avg of 5 runs)","Miss: σ=2.5ms, Hit: σ=0.29ms",300,65.09,3.69,17.65,300,1200,Success
+"Stress Test (500 expansions) (avg of 5 runs)","Miss: σ=3.9ms, Hit: σ=0.20ms",500,64.87,3.77,17.21,500,2000,Success

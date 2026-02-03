@@ -1,0 +1,6 @@
+Relationship,Description,Expected Results,Actual Results,Query Time (ms),Path Reconstruction (ms),Tree Expansion (ms),Total Time (ms),Status
+"Same Hash Code","Find duplicate files (low complexity)",3,5,312.27,49.56,24.00,385.83,Fast
+"Same Creation Date","Files on same date (medium complexity)",25,26,597.56,254.74,178.81,1031.12,Fast
+"Same Literary Work","Related to same work (high complexity)",75,75,249.78,1221.40,452.37,1923.55,Fast
+"Same Software","Created with same software (very high complexity)",150,150,491.30,3484.19,843.76,4819.24,Fast
+"Same File Extension","Files with same extension (extreme complexity)",300,301,506.37,4132.69,1010.57,5649.63,Slow

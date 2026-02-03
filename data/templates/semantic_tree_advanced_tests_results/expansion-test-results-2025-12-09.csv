@@ -1,0 +1,12 @@
+Depth,Node Label,Query Time (ms),Render Time (ms),Total Time (ms),Children,Status
+1,"RS1_RS1 (Depth 1) (avg of 5 runs, σ=3.4ms)",45.38,12.40,57.78,33,Success
+2,"Folder Depth 2 (avg of 5 runs, σ=4.3ms)",45.54,11.73,57.26,42,Success
+3,"Folder Depth 3 (avg of 5 runs, σ=3.0ms)",43.79,13.04,56.84,48,Success
+4,"Folder Depth 4 (avg of 5 runs, σ=1.9ms)",44.76,11.58,56.34,55,Success
+5,"Folder Depth 5 (avg of 5 runs, σ=3.5ms)",44.96,10.60,55.55,40,Success
+6,"Folder Depth 6 (avg of 5 runs, σ=3.2ms)",47.08,9.87,56.95,43,Success
+7,"Folder Depth 7 (avg of 5 runs, σ=2.0ms)",45.33,11.12,56.46,79,Success
+8,"Folder Depth 8 (avg of 5 runs, σ=2.3ms)",43.83,9.87,53.70,58,Success
+10,"Folder Depth 10 (avg of 5 runs, σ=2.5ms)",46.35,12.28,58.63,64,Success
+12,"Folder Depth 12 (avg of 5 runs, σ=2.7ms)",45.67,11.13,56.80,63,Success
+15,"Folder Depth 15 (avg of 5 runs, σ=4.5ms)",46.24,12.04,58.28,88,Success
