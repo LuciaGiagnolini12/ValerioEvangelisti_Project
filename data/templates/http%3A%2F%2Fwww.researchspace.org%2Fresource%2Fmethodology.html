@@ -37,6 +37,74 @@
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
+        /* Footer Sections */
+        .footer-section {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .footer-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--color-beige);
+            margin-bottom: 24px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            font-size: 14px;
+        }
+
+        .footer-description {
+            font-size: 14px;
+            line-height: 1.8;
+            color: var(--color-dark-beige);
+            margin-bottom: 24px;
+        }
+
+        /* Contact Info */
+        .footer-info {
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        .footer-info p,
+        .footer-info address {
+            margin-bottom: 12px;
+            color: var(--color-dark-beige);
+            font-style: normal;
+        }
+
+        .info-institution strong {
+            color: var(--color-beige);
+            font-size: 15px;
+        }
+
+        .info-department a {
+            color: var(--color-dark-beige);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            display: inline-block;
+        }
+
+        .info-department a:hover {
+            color: var(--color-beige);
+        }
+
+        .info-address {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(245, 230, 211, 0.15);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         .header-container {
             max-width: 1400px;
             margin: 0 auto;
@@ -789,3 +857,38 @@
         </div>
     </div>
 </section>
+
+    <!-- Footer -->
+    <footer class="footer" id="contact">
+        <div class="footer-container">
+            <!-- About Section -->
+            <div class="footer-section">
+                <h3 class="footer-title">About the Archive</h3>
+                <p class="footer-description">
+                    The Valerio Evangelisti Archive is a research project dedicated to preserving and promoting the born-digital literary heritage of one of Italy's most influential contemporary authors.
+                </p>
+            </div>
+
+            <!-- Contact Info -->
+            <div class="footer-section">
+                <h3 class="footer-title">Contact</h3>
+                <div class="footer-info">
+                    <p class="info-institution"><strong>University of Bologna</strong></p>
+                    <p class="info-department">
+                        <a href="https://centri.unibo.it/dharc/en" target="_blank" rel="noopener noreferrer">
+                            /DH.ARC - Digital Humanities<br>Advanced Research Center
+                        </a>
+                    </p>
+                    <address class="info-address">
+                        Via Zamboni, 32<br>
+                        40126 Bologna, Italy
+                    </address>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer Bottom -->
+        <div class="footer-bottom">
+            <p>&copy; 2025 Valerio Evangelisti Archive. All rights reserved.</p>
+        </div>
+    </footer>
