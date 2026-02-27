@@ -69,14 +69,20 @@
     }
   }
 "
-        filter-options='[
-        {
-          "label": "Hide anonymized information",
-          "description": "Hide files marked as having anonymized information (folders are kept to show non-redacted children)",
-          "condition": "PREFIX bodi: <http://w3id.org/bodi#> PREFIX rico: <https://www.ica.org/standards/RiC/ontology#> SELECT ?node WHERE { ?node bodi:redactedInformation \"yes\" . FILTER NOT EXISTS { ?node rico:includesOrIncluded ?child } }",
-          "defaultChecked": true
-        }
-        ]'
+filter-options='[
+{
+  "label": "Hide anonymized information",
+  "description": "Hide files marked as having anonymized information (folders are kept to show non-redacted children)",
+  "condition": "PREFIX bodi: <http://w3id.org/bodi#> PREFIX rico: <https://www.ica.org/standards/RiC/ontology#> SELECT ?node WHERE { ?node bodi:redactedInformation \"yes\" . FILTER NOT EXISTS { GRAPH <http://ficlit.unibo.it/ArchivioEvangelisti/revision_safe> { ?node rico:includesOrIncluded ?child } } }",
+  "defaultChecked": true
+},
+{
+  "label": "Hide non-explorable folders",
+  "description": "Hide non-explorable folders",
+  "condition": "PREFIX rico: <https://www.ica.org/standards/RiC/ontology#> SELECT ?node WHERE { ?node a rico:RecordSet . FILTER NOT EXISTS { GRAPH <http://ficlit.unibo.it/ArchivioEvangelisti/revision_safe> { ?node rico:includesOrIncluded ?child } } }",
+  "defaultChecked": false
+}
+]'
         related-node-criteria='[
   {
     "label": "Same Hash",
@@ -99,116 +105,276 @@
 ]'
 
         query="
-        SELECT DISTINCT ?parent ?node ?label ?title ?structuralTitle ?hasChildren (COUNT(DISTINCT ?child) as ?childCount) ?isRoot ?fileType ?isRecordSet WHERE {
-            # Load RS1 and its three parts dynamically using dcterms:hasPart
-            VALUES ?parent { <http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1> }
-            ?parent <http://purl.org/dc/terms/hasPart> ?node .
-            
-            # Check if the corresponding data node (without /structure/) has children
-            BIND(IRI(REPLACE(STR(?node), &quot;/structure&quot;, &quot;&quot;)) AS ?dataNode)
-            OPTIONAL {
-              ?dataNode <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?child .
-            }
-            BIND(EXISTS { 
-              BIND(IRI(REPLACE(STR(?node), &quot;/structure&quot;, &quot;&quot;)) AS ?dn)
-              ?dn <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?anyChild 
-            } AS ?hasChildren)
-            
-            BIND(EXISTS {
-              BIND(IRI(REPLACE(STR(?node), &quot;/structure&quot;, &quot;&quot;)) AS ?dn)
-              ?dn a <https://www.ica.org/standards/RiC/ontology#RecordSet>
-            } AS ?isRecordSet)
+  SELECT DISTINCT ?parent ?node ?label ?title ?structuralTitle ?hasChildren (COUNT(DISTINCT ?child) as ?childCount) ?isRoot ?fileType ?isRecordSet ?containsRecords WHERE {
+      # Load RS1 and its three parts dynamically using dcterms:hasPart
+      VALUES ?parent { <http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1> }
+      ?parent <http://purl.org/dc/terms/hasPart> ?node .
+      
+      # Check if the corresponding data node (without /structure/) has children
+      BIND(IRI(REPLACE(STR(?node), &quot;/structure&quot;, &quot;&quot;)) AS ?dataNode)
+      
+      # Search for children within revision_safe graph
+      OPTIONAL {
+        GRAPH <http://ficlit.unibo.it/ArchivioEvangelisti/revision_safe> {
+          ?dataNode <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?child .
+        }
+      }
+      
+      # Check if node has children (within revision_safe graph)
+      BIND(EXISTS { 
+        BIND(IRI(REPLACE(STR(?node), &quot;/structure&quot;, &quot;&quot;)) AS ?dn)
+        GRAPH <http://ficlit.unibo.it/ArchivioEvangelisti/revision_safe> {
+          ?dn <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?anyChild
+        }
+      } AS ?hasChildren)
+      
+      # Check if node is a RecordSet (query all graphs/default graph for type information)
+      BIND(EXISTS {
+        BIND(IRI(REPLACE(STR(?node), &quot;/structure&quot;, &quot;&quot;)) AS ?dn)
+        ?dn a <https://www.ica.org/standards/RiC/ontology#RecordSet>
+      } AS ?isRecordSet)
 
+      ## Check if this node contains Records at any depth (up to 10 levels)
+      BIND(IF(EXISTS {
+        GRAPH <http://ficlit.unibo.it/ArchivioEvangelisti/revision_safe> {
+          { ?dataNode <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?rec1 .
+            ?rec1 a <https://www.ica.org/standards/RiC/ontology#Record> . }
+          UNION
+          { ?dataNode <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?a2 .
+            ?a2 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?rec2 .
+            ?rec2 a <https://www.ica.org/standards/RiC/ontology#Record> . }
+          UNION
+          { ?dataNode <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?a3 .
+            ?a3 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?b3 .
+            ?b3 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?rec3 .
+            ?rec3 a <https://www.ica.org/standards/RiC/ontology#Record> . }
+          UNION
+          { ?dataNode <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?a4 .
+            ?a4 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?b4 .
+            ?b4 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?c4 .
+            ?c4 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?rec4 .
+            ?rec4 a <https://www.ica.org/standards/RiC/ontology#Record> . }
+          UNION
+          { ?dataNode <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?a5 .
+            ?a5 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?b5 .
+            ?b5 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?c5 .
+            ?c5 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?d5 .
+            ?d5 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?rec5 .
+            ?rec5 a <https://www.ica.org/standards/RiC/ontology#Record> . }
+          UNION
+          { ?dataNode <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?a6 .
+            ?a6 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?b6 .
+            ?b6 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?c6 .
+            ?c6 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?d6 .
+            ?d6 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?e6 .
+            ?e6 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?rec6 .
+            ?rec6 a <https://www.ica.org/standards/RiC/ontology#Record> . }
+          UNION
+          { ?dataNode <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?a7 .
+            ?a7 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?b7 .
+            ?b7 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?c7 .
+            ?c7 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?d7 .
+            ?d7 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?e7 .
+            ?e7 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?f7 .
+            ?f7 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?rec7 .
+            ?rec7 a <https://www.ica.org/standards/RiC/ontology#Record> . }
+          UNION
+          { ?dataNode <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?a8 .
+            ?a8 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?b8 .
+            ?b8 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?c8 .
+            ?c8 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?d8 .
+            ?d8 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?e8 .
+            ?e8 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?f8 .
+            ?f8 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?g8 .
+            ?g8 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?rec8 .
+            ?rec8 a <https://www.ica.org/standards/RiC/ontology#Record> . }
+          UNION
+          { ?dataNode <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?a9 .
+            ?a9 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?b9 .
+            ?b9 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?c9 .
+            ?c9 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?d9 .
+            ?d9 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?e9 .
+            ?e9 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?f9 .
+            ?f9 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?g9 .
+            ?g9 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?h9 .
+            ?h9 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?rec9 .
+            ?rec9 a <https://www.ica.org/standards/RiC/ontology#Record> . }
+          UNION
+          { ?dataNode <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?a10 .
+            ?a10 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?b10 .
+            ?b10 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?c10 .
+            ?c10 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?d10 .
+            ?d10 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?e10 .
+            ?e10 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?f10 .
+            ?f10 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?g10 .
+            ?g10 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?h10 .
+            ?h10 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?i10 .
+            ?i10 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?rec10 .
+            ?rec10 a <https://www.ica.org/standards/RiC/ontology#Record> . }
+        }
+      }, &quot;true&quot;, &quot;false&quot;) AS ?containsRecords)
 
-            # Mark RS1 as root
-            BIND(IF(?parent = <http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1>, &quot;true&quot;, &quot;false&quot;) AS ?isRoot)
-            
-            # Set custom label for RS1
-            BIND(IF(?parent = <http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1>, &quot;Born-Digital Materials&quot;, ?tempLabel) AS ?label)
-            OPTIONAL { 
-              ?parent rdfs:label ?tempLabel 
-            }
-            
-            # Fetch labels for nodes
-            OPTIONAL { ?node rdfs:label ?tempTitle }
-            
-            # Set custom titles for specific nodes (RS1_RS1, RS1_RS2, RS1_RS3)
-            BIND(
-              IF(?node = <http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS1>, &quot;Primary Hard Drive&quot;,
-              IF(?node = <http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS2>, &quot;External Hard Drive&quot;,
-              IF(?node = <http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS3>, &quot;Floppy Disks Collection&quot;,
-              ?tempTitle)))
-            AS ?title)
-            
-            # For structural nodes, fetch the isRelatedTo value
-            OPTIONAL { ?node <https://www.ica.org/standards/RiC/ontology#isRelatedTo> ?structuralTitle }
-            
-            # Get file type from technical metadata
-            OPTIONAL {
-              ?dataNode <https://www.ica.org/standards/RiC/ontology#hasOrHadInstantiation> ?inst .
-              ?inst <http://w3id.org/bodi#hasTechnicalMetadata> ?techMeta .
-              ?techMeta <http://w3id.org/bodi#hasTechnicalMetadataType> <http://ficlit.unibo.it/ArchivioEvangelisti/system_tmtype_0001> .
-              ?techMeta <http://www.w3.org/1999/02/22-rdf-syntax-ns#value> ?fileType .
-            }
-          } GROUP BY ?parent ?node ?label ?title ?structuralTitle ?hasChildren ?isRoot ?fileType ?isRecordSet
-        "
+      # Mark RS1 as root
+      BIND(IF(?parent = <http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1>, &quot;true&quot;, &quot;false&quot;) AS ?isRoot)
+      
+      # Set custom label for RS1
+      BIND(IF(?parent = <http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1>, &quot;Born-Digital Materials&quot;, ?tempLabel) AS ?label)
+      OPTIONAL { 
+        ?parent rdfs:label ?tempLabel 
+      }
+      
+      # Fetch labels for nodes
+      OPTIONAL { ?node rdfs:label ?tempTitle }
+      
+      # Set custom titles for specific nodes (RS1_RS1, RS1_RS2, RS1_RS3)
+      BIND(
+        IF(?node = <http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS1>, &quot;Primary Hard Drive&quot;,
+        IF(?node = <http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS2>, &quot;External Hard Drive&quot;,
+        IF(?node = <http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS3>, &quot;Floppy Disks Collection&quot;,
+        ?tempTitle)))
+      AS ?title)
+      
+      # For structural nodes, fetch the isRelatedTo value
+      OPTIONAL { ?node <https://www.ica.org/standards/RiC/ontology#isRelatedTo> ?structuralTitle }
+      
+      # Get file type from technical metadata
+      OPTIONAL {
+        ?dataNode <https://www.ica.org/standards/RiC/ontology#hasOrHadInstantiation> ?inst .
+        ?inst <http://w3id.org/bodi#hasTechnicalMetadata> ?techMeta .
+        ?techMeta <http://w3id.org/bodi#hasTechnicalMetadataType> <http://ficlit.unibo.it/ArchivioEvangelisti/system_tmtype_0001> .
+        ?techMeta <http://www.w3.org/1999/02/22-rdf-syntax-ns#value> ?fileType .
+      }
+    } GROUP BY ?parent ?node ?label ?title ?structuralTitle ?hasChildren ?isRoot ?fileType ?isRecordSet ?containsRecords
+  "
         expand-query="
-        SELECT DISTINCT ?parent ?node ?label ?title ?hasChildren (COUNT(DISTINCT ?child) as ?childCount) ?fileType ?isRecordSet WHERE {
-            # Remove /structure/ from the clicked node to get its data counterpart
-            BIND(IRI(REPLACE(STR(<{{clickedNode}}>), &quot;/structure/&quot;, &quot;/&quot;)) AS ?dataNode)
-            BIND(<{{clickedNode}}> as ?parent)
-            
-            # Query children from the data node within the revision_safe graph
-            GRAPH <http://ficlit.unibo.it/ArchivioEvangelisti/revision_safe> {
-              ?dataNode <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?node .
-              
-              # Check for grandchildren (also data IRIs)
-              OPTIONAL { ?node <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?child . }
-            }
-            
-            # Check if node has children (within revision_safe graph)
-            BIND(EXISTS { 
-              GRAPH <http://ficlit.unibo.it/ArchivioEvangelisti/revision_safe> {
-                ?node <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?anyChild . 
-              }
-            } AS ?hasChildren)
+  SELECT DISTINCT ?parent ?node ?label ?title ?hasChildren (COUNT(DISTINCT ?child) as ?childCount) ?fileType ?isRecordSet ?containsRecords WHERE {
+      # Remove /structure/ from the clicked node to get its data counterpart
+      BIND(IRI(REPLACE(STR(<{{clickedNode}}>), &quot;/structure/&quot;, &quot;/&quot;)) AS ?dataNode)
+      BIND(<{{clickedNode}}> as ?parent)
+      
+      # Query children from the data node within the revision_safe graph
+      GRAPH <http://ficlit.unibo.it/ArchivioEvangelisti/revision_safe> {
+        ?dataNode <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?node .
+        
+        # Check for grandchildren (also data IRIs)
+        OPTIONAL { ?node <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?child . }
+      }
+      
+      # Check if node has children (within revision_safe graph)
+      BIND(EXISTS { 
+        GRAPH <http://ficlit.unibo.it/ArchivioEvangelisti/revision_safe> {
+          ?node <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?anyChild . 
+        }
+      } AS ?hasChildren)
 
-            # Check if node is a RecordSet (query all graphs/default graph for type information)
-            BIND(EXISTS { 
-              ?node a <https://www.ica.org/standards/RiC/ontology#RecordSet> 
-            } AS ?isRecordSet)
-            
-            # Fetch labels from default graph
-            OPTIONAL { ?parent rdfs:label ?label }
-            OPTIONAL { ?node rdfs:label ?title }
-            
-            # Get file type from technical metadata (from default graph)
-            OPTIONAL {
-              ?node <https://www.ica.org/standards/RiC/ontology#hasOrHadInstantiation> ?inst .
-              ?inst <http://w3id.org/bodi#hasTechnicalMetadata> ?techMeta .
-              ?techMeta <http://w3id.org/bodi#hasTechnicalMetadataType> <http://ficlit.unibo.it/ArchivioEvangelisti/system_tmtype_0001> .
-              ?techMeta <http://www.w3.org/1999/02/22-rdf-syntax-ns#value> ?fileType .
-            }
-          } GROUP BY ?parent ?node ?label ?title ?hasChildren ?fileType ?isRecordSet
-        "
+      # Check if node is a RecordSet (query all graphs/default graph for type information)
+      BIND(EXISTS { 
+        ?node a <https://www.ica.org/standards/RiC/ontology#RecordSet> 
+      } AS ?isRecordSet)
+
+      BIND(IF(EXISTS {
+        GRAPH <http://ficlit.unibo.it/ArchivioEvangelisti/revision_safe> {
+          { ?node <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?rec . }
+          UNION
+          { ?node <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?m1 .
+            ?m1 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?rec . }
+          UNION
+          { ?node <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?m1 .
+            ?m1 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?m2 .
+            ?m2 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?rec . }
+          UNION
+          { ?node <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?m1 .
+            ?m1 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?m2 .
+            ?m2 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?m3 .
+            ?m3 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?rec . }
+          UNION
+          { ?node <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?m1 .
+            ?m1 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?m2 .
+            ?m2 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?m3 .
+            ?m3 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?m4 .
+            ?m4 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?rec . }
+          UNION
+          { ?node <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?m1 .
+            ?m1 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?m2 .
+            ?m2 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?m3 .
+            ?m3 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?m4 .
+            ?m4 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?m5 .
+            ?m5 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?rec . }
+          UNION
+          { ?node <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?m1 .
+            ?m1 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?m2 .
+            ?m2 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?m3 .
+            ?m3 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?m4 .
+            ?m4 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?m5 .
+            ?m5 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?m6 .
+            ?m6 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?rec . }
+          UNION
+          { ?node <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?m1 .
+            ?m1 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?m2 .
+            ?m2 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?m3 .
+            ?m3 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?m4 .
+            ?m4 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?m5 .
+            ?m5 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?m6 .
+            ?m6 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?m7 .
+            ?m7 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?rec . }
+          UNION
+          { ?node <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?m1 .
+            ?m1 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?m2 .
+            ?m2 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?m3 .
+            ?m3 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?m4 .
+            ?m4 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?m5 .
+            ?m5 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?m6 .
+            ?m6 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?m7 .
+            ?m7 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?m8 .
+            ?m8 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?rec . }
+          UNION
+          { ?node <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?m1 .
+            ?m1 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?m2 .
+            ?m2 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?m3 .
+            ?m3 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?m4 .
+            ?m4 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?m5 .
+            ?m5 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?m6 .
+            ?m6 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?m7 .
+            ?m7 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?m8 .
+            ?m8 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?m9 .
+            ?m9 <https://www.ica.org/standards/RiC/ontology#includesOrIncluded> ?rec . }
+        }
+        ?rec a <https://www.ica.org/standards/RiC/ontology#Record> .
+      }, &quot;true&quot;, &quot;false&quot;) AS ?containsRecords)
+      
+      # Fetch labels from default graph
+      OPTIONAL { ?parent rdfs:label ?label }
+      OPTIONAL { ?node rdfs:label ?title }
+      
+      # Get file type from technical metadata (from default graph)
+      OPTIONAL {
+        ?node <https://www.ica.org/standards/RiC/ontology#hasOrHadInstantiation> ?inst .
+        ?inst <http://w3id.org/bodi#hasTechnicalMetadata> ?techMeta .
+        ?techMeta <http://w3id.org/bodi#hasTechnicalMetadataType> <http://ficlit.unibo.it/ArchivioEvangelisti/system_tmtype_0001> .
+        ?techMeta <http://www.w3.org/1999/02/22-rdf-syntax-ns#value> ?fileType .
+      }
+    } GROUP BY ?parent ?node ?label ?title ?hasChildren ?fileType ?isRecordSet ?containsRecords
+  "
         path-to-root-query="
-          SELECT DISTINCT ?ancestor WHERE {
-            # Find ancestors in data space using the node IRI directly
-            <$__node__> (^<https://www.ica.org/standards/RiC/ontology#includesOrIncluded>)* ?dataAncestor .
-            
-            # Convert back to structural IRI only for the special structural nodes
-            BIND(IF(
-              ?dataAncestor = <http://ficlit.unibo.it/ArchivioEvangelisti/RS1> ||
-              ?dataAncestor = <http://ficlit.unibo.it/ArchivioEvangelisti/RS1_RS1> ||
-              ?dataAncestor = <http://ficlit.unibo.it/ArchivioEvangelisti/RS1_RS2> ||
-              ?dataAncestor = <http://ficlit.unibo.it/ArchivioEvangelisti/RS1_RS3>,
-              IRI(REPLACE(STR(?dataAncestor), 
-                  &quot;http://ficlit.unibo.it/ArchivioEvangelisti/&quot;, 
-                  &quot;http://ficlit.unibo.it/ArchivioEvangelisti/structure/&quot;)),
-              ?dataAncestor
-            ) AS ?ancestor)
-          }
-        "
+  SELECT DISTINCT ?ancestor WHERE {
+    # Find ancestors in data space within revision_safe graph
+    GRAPH <http://ficlit.unibo.it/ArchivioEvangelisti/revision_safe> {
+      <$__node__> (^<https://www.ica.org/standards/RiC/ontology#includesOrIncluded>)* ?dataAncestor .
+    }
+    
+    # Convert back to structural IRI only for the special structural nodes
+    BIND(IF(
+      ?dataAncestor = <http://ficlit.unibo.it/ArchivioEvangelisti/RS1> ||
+      ?dataAncestor = <http://ficlit.unibo.it/ArchivioEvangelisti/RS1_RS1> ||
+      ?dataAncestor = <http://ficlit.unibo.it/ArchivioEvangelisti/RS1_RS2> ||
+      ?dataAncestor = <http://ficlit.unibo.it/ArchivioEvangelisti/RS1_RS3>,
+      IRI(REPLACE(STR(?dataAncestor), 
+          &quot;http://ficlit.unibo.it/ArchivioEvangelisti/&quot;, 
+          &quot;http://ficlit.unibo.it/ArchivioEvangelisti/structure/&quot;)),
+      ?dataAncestor
+    ) AS ?ancestor)
+  }
+"
       roots='["http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1"]'
       keys-opened='["http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1"]'
       has-children-binding="hasChildren"
@@ -245,11 +411,20 @@
                     <i class="fa fa-archive" style="margin-right: 8px; color:#E86A33;"></i>
                     <span style="font-size: 0.8em; color: #777; margin-right: 5px;">({{childCount.value}})</span>
                   {{else if (eq isRecordSet.value "true")}}
-                    <!-- rico:RecordSet - use folder icon -->
-                    <i class="fa fa-folder" style="margin-right: 8px; color: #d4c7b2;"></i>
-                    {{#unless (eq childCount.value "0")}}
-                      <span style="font-size: 0.8em; color: #777; margin-right: 5px;">({{childCount.value}})</span>
-                    {{/unless}}
+                  <!-- rico:RecordSet - use folder icon -->
+                  {{#if (eq containsRecords.value "true")}}
+                    <span style="position: relative; display: inline-block; margin-right: 8px;">
+                      <i class="fa fa-folder" style="color: #d4c7b2; font-size: 1em;"></i>
+                      <span style="position: absolute; bottom: -2px; right: -5px; background: #27ae60; border-radius: 50%; width: 0.65em; height: 0.65em; display: flex; align-items: center; justify-content: center;">
+                        <i class="fa fa-check" style="color: white; font-size: 0.4em;"></i>
+                      </span>
+                    </span>
+                  {{else}}
+                    <i class="fa fa-folder" style="margin-right: 8px; color: #ccc;"></i>
+                  {{/if}}
+                  {{#unless (eq childCount.value "0")}}
+                    <span style="font-size: 0.8em; color: #bbb; margin-right: 5px;">({{childCount.value}})</span>
+                  {{/unless}}
                   {{else if (eq fileType.value "directory")}}
                     <!-- Node explicitly marked as directory -->
                     <i class="fa fa-folder" style="margin-right: 8px; color: #d4c7b2;"></i>
@@ -268,30 +443,28 @@
                   {{else}}
                     <!-- Fallback: no children = file -->
                     <i class="fa fa-file-text-o" style="margin-right: 8px; color: #777;"></i>
-                  {{/if}}
-                  
+                  {{/if}}         
                   <div>
                     {{#if (eq node.value "http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1")}}
-                      <!-- Root node - show custom name -->
                       <a href="{{node.value}}" target="_blank" style="font-weight: bold; color: #333; text-decoration: none; font-size: 1.1em;">Born-Digital Materials</a>
                     {{else if (eq node.value "http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS1")}}
-                      <!-- RS1_RS1 custom title -->
                       <a href="{{node.value}}" target="_blank" style="font-weight: bold; color: #333; text-decoration: none;">{{title.value}}</a>
                     {{else if (eq node.value "http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS2")}}
-                      <!-- RS1_RS2 custom title -->
                       <a href="{{node.value}}" target="_blank" style="font-weight: bold; color: #333; text-decoration: none;">{{title.value}}</a>
                     {{else if (eq node.value "http://ficlit.unibo.it/ArchivioEvangelisti/structure/RS1_RS3")}}
-                      <!-- RS1_RS3 custom title -->
                       <a href="{{node.value}}" target="_blank" style="font-weight: bold; color: #333; text-decoration: none;">{{title.value}}</a>
                     {{else if structuralTitle.value}}
-                      <!-- For other structural nodes, show the isRelatedTo value -->
                       <a href="{{node.value}}" target="_blank" style="font-weight: bold; color: #333; text-decoration: none;">{{structuralTitle.value}}</a>
-                    {{else if title.value}}
-                      <a href="{{node.value}}" target="_blank" style="font-weight: bold; color: #333; text-decoration: none;">{{title.value}}</a>
+                    {{else if (and (eq isRecordSet.value "true") (eq containsRecords.value "false"))}}
+                      <a href="{{node.value}}" target="_blank" style="font-weight: bold; color: #bbb; text-decoration: none;">{{#if title.value}}{{title.value}}{{else}}{{node.value}}{{/if}}</a>
                     {{else}}
-                      <a href="{{node.value}}" target="_blank" style="font-weight: bold; color: #333; text-decoration: none;">{{node.value}}</a>
+                      <a href="{{node.value}}" target="_blank" style="font-weight: bold; color: #333; text-decoration: none;">{{#if title.value}}{{title.value}}{{else}}{{node.value}}{{/if}}</a>
                     {{/if}}
-                    <div style="font-size: 0.8em; color: #777;">{{node.value}}</div>
+                    {{#if (and (eq isRecordSet.value "true") (eq containsRecords.value "false"))}}
+                      <div style="font-size: 0.8em; color: #ccc;">{{node.value}}</div>
+                    {{else}}
+                      <div style="font-size: 0.8em; color: #777;">{{node.value}}</div>
+                    {{/if}}
                   </div>
                 </div>
               </div>
@@ -858,7 +1031,7 @@
                                           </div>
                                         </div>
                                         <div style="margin-bottom: 12px; display: flex; align-items: start;">
-                                          <i class="fa fa-arrow-right" style="color: #27ae60; margin-right: 10px; margin-top: 3px;"></i>
+                                          <i class="fa fa-arrow-right" style="color: white; margin-right: 10px; margin-top: 3px;"></i>
                                           <div>
                                             <strong style="color: #555; display: block; margin-bottom: 2px;">From</strong>
                                             <span style="color: #333;">Samsung Portable SSD T7</span>
@@ -907,7 +1080,7 @@
                                           </div>
                                         </div>
                                         <div style="margin-bottom: 12px; display: flex; align-items: start;">
-                                          <i class="fa fa-arrow-right" style="color: #27ae60; margin-right: 10px; margin-top: 3px;"></i>
+                                          <i class="fa fa-arrow-right" style="color: white; margin-right: 10px; margin-top: 3px;"></i>
                                           <div>
                                             <strong style="color: #555; display: block; margin-bottom: 2px;">From</strong>
                                             <span style="color: #333;">Unknown Microsoft Windows PC</span>
