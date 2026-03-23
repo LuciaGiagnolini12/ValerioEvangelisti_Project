@@ -41,33 +41,44 @@
         tree-line-style="dotted"
         search-placeholder="Search archive nodes..."
         search-query="
-  SELECT DISTINCT ?node WHERE {
-    GRAPH <http://ficlit.unibo.it/ArchivioEvangelisti/revision_safe> {
-      # Constrain to archive nodes only (Records or RecordSets)
-      { ?dataNode a <https://www.ica.org/standards/RiC/ontology#Record> }
-      UNION
-      { ?dataNode a <https://www.ica.org/standards/RiC/ontology#RecordSet> }
-      
-      # Filter out metadata nodes first (cheapest filter)
-      FILTER(!REGEX(STR(?dataNode), &quot;_(inst|title|id|path)$&quot;))
-      
-      # Get label and filter by search text
-      ?dataNode rdfs:label ?label .
-      FILTER(CONTAINS(LCASE(?label), LCASE(&quot;$__searchText__&quot;)))
-      
-      # Convert to structural IRI only for special nodes
-      BIND(IF(
-             ?dataNode = <http://ficlit.unibo.it/ArchivioEvangelisti/RS1> ||
-             ?dataNode = <http://ficlit.unibo.it/ArchivioEvangelisti/RS1_RS1> ||
-             ?dataNode = <http://ficlit.unibo.it/ArchivioEvangelisti/RS1_RS2> ||
-             ?dataNode = <http://ficlit.unibo.it/ArchivioEvangelisti/RS1_RS3>,
-             IRI(REPLACE(STR(?dataNode), 
-                 &quot;http://ficlit.unibo.it/ArchivioEvangelisti/&quot;, 
-                 &quot;http://ficlit.unibo.it/ArchivioEvangelisti/structure/&quot;)),
-             ?dataNode
-      ) AS ?node)
-    }
-  }
+        SELECT DISTINCT ?node WHERE {
+          {
+            ?dataNode a <https://www.ica.org/standards/RiC/ontology#Record>
+          }
+          UNION
+          {
+            ?dataNode a <https://www.ica.org/standards/RiC/ontology#RecordSet>
+          }
+          
+          FILTER(!REGEX(STR(?dataNode), &quot;_(inst|title|id|path)$&quot;))
+          
+          {
+            ?dataNode <https://www.ica.org/standards/RiC/ontology#hasOrHadTitle> ?titleNode .
+            ?titleNode rdfs:label ?label .
+          }
+          UNION
+          {
+            ?dataNode rdfs:label ?label .
+          }
+          UNION
+          {
+            ?dataNode <https://www.ica.org/standards/RiC/ontology#hasOrHadInstantiation> ?inst .
+            ?inst rdfs:label ?label .
+          }
+          
+          FILTER(CONTAINS(LCASE(?label), LCASE(&quot;$__searchText__&quot;)))
+          
+          BIND(IF(
+                 ?dataNode = <http://ficlit.unibo.it/ArchivioEvangelisti/RS1> ||
+                 ?dataNode = <http://ficlit.unibo.it/ArchivioEvangelisti/RS1_RS1> ||
+                 ?dataNode = <http://ficlit.unibo.it/ArchivioEvangelisti/RS1_RS2> ||
+                 ?dataNode = <http://ficlit.unibo.it/ArchivioEvangelisti/RS1_RS3>,
+                 IRI(REPLACE(STR(?dataNode), 
+                     &quot;http://ficlit.unibo.it/ArchivioEvangelisti/&quot;, 
+                     &quot;http://ficlit.unibo.it/ArchivioEvangelisti/structure/&quot;)),
+                 ?dataNode
+          ) AS ?node)
+      }
 "
 filter-options='[
 {
