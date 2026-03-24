@@ -42,16 +42,15 @@
         search-placeholder="Search archive nodes..."
         search-query="
         SELECT DISTINCT ?node WHERE {
-          {
-            ?dataNode a <https://www.ica.org/standards/RiC/ontology#Record>
+
+          VALUES ?type {
+            <https://www.ica.org/standards/RiC/ontology#Record>
+            <https://www.ica.org/standards/RiC/ontology#RecordSet>
           }
-          UNION
-          {
-            ?dataNode a <https://www.ica.org/standards/RiC/ontology#RecordSet>
-          }
-          
+          ?dataNode a ?type .
+      
           FILTER(!REGEX(STR(?dataNode), &quot;_(inst|title|id|path)$&quot;))
-          
+      
           {
             ?dataNode <https://www.ica.org/standards/RiC/ontology#hasOrHadTitle> ?titleNode .
             ?titleNode rdfs:label ?label .
@@ -65,9 +64,9 @@
             ?dataNode <https://www.ica.org/standards/RiC/ontology#hasOrHadInstantiation> ?inst .
             ?inst rdfs:label ?label .
           }
-          
+      
           FILTER(CONTAINS(LCASE(?label), LCASE(&quot;$__searchText__&quot;)))
-          
+      
           BIND(IF(
                  ?dataNode = <http://ficlit.unibo.it/ArchivioEvangelisti/RS1> ||
                  ?dataNode = <http://ficlit.unibo.it/ArchivioEvangelisti/RS1_RS1> ||
