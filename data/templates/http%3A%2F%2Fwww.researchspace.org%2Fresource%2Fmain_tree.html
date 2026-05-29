@@ -95,13 +95,13 @@ filter-options='[
 ]'
         related-node-criteria='[
   {
-    "label": "Same Hash",
+    "label": "Same Content",
     "icon": "fa fa-copy",
     "query": "PREFIX rico: <https://www.ica.org/standards/RiC/ontology#> PREFIX bodi: <http://w3id.org/bodi#> SELECT DISTINCT ?node WHERE { <$__nodeIri__> rico:hasOrHadInstantiation ?inst1 . ?inst1 bodi:hasSameHashCodeAs ?inst2 . ?node rico:hasOrHadInstantiation ?inst2 . FILTER(?node != <$__nodeIri__>) }",
     "description": "Find all records with the same file hash (duplicate files)"
   },
   {
-    "label": "Same Work",
+    "label": "Same related Work",
     "icon": "fa fa-book",
     "query": "PREFIX rico: <https://www.ica.org/standards/RiC/ontology#> PREFIX lrmoo: <http://iflastandards.info/ns/lrm/lrmoo/> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> SELECT DISTINCT ?node WHERE { <$__nodeIri__> rico:isRelatedTo ?work . ?work a lrmoo:F1_Work ; rdfs:label ?workLabel . FILTER(!CONTAINS(LCASE(?workLabel), \"ciclo\") && !CONTAINS(LCASE(?workLabel), \"trilogia\")) . ?node rico:isRelatedTo ?work . FILTER(?node != <$__nodeIri__>) }",
     "description": "Find all records related to the same intellectual work (excluding cycles and trilogies)"
