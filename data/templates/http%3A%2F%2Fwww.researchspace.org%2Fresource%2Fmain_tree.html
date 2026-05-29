@@ -93,23 +93,23 @@ filter-options='[
   "defaultChecked": false
 }
 ]'
-        related-node-criteria='[
+related-node-criteria='[
   {
     "label": "Same Content",
     "icon": "fa fa-copy",
-    "query": "PREFIX rico: <https://www.ica.org/standards/RiC/ontology#> PREFIX bodi: <http://w3id.org/bodi#> SELECT DISTINCT ?node WHERE { <$__nodeIri__> rico:hasOrHadInstantiation ?inst1 . ?inst1 bodi:hasSameHashCodeAs ?inst2 . ?node rico:hasOrHadInstantiation ?inst2 . FILTER(?node != <$__nodeIri__>) }",
+    "query": "PREFIX rico: <https://www.ica.org/standards/RiC/ontology#> PREFIX bodi: <http://w3id.org/bodi#> SELECT DISTINCT ?node WHERE { <$__nodeIri__> a rico:Record . <$__nodeIri__> rico:hasOrHadInstantiation ?inst1 . ?inst1 bodi:hasSameHashCodeAs ?inst2 . ?node rico:hasOrHadInstantiation ?inst2 . FILTER(?node != <$__nodeIri__>) }",
     "description": "Find all records with the same file hash (duplicate files)"
   },
   {
-    "label": "Same related Work",
+    "label": "Same Work",
     "icon": "fa fa-book",
-    "query": "PREFIX rico: <https://www.ica.org/standards/RiC/ontology#> PREFIX lrmoo: <http://iflastandards.info/ns/lrm/lrmoo/> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> SELECT DISTINCT ?node WHERE { <$__nodeIri__> rico:isRelatedTo ?work . ?work a lrmoo:F1_Work ; rdfs:label ?workLabel . FILTER(!CONTAINS(LCASE(?workLabel), \"ciclo\") && !CONTAINS(LCASE(?workLabel), \"trilogia\")) . ?node rico:isRelatedTo ?work . FILTER(?node != <$__nodeIri__>) }",
+    "query": "PREFIX rico: <https://www.ica.org/standards/RiC/ontology#> PREFIX lrmoo: <http://iflastandards.info/ns/lrm/lrmoo/> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> SELECT DISTINCT ?node WHERE { <$__nodeIri__> a rico:Record . <$__nodeIri__> rico:isRelatedTo ?work . ?work a lrmoo:F1_Work ; rdfs:label ?workLabel . FILTER(!CONTAINS(LCASE(?workLabel), \"ciclo\") && !CONTAINS(LCASE(?workLabel), \"trilogia\")) . ?node rico:isRelatedTo ?work . FILTER(?node != <$__nodeIri__>) }",
     "description": "Find all records related to the same intellectual work (excluding cycles and trilogies)"
   },
   {
     "label": "Same Creation Date",
     "icon": "fa fa-calendar",
-    "query": "PREFIX rico: <https://www.ica.org/standards/RiC/ontology#> PREFIX bodi: <http://w3id.org/bodi#> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> SELECT DISTINCT ?node WHERE { <$__nodeIri__> rico:hasOrHadInstantiation ?inst1 . ?inst1 bodi:hasTechnicalMetadata ?techMetadata1 . ?techMetadata1 bodi:hasTechnicalMetadataType ?techMetadataType1 . ?techMetadataType1 rdfs:label \"dcterms:created\" . ?techMetadata1 rdf:value ?dateValue . ?node rico:hasOrHadInstantiation ?inst2 . ?inst2 bodi:hasTechnicalMetadata ?techMetadata2 . ?techMetadata2 bodi:hasTechnicalMetadataType ?techMetadataType2 . ?techMetadataType2 rdfs:label \"dcterms:created\" . ?techMetadata2 rdf:value ?dateValue . FILTER(?node != <$__nodeIri__>) }",
+    "query": "PREFIX rico: <https://www.ica.org/standards/RiC/ontology#> PREFIX bodi: <http://w3id.org/bodi#> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> SELECT DISTINCT ?node WHERE { <$__nodeIri__> a rico:Record . <$__nodeIri__> rico:hasOrHadInstantiation ?inst1 . ?inst1 bodi:hasTechnicalMetadata ?techMetadata1 . ?techMetadata1 bodi:hasTechnicalMetadataType ?techMetadataType1 . ?techMetadataType1 rdfs:label \"dcterms:created\" . ?techMetadata1 rdf:value ?dateValue . ?node rico:hasOrHadInstantiation ?inst2 . ?inst2 bodi:hasTechnicalMetadata ?techMetadata2 . ?techMetadata2 bodi:hasTechnicalMetadataType ?techMetadataType2 . ?techMetadataType2 rdfs:label \"dcterms:created\" . ?techMetadata2 rdf:value ?dateValue . FILTER(?node != <$__nodeIri__>) }",
     "description": "Find all records created on the same date"
   }
 ]'
